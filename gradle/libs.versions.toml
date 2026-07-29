@@ -21,6 +21,8 @@ decompose = "3.5.0"
 mvikotlin = "4.4.0"
 sqldelight = "2.3.2"
 yandex-mobile-ads-kmp = "8.1.0"
+detekt = "2.0.0-alpha.5"
+kover = "0.9.9"
 
 [libraries]
 
@@ -75,3 +77,6 @@ kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", vers
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services-plugin" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+coverage = { id = "bulbmatch.config.printcoverage" }

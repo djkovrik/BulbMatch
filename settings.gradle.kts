@@ -28,6 +28,9 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
+includeBuild("gradle/build-logic")
+
 include(":shared:compose")
 include(":shared:app")
 include(":shared:platform")

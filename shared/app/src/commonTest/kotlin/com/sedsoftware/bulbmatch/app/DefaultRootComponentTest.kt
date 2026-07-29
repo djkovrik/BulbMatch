@@ -8,7 +8,10 @@ import com.arkivanov.essenty.lifecycle.resume
 import com.arkivanov.essenty.lifecycle.start
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.sedsoftware.bulbmatch.domain.CatalogAvailability
+import com.sedsoftware.bulbmatch.domain.CatalogProvider
 import com.sedsoftware.bulbmatch.domain.CompatibilityEngine
+import com.sedsoftware.bulbmatch.domain.FieldKey
+import com.sedsoftware.bulbmatch.domain.FieldOrigin
 import com.sedsoftware.bulbmatch.domain.LocaleOverride
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -75,16 +78,46 @@ class DefaultRootComponentTest {
         assertIs<MatchComponent.Child.Camera>(root.match.stack.value.active.instance)
     }
 
+    @Test
+    fun childOutputsAreInterpretedByTheRootOwner() = runTest(dispatcher) {
+        val root = createRoot(
+            actions = RecordingImageActions(),
+            settings = InMemorySettingsRepository(),
+            catalogProvider = testCatalogProvider(),
+        )
+        dispatcher.scheduler.runCurrent()
+
+        root.selectDestination(RootDestination.Reference)
+        root.reference.onEntrySelected(testBaseCode())
+        val detail = assertNotNull(root.reference.detailSlot.value.child?.instance)
+        detail.onUseBaseRequested()
+
+        assertEquals(RootDestination.Match, root.selectedDestination.value)
+        val form = assertIs<MatchComponent.Child.Form>(root.match.stack.value.active.instance).component
+        assertEquals(MatchFormComponent.Mode.ReferencePrefill, form.model.value.mode)
+        assertEquals("E27", form.model.value.fields.getValue(FieldKey.Base).rawValue)
+        assertEquals(FieldOrigin.Manual, form.model.value.fields.getValue(FieldKey.Base).origin)
+
+        root.selectDestination(RootDestination.History)
+        root.history.onStartMatchRequested()
+        assertEquals(RootDestination.Match, root.selectedDestination.value)
+
+        root.openSettings()
+        assertNotNull(root.settingsSlot.value.child?.instance).onBackRequested()
+        assertNull(root.settingsSlot.value.child)
+    }
+
     private fun createRoot(
         actions: RecordingImageActions,
         settings: InMemorySettingsRepository,
+        catalogProvider: CatalogProvider = InMemoryCatalogProvider(
+            CatalogAvailability.Invalid("test_catalog_unavailable"),
+        ),
     ): DefaultRootComponent = DefaultRootComponent(
         componentContext = DefaultComponentContext(lifecycle = lifecycle),
         storeFactory = DefaultStoreFactory(),
         compatibilityEngine = CompatibilityEngine(),
-        catalogProvider = InMemoryCatalogProvider(
-            CatalogAvailability.Invalid("test_catalog_unavailable"),
-        ),
+        catalogProvider = catalogProvider,
         settingsRepository = settings,
         savedMatchRepository = InMemorySavedMatchRepository(),
         recognitionGateway = FakeRecognitionGateway(

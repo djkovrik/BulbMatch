@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.kmp.library)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.kover)
 }
 
 kotlin {
