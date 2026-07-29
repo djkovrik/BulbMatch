@@ -1,6 +1,6 @@
-[![GitHub Actions](https://github.com/djkovrik/BulbMatch/actions/workflows/AnalysisAndTest.yml/badge.svg?branch=main)](https://github.com/djkovrik/BulbMatch/actions/workflows/AnalysisAndTest.yml)
+[![GitHub Actions](https://github.com/djkovrik/BulbMatch/actions/workflows/AnalysisAndTest.yml/badge.svg?branch=master)](https://github.com/djkovrik/BulbMatch/actions/workflows/AnalysisAndTest.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/djkovrik/ee9bfb6d698aba0842a299dc0b55238c/raw/bulbmatch-coverage-badge.json)](https://github.com/djkovrik/BulbMatch/actions/workflows/CodeCoverageBadge.yml)
-[![Last Commit](https://img.shields.io/github/last-commit/djkovrik/BulbMatch/main.svg)](https://github.com/djkovrik/BulbMatch/commits/main)
+[![Last Commit](https://img.shields.io/github/last-commit/djkovrik/BulbMatch/master.svg)](https://github.com/djkovrik/BulbMatch/commits/master)
 
 # BulbMatch
 

@@ -2,7 +2,7 @@ name: MeasureTestCoverage
 
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
 
 permissions:
   contents: read

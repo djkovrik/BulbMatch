@@ -2,14 +2,14 @@ name: CodeCoverageBadge
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: code-coverage-badge-main
+  group: code-coverage-badge-master
   cancel-in-progress: true
 
 jobs:
