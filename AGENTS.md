@@ -182,10 +182,15 @@ The macOS iOS CI-equivalent task set, after `pod install` in `iosApp`, is:
 :shared:data:iosSimulatorArm64Test
 :shared:platform:iosSimulatorArm64Test
 :shared:app:iosSimulatorArm64Test
-:shared:ads:iosSimulatorArm64Test
 :shared:compose:iosSimulatorArm64Test
 :shared:compose:linkDebugFrameworkIosSimulatorArm64
+xcodebuild -workspace iosApp/iosApp.xcworkspace -scheme iosApp -configuration Debug -destination "generic/platform=iOS Simulator" CODE_SIGNING_ALLOWED=NO build
 ```
+
+The ads module's pure common tests run on the Android host through Kover.
+Validate the native iOS Yandex SDK graph by building the CocoaPods workspace;
+do not link its transitive frameworks into a standalone Kotlin/Native test
+binary.
 
 Run Android checks after changes to common code. Run iOS Gradle and Xcode checks
 on macOS after changes that affect Apple targets, Swift bridges, CocoaPods, or

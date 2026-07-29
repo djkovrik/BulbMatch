@@ -18,16 +18,7 @@ kotlin {
     }
 
     iosArm64()
-    iosSimulatorArm64 {
-        binaries {
-            // Standalone Kotlin/Native tests are linked outside Xcode, so they
-            // do not inherit CocoaPods FRAMEWORK_SEARCH_PATHS.
-            getTest("DEBUG").linkerOpts(
-                "-F${rootProject.projectDir}/iosApp/Pods/YandexMobileAds/" +
-                    "YandexMobileAds.xcframework/ios-arm64_x86_64-simulator",
-            )
-        }
-    }
+    iosSimulatorArm64()
 
     sourceSets {
         commonMain.dependencies {

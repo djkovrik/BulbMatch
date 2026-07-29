@@ -28,9 +28,6 @@ result.
   responsive text scaling.
 - Detekt static analysis and Kover JVM line coverage with a 70% minimum gate.
 
-The approved product contract and acceptance criteria live in
-[`spec/app-spec`](spec/app-spec).
-
 ## Project structure
 
 - `shared/domain` — pure models, parsing, catalog contracts, and compatibility.

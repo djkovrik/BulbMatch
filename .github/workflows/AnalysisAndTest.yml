@@ -62,6 +62,9 @@ jobs:
   ios:
     name: Test and link iOS
     runs-on: macos-15
+    env:
+      # Yandex Mobile Ads 8.x is built with Xcode 26.2 and links iOS 26 frameworks.
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
     steps:
       - name: Check out sources
         uses: actions/checkout@v6
@@ -78,21 +81,38 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
+      - name: Verify Xcode and iOS Simulator SDK
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphonesimulator --show-sdk-version
+          test -d "$(xcrun --sdk iphonesimulator --show-sdk-path)/System/Library/Frameworks/_LocationEssentials.framework"
+
       - name: Resolve native iOS SDKs
         working-directory: iosApp
         run: pod install --repo-update
 
-      - name: Test shared iOS modules and link framework
+      # Ads common tests run in the Android/Kover job. Native Yandex SDK
+      # integration is verified through the CocoaPods workspace below.
+      - name: Test shared iOS modules and link Compose framework
         run: >
           ./gradlew
           :shared:domain:iosSimulatorArm64Test
           :shared:data:iosSimulatorArm64Test
           :shared:platform:iosSimulatorArm64Test
           :shared:app:iosSimulatorArm64Test
-          :shared:ads:iosSimulatorArm64Test
           :shared:compose:iosSimulatorArm64Test
           :shared:compose:linkDebugFrameworkIosSimulatorArm64
           --stacktrace
+
+      - name: Build iOS workspace
+        run: >
+          xcodebuild
+          -workspace iosApp/iosApp.xcworkspace
+          -scheme iosApp
+          -configuration Debug
+          -destination "generic/platform=iOS Simulator"
+          CODE_SIGNING_ALLOWED=NO
+          build
 
       - name: Upload iOS test reports
         if: always()
