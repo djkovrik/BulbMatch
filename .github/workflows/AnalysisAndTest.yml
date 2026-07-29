@@ -1,0 +1,123 @@
+name: AnalysisAndTest
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: analysis-and-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    name: Analyze, test and assemble Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out sources
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
+      - name: Static analysis
+        run: ./gradlew detekt --stacktrace
+
+      - name: Test and enforce coverage
+        run: ./gradlew koverVerify --stacktrace
+
+      - name: Verify migrations and assemble Android
+        run: >
+          ./gradlew
+          :shared:data:verifySqlDelightMigration
+          :shared:compose:compileAndroidMain
+          :androidApp:assembleDebug
+          --stacktrace
+
+      - name: Upload analysis and test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-analysis-and-test-reports
+          path: |
+            build/reports/detekt
+            build/reports/kover
+            shared/**/build/reports/tests
+          if-no-files-found: ignore
+
+  ios:
+    name: Test and link iOS
+    runs-on: macos-15
+    env:
+      # Yandex Mobile Ads 8.x is built with Xcode 26.2 and links iOS 26 frameworks.
+      DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
+    steps:
+      - name: Check out sources
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
+      - name: Verify Xcode and iOS Simulator SDK
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphonesimulator --show-sdk-version
+          test -d "$(xcrun --sdk iphonesimulator --show-sdk-path)/System/Library/Frameworks/_LocationEssentials.framework"
+
+      - name: Resolve native iOS SDKs
+        working-directory: iosApp
+        run: pod install --repo-update
+
+      # Ads common tests run in the Android/Kover job. Native Yandex SDK
+      # integration is verified through the CocoaPods workspace below.
+      - name: Test shared iOS modules and link Compose framework
+        run: >
+          ./gradlew
+          :shared:domain:iosSimulatorArm64Test
+          :shared:data:iosSimulatorArm64Test
+          :shared:platform:iosSimulatorArm64Test
+          :shared:app:iosSimulatorArm64Test
+          :shared:compose:iosSimulatorArm64Test
+          :shared:compose:linkDebugFrameworkIosSimulatorArm64
+          --stacktrace
+
+      - name: Build iOS workspace
+        run: >
+          xcodebuild
+          -workspace iosApp/iosApp.xcworkspace
+          -scheme iosApp
+          -configuration Debug
+          -destination "generic/platform=iOS Simulator"
+          CODE_SIGNING_ALLOWED=NO
+          build
+
+      - name: Upload iOS test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ios-test-reports
+          path: shared/**/build/reports/tests
+          if-no-files-found: ignore

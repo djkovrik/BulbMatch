@@ -1,0 +1,254 @@
+PODS:
+  - AppMetricaAdSupport (6.3.0):
+    - AppMetricaCore (= 6.3.0)
+    - AppMetricaCoreExtension (= 6.3.0)
+  - AppMetricaCore (6.3.0):
+    - AppMetricaCoreUtils (= 6.3.0)
+    - AppMetricaEncodingUtils (= 6.3.0)
+    - AppMetricaFMDB (= 6.3.0)
+    - AppMetricaHostState (= 6.3.0)
+    - AppMetricaIdentifiers (= 6.3.0)
+    - AppMetricaKeychain (= 6.3.0)
+    - AppMetricaLog (= 6.3.0)
+    - AppMetricaNetwork (= 6.3.0)
+    - AppMetricaPlatform (= 6.3.0)
+    - AppMetricaProtobuf (= 6.3.0)
+    - AppMetricaProtobufUtils (= 6.3.0)
+    - AppMetricaStorageUtils (= 6.3.0)
+  - AppMetricaCoreExtension (6.3.0):
+    - AppMetricaCore (= 6.3.0)
+    - AppMetricaStorageUtils (= 6.3.0)
+  - AppMetricaCoreUtils (6.3.0):
+    - AppMetricaLog (= 6.3.0)
+  - AppMetricaEncodingUtils (6.3.0):
+    - AppMetricaCoreUtils (= 6.3.0)
+    - AppMetricaLog (= 6.3.0)
+    - AppMetricaPlatform (= 6.3.0)
+  - AppMetricaFMDB (6.3.0)
+  - AppMetricaHostState (6.3.0):
+    - AppMetricaCoreUtils (= 6.3.0)
+    - AppMetricaLog (= 6.3.0)
+  - AppMetricaIdentifiers (6.3.0):
+    - AppMetricaKeychain (= 6.3.0)
+    - AppMetricaLogSwift (= 6.3.0)
+    - AppMetricaPlatform (= 6.3.0)
+    - AppMetricaStorageUtils (= 6.3.0)
+    - AppMetricaSynchronization (= 6.3.0)
+  - AppMetricaIDSync (6.3.0):
+    - AppMetricaCore (= 6.3.0)
+    - AppMetricaCoreExtension (= 6.3.0)
+    - AppMetricaCoreUtils (= 6.3.0)
+    - AppMetricaLog (= 6.3.0)
+    - AppMetricaNetwork (= 6.3.0)
+    - AppMetricaPlatform (= 6.3.0)
+    - AppMetricaStorageUtils (= 6.3.0)
+  - AppMetricaKeychain (6.3.0):
+    - AppMetricaCoreUtils (= 6.3.0)
+    - AppMetricaLog (= 6.3.0)
+    - AppMetricaStorageUtils (= 6.3.0)
+  - AppMetricaLibraryAdapter (6.3.0):
+    - AppMetricaCore (= 6.3.0)
+    - AppMetricaCoreExtension (= 6.3.0)
+  - AppMetricaLog (6.3.0)
+  - AppMetricaLogSwift (6.3.0):
+    - AppMetricaLog (= 6.3.0)
+  - AppMetricaNetwork (6.3.0):
+    - AppMetricaCoreUtils (= 6.3.0)
+    - AppMetricaLog (= 6.3.0)
+    - AppMetricaPlatform (= 6.3.0)
+  - AppMetricaPlatform (6.3.0):
+    - AppMetricaCoreUtils (= 6.3.0)
+    - AppMetricaLog (= 6.3.0)
+  - AppMetricaProtobuf (6.3.0)
+  - AppMetricaProtobufUtils (6.3.0):
+    - AppMetricaProtobuf (= 6.3.0)
+  - AppMetricaStorageUtils (6.3.0):
+    - AppMetricaCoreUtils (= 6.3.0)
+    - AppMetricaLog (= 6.3.0)
+  - AppMetricaSynchronization (6.3.0):
+    - AppMetricaLogSwift (= 6.3.0)
+  - FirebaseCore (12.11.0):
+    - FirebaseCoreInternal (~> 12.11.0)
+    - GoogleUtilities/Environment (~> 8.1)
+    - GoogleUtilities/Logger (~> 8.1)
+  - FirebaseCoreExtension (12.11.0):
+    - FirebaseCore (~> 12.11.0)
+  - FirebaseCoreInternal (12.11.0):
+    - "GoogleUtilities/NSData+zlib (~> 8.1)"
+  - FirebaseCrashlytics (12.11.0):
+    - FirebaseCore (~> 12.11.0)
+    - FirebaseInstallations (~> 12.11.0)
+    - FirebaseRemoteConfigInterop (~> 12.11.0)
+    - FirebaseSessions (~> 12.11.0)
+    - GoogleDataTransport (~> 10.1)
+    - GoogleUtilities/Environment (~> 8.1)
+    - nanopb (~> 3.30910.0)
+    - PromisesObjC (~> 2.4)
+  - FirebaseInstallations (12.11.0):
+    - FirebaseCore (~> 12.11.0)
+    - GoogleUtilities/Environment (~> 8.1)
+    - GoogleUtilities/UserDefaults (~> 8.1)
+    - PromisesObjC (~> 2.4)
+  - FirebaseRemoteConfigInterop (12.11.0)
+  - FirebaseSessions (12.11.0):
+    - FirebaseCore (~> 12.11.0)
+    - FirebaseCoreExtension (~> 12.11.0)
+    - FirebaseInstallations (~> 12.11.0)
+    - GoogleDataTransport (~> 10.1)
+    - GoogleUtilities/Environment (~> 8.1)
+    - GoogleUtilities/UserDefaults (~> 8.1)
+    - nanopb (~> 3.30910.0)
+    - PromisesSwift (~> 2.1)
+  - GoogleDataTransport (10.1.0):
+    - nanopb (~> 3.30910.0)
+    - PromisesObjC (~> 2.4)
+  - GoogleMLKit/MLKitCore (8.0.0):
+    - MLKitCommon (~> 13.0.0)
+  - GoogleMLKit/TextRecognition (8.0.0):
+    - GoogleMLKit/MLKitCore
+    - MLKitTextRecognition (~> 6.0.0)
+  - GoogleToolboxForMac/Defines (4.2.1)
+  - GoogleToolboxForMac/Logger (4.2.1):
+    - GoogleToolboxForMac/Defines (= 4.2.1)
+  - "GoogleToolboxForMac/NSData+zlib (4.2.1)":
+    - GoogleToolboxForMac/Defines (= 4.2.1)
+  - GoogleUtilities/Environment (8.1.2):
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Logger (8.1.2):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Privacy
+  - "GoogleUtilities/NSData+zlib (8.1.2)":
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Privacy (8.1.2)
+  - GoogleUtilities/UserDefaults (8.1.2):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - GTMSessionFetcher/Core (3.5.0)
+  - MLImage (1.0.0-beta7)
+  - MLKitCommon (13.0.0):
+    - GoogleDataTransport (~> 10.0)
+    - GoogleToolboxForMac/Logger (< 5.0, >= 4.2.1)
+    - "GoogleToolboxForMac/NSData+zlib (< 5.0, >= 4.2.1)"
+    - GoogleUtilities/Logger (~> 8.0)
+    - GoogleUtilities/UserDefaults (~> 8.0)
+    - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
+  - MLKitTextRecognition (6.0.0):
+    - MLKitCommon (~> 13.0)
+    - MLKitTextRecognitionCommon (= 5.0.0)
+    - MLKitVision (~> 9.0)
+  - MLKitTextRecognitionCommon (5.0.0):
+    - MLKitCommon (~> 13.0)
+    - MLKitVision (~> 9.0)
+  - MLKitVision (9.0.0):
+    - GoogleToolboxForMac/Logger (< 5.0, >= 4.2.1)
+    - "GoogleToolboxForMac/NSData+zlib (< 5.0, >= 4.2.1)"
+    - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
+    - MLImage (= 1.0.0-beta7)
+    - MLKitCommon (~> 13.0)
+  - nanopb (3.30910.0):
+    - nanopb/decode (= 3.30910.0)
+    - nanopb/encode (= 3.30910.0)
+  - nanopb/decode (3.30910.0)
+  - nanopb/encode (3.30910.0)
+  - PromisesObjC (2.4.1)
+  - PromisesSwift (2.4.1):
+    - PromisesObjC (= 2.4.1)
+  - YandexMobileAds (8.1.0):
+    - AppMetricaAdSupport (~> 6.3.0)
+    - AppMetricaCore (~> 6.3.0)
+    - AppMetricaIDSync (~> 6.3.0)
+    - AppMetricaLibraryAdapter (~> 6.3.0)
+
+DEPENDENCIES:
+  - FirebaseCrashlytics (= 12.11.0)
+  - GoogleMLKit/TextRecognition (= 8.0.0)
+  - YandexMobileAds (= 8.1.0)
+
+SPEC REPOS:
+  trunk:
+    - AppMetricaAdSupport
+    - AppMetricaCore
+    - AppMetricaCoreExtension
+    - AppMetricaCoreUtils
+    - AppMetricaEncodingUtils
+    - AppMetricaFMDB
+    - AppMetricaHostState
+    - AppMetricaIdentifiers
+    - AppMetricaIDSync
+    - AppMetricaKeychain
+    - AppMetricaLibraryAdapter
+    - AppMetricaLog
+    - AppMetricaLogSwift
+    - AppMetricaNetwork
+    - AppMetricaPlatform
+    - AppMetricaProtobuf
+    - AppMetricaProtobufUtils
+    - AppMetricaStorageUtils
+    - AppMetricaSynchronization
+    - FirebaseCore
+    - FirebaseCoreExtension
+    - FirebaseCoreInternal
+    - FirebaseCrashlytics
+    - FirebaseInstallations
+    - FirebaseRemoteConfigInterop
+    - FirebaseSessions
+    - GoogleDataTransport
+    - GoogleMLKit
+    - GoogleToolboxForMac
+    - GoogleUtilities
+    - GTMSessionFetcher
+    - MLImage
+    - MLKitCommon
+    - MLKitTextRecognition
+    - MLKitTextRecognitionCommon
+    - MLKitVision
+    - nanopb
+    - PromisesObjC
+    - PromisesSwift
+    - YandexMobileAds
+
+SPEC CHECKSUMS:
+  AppMetricaAdSupport: d9d6516e5e21032f058b7aef3f17aefe9c7cc116
+  AppMetricaCore: 12186e7fca8c7e293bd45f66f0e18d64435f1ab7
+  AppMetricaCoreExtension: 71f4f4b7e993e963241a764790e07b0813926f18
+  AppMetricaCoreUtils: 88b1288644a44ddc2572483bcd64c2e62f6f76ba
+  AppMetricaEncodingUtils: a895862856ee06b9b22fdc02771157e4004b3819
+  AppMetricaFMDB: cc66f2b0c0e8d3d451313b0ac7174b111820f6ec
+  AppMetricaHostState: c6bbff91eb4e35a16da4cf721a729029db455d9b
+  AppMetricaIdentifiers: 7dd47f89a04955b8913c96a6be367c4dc739b3db
+  AppMetricaIDSync: 6799f35fd10a5616f4d214d896829136dc2b4533
+  AppMetricaKeychain: 743d4d2e1dadcce2e33c892b82409e5882e87da1
+  AppMetricaLibraryAdapter: b476a378a83c89e2b4e7b874f4a3874266989ee9
+  AppMetricaLog: a939df984c6564ac0007b6634ea6c24dc54df3a9
+  AppMetricaLogSwift: fa337df59c92edcd51bed406c4298ab1ce9ddd4b
+  AppMetricaNetwork: 1d7cb179c7dce7dbac5f54fb28cc378410b89e61
+  AppMetricaPlatform: 0732c0de92c8db13b25592c49e9bc82df1cc27eb
+  AppMetricaProtobuf: 4d554ca95b28d1d11c661ad4b6b8c6e5c647624a
+  AppMetricaProtobufUtils: f3bfe7f36e3d0b00552398e0c06bd2af515800dd
+  AppMetricaStorageUtils: 658dc0cd262a94c0a4ce450af11a50aef0809a82
+  AppMetricaSynchronization: d629fdefd72af0bb7768ae4d32fb107c42662811
+  FirebaseCore: 1b39aa6e67b4b4d5771045abf9c9a57a585ff1e7
+  FirebaseCoreExtension: dd75d774a2d9bc48a4e559c5b80b7c43e30d66dd
+  FirebaseCoreInternal: 26601b1134d192ef73e80c0c0110fb96477db687
+  FirebaseCrashlytics: 0752614319acf43e90df6210e7d8bcf644f5215f
+  FirebaseInstallations: 3b65e8f4faed02bad1abf5de40e8286c5b13073d
+  FirebaseRemoteConfigInterop: 372ef310f177ee237dda0a695fe058848effb155
+  FirebaseSessions: 380475216987a33191364c241772d36b24e4e393
+  GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
+  GoogleMLKit: ddd51d7dff36ff28defa69afedd9cdce684fd857
+  GoogleToolboxForMac: d1a2cbf009c453f4d6ded37c105e2f67a32206d8
+  GoogleUtilities: 766ace00c6b10d8148408f329d10c4f051931850
+  GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
+  MLImage: 2ab9c968e75f57911c16f4c9d9e8a8e9604a86a1
+  MLKitCommon: 26b779f072a182c1603d4c88a101c350cac837b1
+  MLKitTextRecognition: 072488cfd29f1726733378661881f88db74ba3dc
+  MLKitTextRecognitionCommon: 228502b9dc61ea9cfb6199ebafef3baa842e2043
+  MLKitVision: fa8dea9012ac59497c79ddbe9ebf32051047ac4c
+  nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
+  PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
+  PromisesSwift: 217dea0fd5d2ad65222a109c48698add13cc1c5b
+  YandexMobileAds: 47d9d0ce6705e79e3801138e8c1d9898e4c79a51
+
+PODFILE CHECKSUM: 46aac3085cd586f2e6256994a11911fc70cc5b0d
+
+COCOAPODS: 1.16.2

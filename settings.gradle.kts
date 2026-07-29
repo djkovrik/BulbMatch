@@ -28,6 +28,13 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-include(":shared:compose")
-include(":androidApp")
 
+includeBuild("gradle/build-logic")
+
+include(":shared:compose")
+include(":shared:app")
+include(":shared:platform")
+include(":shared:data")
+include(":shared:domain")
+include(":shared:ads")
+include(":androidApp")

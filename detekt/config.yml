@@ -1,0 +1,51 @@
+complexity:
+  LongMethod:
+    active: true
+    allowedLines: 100
+    excludes:
+      - '**/commonTest/**'
+      - '**/androidHostTest/**'
+      - '**/*Previews.kt'
+  TooManyFunctions:
+    active: true
+    allowedFunctionsPerFile: 25
+    allowedFunctionsPerClass: 20
+    excludes:
+      - '**/commonTest/**'
+      - '**/androidHostTest/**'
+      - '**/*Previews.kt'
+
+naming:
+  FunctionNaming:
+    active: true
+    ignoreAnnotated:
+      - 'Composable'
+      - 'Preview'
+    excludes:
+      - '**/commonTest/**'
+      - '**/androidHostTest/**'
+
+style:
+  MagicNumber:
+    active: true
+    excludes:
+      - '**/commonTest/**'
+      - '**/androidHostTest/**'
+      - '**/*.gradle.kts'
+      - '**/compose/**'
+      - '**/*Previews.kt'
+    ignoreNumbers:
+      - '-1'
+      - '0'
+      - '1'
+      - '2'
+  MaxLineLength:
+    active: true
+    maxLineLength: 140
+    excludePackageStatements: true
+    excludeImportStatements: true
+    excludeCommentStatements: false
+    excludeRawStrings: true
+    excludes:
+      - '**/commonTest/**'
+      - '**/androidHostTest/**'

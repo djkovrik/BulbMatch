@@ -1,0 +1,125 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:BundledCatalog.kt:BundledCatalogLoader$entry.canonicalCode.isBlank() || entry.commonNameEn.isBlank() || entry.commonNameRu.isBlank() || entry.diagramId.isBlank() || entry.distinguishingHintEn.isBlank() || entry.distinguishingHintRu.isBlank() || entry.sourceRecordIds.isEmpty() || entry.sourceRecordIds.any(String::isBlank)</ID>
+    <ID>ComplexCondition:BundledCatalog.kt:BundledCatalogLoader$release.state != "APPROVED" || !release.releaseEligible || release.requiredReviewer != "Sergey V." || release.reviewedAt.isNullOrBlank() || release.decision != "APPROVED"</ID>
+    <ID>ComplexCondition:ResultScreens.kt:showActions &amp;&amp; model.outcome == AssessmentOutcome.Compatible &amp;&amp; model.showInlineAd &amp;&amp; inlineAdContent != null</ID>
+    <ID>CyclomaticComplexMethod:BundledCatalog.kt:BundledCatalogLoader$private fun validateMetadata: CatalogIntegrityFailure?</ID>
+    <ID>CyclomaticComplexMethod:CompatibilityEngine.kt:CompatibilityEngine$fun assess: Assessment</ID>
+    <ID>CyclomaticComplexMethod:MatchStore.kt:MatchStoreProvider$@OptIn(ExperimentalMviKotlinApi::class) fun provide: MatchStore</ID>
+    <ID>CyclomaticComplexMethod:MatchStore.kt:private fun updateField: MatchStore.State</ID>
+    <ID>CyclomaticComplexMethod:ResultScreens.kt:@Composable private fun ResultEvidenceList</ID>
+    <ID>CyclomaticComplexMethod:RootAdapter.kt:@Composable private fun Assessment.toUiResult: ResultUiModel</ID>
+    <ID>CyclomaticComplexMethod:RootAdapter.kt:@Composable private fun FormContent</ID>
+    <ID>CyclomaticComplexMethod:RootAdapter.kt:@Composable private fun SettingsContent</ID>
+    <ID>CyclomaticComplexMethod:SavedAssessmentSnapshotCodec.kt:private fun CompatibleProfileDto.toDomain: CompatibleProfile</ID>
+    <ID>CyclomaticComplexMethod:SavedAssessmentSnapshotCodec.kt:private fun ConfirmedInputDto.toDomain: ConfirmedMatchInput</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:Components.kt:val (symbol, title, container, content) = when (outcome) { AssessmentOutcome.Compatible -&gt; StatusTuple( "✓", tr("Compatible profile", "Совместимый профиль"), status.successContainer, status.onSuccessContainer, ) AssessmentOutcome.NeedClarification -&gt; StatusTuple( "!", tr("Need clarification", "Нужно уточнение"), status.warningContainer, status.onWarningContainer, ) AssessmentOutcome.PotentialConflict -&gt; StatusTuple( "×", tr("Potential conflict", "Возможен конфликт"), status.conflictContainer, status.onConflictContainer, ) AssessmentOutcome.Unavailable -&gt; StatusTuple( "!", tr("Assessment unavailable", "Оценка недоступна"), MaterialTheme.colorScheme.errorContainer, MaterialTheme.colorScheme.onErrorContainer, ) }</ID>
+    <ID>LongMethod:CompatibilityEngine.kt:CompatibilityEngine$fun assess: Assessment</ID>
+    <ID>LongMethod:MatchStore.kt:MatchStoreProvider$@OptIn(ExperimentalMviKotlinApi::class) fun provide: MatchStore</ID>
+    <ID>LongMethod:ResultScreens.kt:@Composable private fun ResultEvidenceList</ID>
+    <ID>LongMethod:ReviewScreen.kt:@Composable fun DataReviewScreen</ID>
+    <ID>LongMethod:SettingsScreen.kt:@Composable fun SettingsScreen</ID>
+    <ID>MagicNumber:AdContract.kt:InterstitialEligibilityPolicy$3</ID>
+    <ID>MagicNumber:AndroidCrashReporter.kt:AndroidCrashReporter.SanitizedNonFatal.Companion$160</ID>
+    <ID>MagicNumber:AndroidTextRecognitionService.kt:360</ID>
+    <ID>MagicNumber:AndroidTextRecognitionService.kt:64</ID>
+    <ID>MagicNumber:Contracts.kt:SavedMatch$80</ID>
+    <ID>MagicNumber:DefaultMatchComponent.kt:0x20</ID>
+    <ID>MagicNumber:DefaultMatchComponent.kt:0x7F</ID>
+    <ID>MagicNumber:DefaultMatchComponent.kt:0x9F</ID>
+    <ID>MagicNumber:DefaultMatchComponent.kt:80</ID>
+    <ID>MagicNumber:IosPlatformBridges.kt:IosCrashReporter$160</ID>
+    <ID>MagicNumber:Model.kt:BaseCode.Companion$32</ID>
+    <ID>MagicNumber:Model.kt:FrequencyMarking.Companion$1_000.0</ID>
+    <ID>MagicNumber:Model.kt:Kelvin.Companion$100_000.0</ID>
+    <ID>MagicNumber:Model.kt:Kelvin.Companion$1_000.0</ID>
+    <ID>MagicNumber:Model.kt:Lumens.Companion$1_000_000.0</ID>
+    <ID>MagicNumber:Model.kt:ShapeCode.Companion$32</ID>
+    <ID>MagicNumber:Model.kt:VoltageMarking.Companion$10_000.0</ID>
+    <ID>MagicNumber:Model.kt:Watts.Companion$100_000.0</ID>
+    <ID>MagicNumber:SavedAssessmentSnapshotCodec.kt:100</ID>
+    <ID>MagicNumber:SavedMatchStore.kt:80</ID>
+    <ID>MagicNumber:SavedMatchStore.kt:SqlDelightSavedMatchStore$32</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$0xff</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$16</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$24</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$3</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$32</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$4</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$5</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$6</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$64</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$7</ID>
+    <ID>MagicNumber:Sha256.kt:Sha256$8</ID>
+    <ID>MatchingDeclarationName:AppComponentTestFixtures.kt:AppComponentTestFixture</ID>
+    <ID>MatchingDeclarationName:RootAdapter.kt:BulbMatchSlots</ID>
+    <ID>MatchingDeclarationName:YandexInterstitialController.kt:BulbMatchInterstitialController</ID>
+    <ID>MaxLineLength:CaptureScreens.kt:"Photo assessment is disabled because the bundled catalog could not be verified. Manual entry and the source information remain available."</ID>
+    <ID>MaxLineLength:CaptureScreens.kt:"Оценка по фото отключена: встроенный каталог не прошёл проверку. Ручной ввод и сведения об источниках остаются доступны."</ID>
+    <ID>MaxLineLength:LibraryScreens.kt:"Это не означает, что цоколь не поддерживается, пока вы явно не выберете «Неизвестный цоколь» в подборе."</ID>
+    <ID>MaxLineLength:ResultScreens.kt:"Используйте этот профиль только в регионах 220–240 В / 50 Гц. Перед покупкой и установкой проверьте маркировку светильника."</ID>
+    <ID>MaxLineLength:ReviewScreen.kt:"Base and voltage are required for a compatible profile. Optional missing values remain “Not provided”, never zero."</ID>
+    <ID>MaxLineLength:ReviewScreen.kt:"Fixture max wattage must come from the fixture label and can only be entered manually. It is never inferred from the old lamp."</ID>
+    <ID>MaxLineLength:ReviewScreen.kt:"Для совместимого профиля нужны цоколь и напряжение. Отсутствующие необязательные значения остаются «Не указано», а не нулём."</ID>
+    <ID>MaxLineLength:ReviewScreen.kt:"Максимальную мощность берите только с маркировки светильника и вводите вручную. Она не определяется по старой лампе."</ID>
+    <ID>MaxLineLength:RootAdapter.kt:"Source lamp power ${sourcePower.value.number()} W exceeds the manually entered fixture limit ${fixtureMaximumPower.watts.value.number()} W."</ID>
+    <ID>MaxLineLength:RootAdapter.kt:"Мощность старой лампы ${sourcePower.value.number()} Вт превышает введённый предел светильника ${fixtureMaximumPower.watts.value.number()} Вт."</ID>
+    <ID>MaxLineLength:RootAdapter.kt:AdvisoryCheck.CheckFixtureLabel -&gt; tr("Check the fixture label and maximum wattage separately.", "Отдельно проверьте маркировку светильника и максимальную мощность.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:AdvisoryCheck.SwitchPowerOff -&gt; tr("Switch power off before removing or fitting a lamp.", "Отключите питание перед снятием или установкой лампы.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:AdvisoryCheck.VerifyDimensionsAndEnclosure -&gt; tr("Verify physical size, enclosure, heat, moisture, and wiring suitability.", "Проверьте габариты, корпус, нагрев, влагу и состояние проводки.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:AdvisoryCheck.VerifyDimmerRequirements -&gt; tr("Verify dimmer compatibility where applicable.", "При необходимости проверьте совместимость с диммером.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:CameraStatus.DeniedCanAsk -&gt; tr("Camera access was denied. You can try again after choosing Camera.", "Доступ к камере отклонён. Повторите после выбора «Камера».")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:CameraStatus.Unavailable -&gt; tr("No camera is available; choose a photo or enter manually.", "Камера недоступна: выберите фото или введите данные вручную.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:ClarificationReason.AmbiguousVoltage -&gt; tr("The voltage marking cannot be classified safely.", "Напряжение нельзя безопасно классифицировать.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:ConflictReason.ContradictoryVoltage -&gt; tr("The confirmed voltage markings contradict each other.", "Подтверждённые значения напряжения противоречат друг другу.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:ConflictReason.OutsideElectricalScope -&gt; tr("The confirmed voltage is outside the supported 220–240 V supply family.", "Подтверждённое напряжение вне поддерживаемого диапазона 220–240 В.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:ExplanationCode.FixtureLimitConfirmed -&gt; tr("The manually entered fixture limit does not conflict with source lamp power.", "Введённое вручную ограничение светильника не конфликтует с мощностью старой лампы.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:ExplanationCode.FixtureLimitUnresolved -&gt; tr("No fixture maximum wattage was entered; it remains a separate check.", "Максимальная мощность светильника не указана и остаётся отдельной проверкой.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:ExplanationCode.KnownBaseConfirmed -&gt; tr("The confirmed base is supported by the reviewed catalog.", "Подтверждённый цоколь поддерживается проверенным каталогом.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:ExplanationCode.VoltageInScope -&gt; tr("The confirmed voltage is within the supported 220–240 V family.", "Подтверждённое напряжение входит в поддерживаемый диапазон 220–240 В.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:is ClarificationReason.UnknownBase -&gt; tr("The base “$rawText” is not confirmed in the catalog.", "Цоколь «$rawText» не подтверждён каталогом.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:is ClarificationReason.UnsupportedBase -&gt; tr("Base ${code.value} is not enabled in the reviewed catalog.", "Цоколь ${code.value} не включён в проверенный каталог.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:is VoltageEvidence.Contradictory -&gt; add(FactUiModel(tr("Voltage", "Напряжение"), tr("Contradictory markings", "Противоречивые значения")))</ID>
+    <ID>MaxLineLength:RootAdapter.kt:tr("Ask a qualified person if anything is damaged, hot, wet, loose, or unclear.", "Обратитесь к специалисту, если что-либо повреждено, нагревается, мокнет, шатается или вызывает сомнения.")</ID>
+    <ID>MaxLineLength:RootAdapter.kt:tr("Confirm physical size, enclosure, dimmer, heat, moisture, and wiring suitability.", "Проверьте габариты, корпус, диммер, нагрев, влагу и состояние проводки.")</ID>
+    <ID>MaxLineLength:ScreenPreviews.kt:FieldUiModel("fixture_max_watts", "Fixture max wattage", "", "Read from fixture label", FieldOrigin.Manual, ReviewDecision.Confirmed)</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:"BulbMatch creates a conservative shopping profile from confirmed markings. It does not inspect wiring, certify a fixture, or guarantee physical fit."</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:"BulbMatch создаёт консервативный профиль для покупки по подтверждённой маркировке. Приложение не проверяет проводку, не сертифицирует светильник и не гарантирует физическую совместимость."</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:"Firebase Crashlytics receives crash diagnostics without photos, OCR text, confirmed values, names, or a stable user ID."</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:"Firebase Crashlytics получает диагностику сбоев без фото, текста OCR, подтверждённых значений, названий и постоянного ID пользователя."</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:"Switch power off and ask a qualified person when damage, heat, moisture, enclosure, dimmer support, or wiring is uncertain."</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:"Yandex Mobile Ads is configured without location, custom targeting, ATT prompt, or an advertising-ID permission."</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:"Yandex Mobile Ads настроен без геолокации, пользовательского таргетинга, запроса ATT и разрешения на рекламный идентификатор."</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:"Кандидаты для разработки не включаются в производственную оценку, пока Sergey V. не зафиксирует подтверждение."</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:"Отключите питание и обратитесь к специалисту при повреждении, нагреве, влаге или сомнениях в корпусе, диммере либо проводке."</ID>
+    <ID>MaxLineLength:SettingsScreen.kt:tr("This packaged catalog has recorded human approval.", "Для этого каталога зафиксировано подтверждение человеком.")</ID>
+    <ID>ReturnCount:AdContract.kt:InterstitialEligibilityPolicy$fun isEligible: Boolean</ID>
+    <ID>ReturnCount:AndroidCameraCaptureSession.kt:AndroidCameraCaptureSession$private fun ImageProxy.toResult: ImageAcquisitionResult</ID>
+    <ID>ReturnCount:AndroidCrashReporter.kt:AndroidCrashReporter.Companion$fun create: CrashReporter</ID>
+    <ID>ReturnCount:AndroidImageSourceService.kt:AndroidImageSourceService$private fun terminalPermissionState: CameraPermissionState</ID>
+    <ID>ReturnCount:AndroidTextRecognitionService.kt:AndroidTextRecognitionService$override suspend fun recognize: TextRecognitionResult</ID>
+    <ID>ReturnCount:AndroidTextRecognitionService.kt:private fun decodeBytes: Bitmap?</ID>
+    <ID>ReturnCount:BundledCatalog.kt:BundledCatalogLoader$fun load: CatalogLoadResult</ID>
+    <ID>ReturnCount:BundledCatalog.kt:BundledCatalogLoader$private fun validateMetadata: CatalogIntegrityFailure?</ID>
+    <ID>ReturnCount:BundledCatalog.kt:BundledCatalogLoader$private fun validateProductionApproval: CatalogIntegrityFailure?</ID>
+    <ID>ReturnCount:CompatibilityEngine.kt:CompatibilityEngine$fun assess: Assessment</ID>
+    <ID>ReturnCount:DefaultMatchComponent.kt:DefaultSaveResultComponent$override fun onSaveRequested</ID>
+    <ID>ReturnCount:DeterministicFakes.kt:InMemoryCatalogProvider$override fun searchEntries: List&lt;CatalogEntry&gt;</ID>
+    <ID>ReturnCount:InterstitialEligibilityPolicy.kt:InterstitialEligibilityPolicy$fun isEligible: Boolean</ID>
+    <ID>ReturnCount:IosPlatformBridges.kt:IosTextRecognitionService$override suspend fun recognize: TextRecognitionResult</ID>
+    <ID>ReturnCount:MarkingParser.kt:MarkingParser$private fun parsePower: Pair&lt;FieldKey, String&gt;?</ID>
+    <ID>ReturnCount:MarkingParser.kt:private fun String.normalizedDecimalOrNull: String?</ID>
+    <ID>ReturnCount:MatchStore.kt:private fun String.parseVoltage: VoltageMarking?</ID>
+    <ID>ReturnCount:Model.kt:VoltageMarking.Companion$fun range: VoltageMarking?</ID>
+    <ID>ReturnCount:Model.kt:private fun String.codePointCount: Int</ID>
+    <ID>ReturnCount:main.kt:@OptIn(ExperimentalForeignApi::class) private fun loadIosCatalogBytes: ByteArray</ID>
+    <ID>TooGenericExceptionCaught:AndroidRootHolder.kt:AndroidPlatformBridge$failure: Throwable</ID>
+    <ID>TooGenericExceptionCaught:DatabaseFactory.kt:BulbMatchDatabaseFactory$failure: Throwable</ID>
+    <ID>TooGenericExceptionCaught:DomainRepositories.kt:failure: Throwable</ID>
+    <ID>TooGenericExceptionCaught:main.kt:IosPlatformBridge$failure: Throwable</ID>
+    <ID>TooManyFunctions:RootAdapter.kt:com.sedsoftware.bulbmatch.compose.RootAdapter.kt</ID>
+    <ID>TooManyFunctions:SavedAssessmentSnapshotCodec.kt:com.sedsoftware.bulbmatch.data.history.SavedAssessmentSnapshotCodec.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>

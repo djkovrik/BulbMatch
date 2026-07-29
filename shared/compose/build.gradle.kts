@@ -12,9 +12,9 @@ plugins {
 
 kotlin {
     android {
-        namespace = "com.sedsoftware.bulbmatch"
+        namespace = "com.sedsoftware.bulbmatch.compose"
         compileSdk = 36
-        minSdk = 23
+        minSdk = 24
         androidResources.enable = true
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
     }
@@ -24,6 +24,11 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":shared:domain"))
+            implementation(project(":shared:data"))
+            implementation(project(":shared:platform"))
+            implementation(project(":shared:app"))
+            implementation(project(":shared:ads"))
             api(libs.compose.runtime)
             api(libs.compose.ui)
             api(libs.compose.foundation)
@@ -33,10 +38,10 @@ kotlin {
             implementation(libs.kermit)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.coil)
-            implementation(libs.coil.network.ktor)
             implementation(libs.multiplatformSettings)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.decompose.extensions.compose)
+            implementation(libs.decompose)
         }
 
         commonTest.dependencies {
@@ -47,6 +52,10 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
+        }
+
+        iosMain.dependencies {
+            implementation(libs.mvikotlin.main)
         }
 
     }
