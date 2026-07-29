@@ -6,7 +6,7 @@
         android:label="BulbMatch"
         android:theme="@android:style/Theme.Material.NoActionBar">
         <activity
-            android:name=".AppActivity"
+            android:name="com.sedsoftware.bulbmatch.AppActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustPan"

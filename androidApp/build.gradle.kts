@@ -6,14 +6,14 @@ plugins {
 }
 
 android {
-    namespace = "com.sedsoftware.bulbmatch.androidApp"
+    namespace = "com.sedsoftware.bulbmatch"
     compileSdk = 36
 
     defaultConfig {
         minSdk = 23
         targetSdk = 36
 
-        applicationId = "com.sedsoftware.bulbmatch.androidApp"
+        applicationId = "com.sedsoftware.bulbmatch"
         versionCode = 1
         versionName = "1.0.0"
     }

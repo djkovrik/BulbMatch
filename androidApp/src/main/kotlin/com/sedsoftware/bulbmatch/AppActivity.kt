@@ -1,4 +1,4 @@
-package com.sedsoftware.bulbmatch.androidApp
+package com.sedsoftware.bulbmatch
 
 import android.app.Activity
 import android.os.Bundle
