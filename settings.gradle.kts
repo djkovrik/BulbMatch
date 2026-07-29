@@ -29,5 +29,9 @@ dependencyResolutionManagement {
     }
 }
 include(":shared:compose")
+include(":shared:app")
+include(":shared:platform")
+include(":shared:data")
+include(":shared:domain")
+include(":shared:ads")
 include(":androidApp")
-

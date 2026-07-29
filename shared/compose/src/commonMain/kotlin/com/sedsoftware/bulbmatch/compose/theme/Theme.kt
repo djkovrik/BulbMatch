@@ -2,104 +2,143 @@ package com.sedsoftware.bulbmatch.compose.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.sedsoftware.bulbmatch.compose.localization.LocalAppLanguage
+import com.sedsoftware.bulbmatch.compose.model.AppLanguage
+import com.sedsoftware.bulbmatch.compose.model.AppThemeMode
 
-private val LightColorScheme = lightColorScheme(
-    primary = PrimaryLight,
-    onPrimary = OnPrimaryLight,
-    primaryContainer = PrimaryContainerLight,
-    onPrimaryContainer = OnPrimaryContainerLight,
-    secondary = SecondaryLight,
-    onSecondary = OnSecondaryLight,
-    secondaryContainer = SecondaryContainerLight,
-    onSecondaryContainer = OnSecondaryContainerLight,
-    tertiary = TertiaryLight,
-    onTertiary = OnTertiaryLight,
-    tertiaryContainer = TertiaryContainerLight,
-    onTertiaryContainer = OnTertiaryContainerLight,
-    error = ErrorLight,
-    onError = OnErrorLight,
-    errorContainer = ErrorContainerLight,
-    onErrorContainer = OnErrorContainerLight,
-    background = BackgroundLight,
-    onBackground = OnBackgroundLight,
-    surface = SurfaceLight,
-    onSurface = OnSurfaceLight,
-    surfaceVariant = SurfaceVariantLight,
-    onSurfaceVariant = OnSurfaceVariantLight,
+private val LightColors = lightColorScheme(
+    primary = WarmYellowLight,
+    onPrimary = OnWarmYellowLight,
+    primaryContainer = WarmYellowContainerLight,
+    onPrimaryContainer = OnWarmYellowContainerLight,
+    secondary = Color(0xFF665D45),
+    onSecondary = Color.White,
+    secondaryContainer = Color(0xFFEEE1C2),
+    onSecondaryContainer = Color(0xFF211B0B),
+    error = ConflictLight,
+    onError = Color.White,
+    errorContainer = ConflictContainerLight,
+    onErrorContainer = OnConflictContainerLight,
+    background = NeutralBackgroundLight,
+    onBackground = NeutralOnSurfaceLight,
+    surface = NeutralSurfaceLight,
+    onSurface = NeutralOnSurfaceLight,
+    surfaceVariant = NeutralVariantLight,
+    onSurfaceVariant = NeutralOnVariantLight,
     outline = OutlineLight,
-    outlineVariant = OutlineVariantLight,
-    scrim = ScrimLight,
-    inverseSurface = InverseSurfaceLight,
-    inverseOnSurface = InverseOnSurfaceLight,
-    inversePrimary = InversePrimaryLight,
-    surfaceDim = SurfaceDimLight,
-    surfaceBright = SurfaceBrightLight,
-    surfaceContainerLowest = SurfaceContainerLowestLight,
-    surfaceContainerLow = SurfaceContainerLowLight,
-    surfaceContainer = SurfaceContainerLight,
-    surfaceContainerHigh = SurfaceContainerHighLight,
-    surfaceContainerHighest = SurfaceContainerHighestLight,
 )
 
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    onPrimary = OnPrimaryDark,
-    primaryContainer = PrimaryContainerDark,
-    onPrimaryContainer = OnPrimaryContainerDark,
-    secondary = SecondaryDark,
-    onSecondary = OnSecondaryDark,
-    secondaryContainer = SecondaryContainerDark,
-    onSecondaryContainer = OnSecondaryContainerDark,
-    tertiary = TertiaryDark,
-    onTertiary = OnTertiaryDark,
-    tertiaryContainer = TertiaryContainerDark,
-    onTertiaryContainer = OnTertiaryContainerDark,
-    error = ErrorDark,
-    onError = OnErrorDark,
-    errorContainer = ErrorContainerDark,
-    onErrorContainer = OnErrorContainerDark,
-    background = BackgroundDark,
-    onBackground = OnBackgroundDark,
-    surface = SurfaceDark,
-    onSurface = OnSurfaceDark,
-    surfaceVariant = SurfaceVariantDark,
-    onSurfaceVariant = OnSurfaceVariantDark,
+private val DarkColors = darkColorScheme(
+    primary = WarmYellowDark,
+    onPrimary = OnWarmYellowDark,
+    primaryContainer = WarmYellowContainerDark,
+    onPrimaryContainer = OnWarmYellowContainerDark,
+    secondary = Color(0xFFD1C5A7),
+    onSecondary = Color(0xFF362F1B),
+    secondaryContainer = Color(0xFF4E4630),
+    onSecondaryContainer = Color(0xFFEEE1C2),
+    error = ConflictDark,
+    onError = Color(0xFF5F1607),
+    errorContainer = ConflictContainerDark,
+    onErrorContainer = OnConflictContainerDark,
+    background = NeutralBackgroundDark,
+    onBackground = NeutralOnSurfaceDark,
+    surface = NeutralSurfaceDark,
+    onSurface = NeutralOnSurfaceDark,
+    surfaceVariant = NeutralVariantDark,
+    onSurfaceVariant = NeutralOnVariantDark,
     outline = OutlineDark,
-    outlineVariant = OutlineVariantDark,
-    scrim = ScrimDark,
-    inverseSurface = InverseSurfaceDark,
-    inverseOnSurface = InverseOnSurfaceDark,
-    inversePrimary = InversePrimaryDark,
-    surfaceDim = SurfaceDimDark,
-    surfaceBright = SurfaceBrightDark,
-    surfaceContainerLowest = SurfaceContainerLowestDark,
-    surfaceContainerLow = SurfaceContainerLowDark,
-    surfaceContainer = SurfaceContainerDark,
-    surfaceContainerHigh = SurfaceContainerHighDark,
-    surfaceContainerHighest = SurfaceContainerHighestDark,
 )
 
-internal val LocalThemeIsDark = compositionLocalOf { mutableStateOf(true) }
+@Immutable
+data class AppSpacing(
+    val xxs: Dp = 2.dp,
+    val xs: Dp = 4.dp,
+    val sm: Dp = 8.dp,
+    val md: Dp = 16.dp,
+    val lg: Dp = 24.dp,
+    val xl: Dp = 32.dp,
+    val xxl: Dp = 48.dp,
+)
+
+@Immutable
+data class StatusColors(
+    val success: Color,
+    val successContainer: Color,
+    val onSuccessContainer: Color,
+    val warning: Color,
+    val warningContainer: Color,
+    val onWarningContainer: Color,
+    val conflict: Color,
+    val conflictContainer: Color,
+    val onConflictContainer: Color,
+)
+
+val LocalAppSpacing = staticCompositionLocalOf { AppSpacing() }
+val LocalStatusColors = staticCompositionLocalOf {
+    StatusColors(
+        SuccessLight, SuccessContainerLight, OnSuccessContainerLight,
+        WarningLight, WarningContainerLight, OnWarningContainerLight,
+        ConflictLight, ConflictContainerLight, OnConflictContainerLight,
+    )
+}
 
 @Composable
-internal fun AppTheme(
-    onThemeChanged: @Composable (isDark: Boolean) -> Unit,
-    content: @Composable () -> Unit
+fun BulbMatchTheme(
+    themeMode: AppThemeMode = AppThemeMode.System,
+    language: AppLanguage = AppLanguage.English,
+    systemIsRussian: Boolean = false,
+    onThemeChanged: @Composable (isDark: Boolean) -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
-    val systemIsDark = isSystemInDarkTheme()
-    val isDarkState = remember(systemIsDark) { mutableStateOf(systemIsDark) }
-    CompositionLocalProvider(
-        LocalThemeIsDark provides isDarkState
-    ) {
-        val isDark by isDarkState
-        onThemeChanged(!isDark)
-        MaterialTheme(
-            colorScheme = if (isDark) DarkColorScheme else LightColorScheme,
-            content = { Surface(content = content) }
+    val systemDark = isSystemInDarkTheme()
+    val isDark = when (themeMode) {
+        AppThemeMode.System -> systemDark
+        AppThemeMode.Light -> false
+        AppThemeMode.Dark -> true
+    }
+    val effectiveLanguage = when (language) {
+        AppLanguage.System -> if (systemIsRussian) AppLanguage.Russian else AppLanguage.English
+        else -> language
+    }
+    val status = if (isDark) {
+        StatusColors(
+            SuccessDark, SuccessContainerDark, OnSuccessContainerDark,
+            WarningDark, WarningContainerDark, OnWarningContainerDark,
+            ConflictDark, ConflictContainerDark, OnConflictContainerDark,
         )
+    } else {
+        StatusColors(
+            SuccessLight, SuccessContainerLight, OnSuccessContainerLight,
+            WarningLight, WarningContainerLight, OnWarningContainerLight,
+            ConflictLight, ConflictContainerLight, OnConflictContainerLight,
+        )
+    }
+
+    CompositionLocalProvider(
+        LocalAppSpacing provides AppSpacing(),
+        LocalStatusColors provides status,
+        LocalAppLanguage provides effectiveLanguage,
+    ) {
+        MaterialTheme(
+            colorScheme = if (isDark) DarkColors else LightColors,
+            typography = Typography(),
+            shapes = Shapes(),
+        ) {
+            onThemeChanged(isDark)
+            Surface(content = content)
+        }
     }
 }

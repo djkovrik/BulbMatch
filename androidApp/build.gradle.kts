@@ -5,12 +5,21 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+val hasFirebaseConfiguration = layout.projectDirectory
+    .file("google-services.json")
+    .asFile
+    .isFile
+if (hasFirebaseConfiguration) {
+    pluginManager.apply("com.google.gms.google-services")
+    pluginManager.apply("com.google.firebase.crashlytics")
+}
+
 android {
     namespace = "com.sedsoftware.bulbmatch"
     compileSdk = 36
 
     defaultConfig {
-        minSdk = 23
+        minSdk = 24
         targetSdk = 36
 
         applicationId = "com.sedsoftware.bulbmatch"
@@ -30,5 +39,42 @@ kotlin {
 
 dependencies {
     implementation(project(":shared:compose"))
+    implementation(project(":shared:app"))
+    implementation(project(":shared:data"))
+    implementation(project(":shared:domain"))
+    implementation(project(":shared:platform"))
+    implementation(project(":shared:ads"))
     implementation(libs.androidx.activityCompose)
+    implementation(libs.decompose)
+    implementation(libs.mvikotlin)
+    implementation(libs.mvikotlin.main)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.multiplatformSettings)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.compose.material3)
+}
+
+tasks.configureEach {
+    if (name.contains("Release", ignoreCase = true)) {
+        dependsOn(":shared:ads:validateProductionAdUnits")
+        dependsOn(":shared:ads:validateAdSdkReleaseVersion")
+        dependsOn(":shared:data:validateProductionCatalog")
+        dependsOn("validateCrashReportingConfiguration")
+    }
+}
+
+tasks.register("validateCrashReportingConfiguration") {
+    group = "verification"
+    description = "Blocks release until Firebase platform configuration is supplied."
+    inputs.property("hasGoogleServicesJson", hasFirebaseConfiguration)
+    doLast {
+        val configured = inputs.properties
+            .getValue("hasGoogleServicesJson")
+            .toString()
+            .toBooleanStrict()
+        check(configured) {
+            "Release blocked: androidApp/google-services.json is required for Crashlytics."
+        }
+    }
 }

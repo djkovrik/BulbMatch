@@ -1,0 +1,66 @@
+CREATE TABLE saved_match (
+    id TEXT NOT NULL PRIMARY KEY,
+    created_at_epoch_ms INTEGER NOT NULL,
+    display_name TEXT,
+    status_code TEXT NOT NULL,
+    base_code TEXT,
+    raw_base_text TEXT,
+    voltage_min_v REAL,
+    voltage_max_v REAL,
+    catalog_version TEXT NOT NULL,
+    ruleset_version TEXT NOT NULL,
+    snapshot_schema_version INTEGER NOT NULL,
+    snapshot_json TEXT NOT NULL
+);
+
+CREATE INDEX saved_match_created_at_desc
+ON saved_match(created_at_epoch_ms DESC, id DESC);
+
+selectSummaries:
+SELECT
+    id,
+    created_at_epoch_ms,
+    display_name,
+    status_code,
+    base_code,
+    raw_base_text,
+    voltage_min_v,
+    voltage_max_v,
+    catalog_version,
+    ruleset_version,
+    snapshot_schema_version
+FROM saved_match
+ORDER BY created_at_epoch_ms DESC, id DESC;
+
+selectById:
+SELECT *
+FROM saved_match
+WHERE id = ?;
+
+insertMatch:
+INSERT OR IGNORE INTO saved_match(
+    id,
+    created_at_epoch_ms,
+    display_name,
+    status_code,
+    base_code,
+    raw_base_text,
+    voltage_min_v,
+    voltage_max_v,
+    catalog_version,
+    ruleset_version,
+    snapshot_schema_version,
+    snapshot_json
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+deleteById:
+DELETE FROM saved_match
+WHERE id = ?;
+
+clearAll:
+DELETE FROM saved_match;
+
+countAll:
+SELECT count(*)
+FROM saved_match;

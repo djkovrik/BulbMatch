@@ -4,5 +4,7 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>BulbMatch uses the camera only when you choose Camera to read lamp markings on device.</string>
 </dict>
 </plist>

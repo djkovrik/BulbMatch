@@ -1,0 +1,14 @@
+source 'https://cdn.cocoapods.org/'
+
+platform :ios, '16.2'
+
+target 'iosApp' do
+  use_frameworks! :linkage => :static
+
+  # YandexMobileAds is static. Build and archive the generated .xcworkspace.
+  pod 'YandexMobileAds', '8.1.0'
+  # Bundled Latin OCR; no first-run model download.
+  pod 'GoogleMLKit/TextRecognition', '8.0.0'
+  # Analytics is intentionally not included.
+  pod 'FirebaseCrashlytics'
+end

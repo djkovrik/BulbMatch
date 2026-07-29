@@ -3,16 +3,20 @@ import compose
 
 @main
 struct ComposeApp: App {
+    private let rootViewController = MainKt.MainViewController()
+
     var body: some Scene {
         WindowGroup {
-            ContentView().ignoresSafeArea(.all)
+            ContentView(viewController: rootViewController)
         }
     }
 }
 
 struct ContentView: UIViewControllerRepresentable {
+    let viewController: UIViewController
+
     func makeUIViewController(context: Context) -> UIViewController {
-        return MainKt.MainViewController()
+        viewController
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
