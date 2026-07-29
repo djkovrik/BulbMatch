@@ -44,10 +44,37 @@ import com.sedsoftware.bulbmatch.data.history.SavedAssessmentSnapshot
 import com.sedsoftware.bulbmatch.data.history.SavedAssessmentSnapshotCodec
 import com.sedsoftware.bulbmatch.data.history.SqlDelightSavedMatchStore
 import com.sedsoftware.bulbmatch.data.settings.BulbMatchSettingsStore
+import com.sedsoftware.bulbmatch.domain.BaseAliasIndex
 import com.sedsoftware.bulbmatch.domain.CompatibilityEngine
 import com.sedsoftware.bulbmatch.domain.FrequencyMarking
+import com.sedsoftware.bulbmatch.domain.MarkingParser
+import com.sedsoftware.bulbmatch.domain.ObservationGeometry
+import com.sedsoftware.bulbmatch.domain.RawTextObservation
 import com.sedsoftware.bulbmatch.domain.VoltageMarking
+import com.sedsoftware.bulbmatch.platform.CameraPermissionState
+import com.sedsoftware.bulbmatch.platform.CrashContext
+import com.sedsoftware.bulbmatch.platform.CrashReporter
+import com.sedsoftware.bulbmatch.platform.EphemeralImageHandle
+import com.sedsoftware.bulbmatch.platform.ImageAcquisitionResult
+import com.sedsoftware.bulbmatch.platform.ImageFailureCode
+import com.sedsoftware.bulbmatch.platform.IosCrashReporter
+import com.sedsoftware.bulbmatch.platform.IosCrashReportingHost
+import com.sedsoftware.bulbmatch.platform.IosHostImageResult
+import com.sedsoftware.bulbmatch.platform.IosHostRecognitionResult
+import com.sedsoftware.bulbmatch.platform.IosImageSourceHost
+import com.sedsoftware.bulbmatch.platform.IosImageSourceService
+import com.sedsoftware.bulbmatch.platform.IosTextRecognitionHost
+import com.sedsoftware.bulbmatch.platform.IosTextRecognitionService
+import com.sedsoftware.bulbmatch.platform.NormalizedRect
+import com.sedsoftware.bulbmatch.platform.OperationCode
+import com.sedsoftware.bulbmatch.platform.TextObservation
+import com.sedsoftware.bulbmatch.platform.TextRecognitionFailureCode
+import com.sedsoftware.bulbmatch.platform.TextRecognitionResult
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ByteVar
@@ -65,10 +92,68 @@ import platform.UIKit.UIStatusBarStyleLightContent
 import platform.UIKit.UIViewController
 import platform.UIKit.setStatusBarStyle
 
-fun MainViewController(): UIViewController {
-    val holder = IosRootHolder.create()
-    return ComposeUIViewController {
+/**
+ * Swift-facing constructors for Kotlin sealed results and singleton permission states.
+ * Keeping construction here avoids exposing implementation subclasses as host contracts.
+ */
+class IosBridgeFactory {
+    fun permissionUnknown(): CameraPermissionState = CameraPermissionState.Unknown
+    fun permissionGranted(): CameraPermissionState = CameraPermissionState.Granted
+    fun permissionDeniedCanAsk(): CameraPermissionState = CameraPermissionState.DeniedCanAsk
+    fun permissionDeniedOpenSettings(): CameraPermissionState =
+        CameraPermissionState.DeniedOpenSettings
+    fun permissionUnavailable(): CameraPermissionState = CameraPermissionState.Unavailable
+
+    fun imageSuccess(encodedImage: ByteArray): IosHostImageResult =
+        IosHostImageResult.Success(encodedImage)
+
+    fun imageCancelled(): IosHostImageResult = IosHostImageResult.Cancelled
+
+    fun imageFailure(code: ImageFailureCode): IosHostImageResult =
+        IosHostImageResult.Failure(code)
+
+    fun textObservation(
+        text: String,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ): TextObservation = TextObservation(
+        text = text,
+        bounds = NormalizedRect(left, top, right, bottom),
+    )
+
+    fun recognitionSuccess(observations: List<TextObservation>): IosHostRecognitionResult =
+        IosHostRecognitionResult.Success(observations)
+
+    fun recognitionFailure(code: TextRecognitionFailureCode): IosHostRecognitionResult =
+        IosHostRecognitionResult.Failure(code)
+}
+
+/**
+ * Retained iOS composition boundary. Swift owns one instance for the lifetime of
+ * the root controller and forwards foreground activation after returning from Settings.
+ */
+class IosAppController(
+    imageSourceHost: IosImageSourceHost,
+    textRecognitionHost: IosTextRecognitionHost,
+    crashReportingHost: IosCrashReportingHost,
+) {
+    private val holder = IosRootHolder.create(
+        imageSourceHost = imageSourceHost,
+        textRecognitionHost = textRecognitionHost,
+        crashReportingHost = crashReportingHost,
+    )
+    val viewController: UIViewController = ComposeUIViewController {
         IosBulbMatchApp(holder)
+    }
+
+    fun onForegroundResume() {
+        holder.platform.onForegroundResume()
+    }
+
+    fun close() {
+        holder.close()
     }
 }
 
@@ -127,13 +212,12 @@ private fun IosBulbMatchApp(holder: IosRootHolder) {
 }
 
 /**
- * The checked-in host remains safe and usable for manual/history/settings on iOS. Camera, picker,
- * bundled OCR, ads, and Crashlytics are activated by the Swift host bridges after CocoaPods are
- * installed on macOS; until then the camera path fails explicitly instead of using demo data.
+ * Kotlin owns application state while the retained Swift composition owns native presenters and
+ * SDK objects. No image or recognized text crosses into persistence or crash-report metadata.
  */
 private class IosRootHolder private constructor(
     val root: RootComponent,
-    val platform: IosUnavailablePlatformBridge,
+    val platform: IosPlatformBridge,
     private val lifecycle: LifecycleRegistry,
     private val database: BulbMatchDatabaseHandle,
 ) {
@@ -143,12 +227,17 @@ private class IosRootHolder private constructor(
         if (closed) return
         closed = true
         lifecycle.destroy()
+        platform.close()
         database.close()
     }
 
     companion object {
-        @OptIn(ExperimentalForeignApi::class)
-        fun create(): IosRootHolder {
+        @OptIn(ExperimentalForeignApi::class, ExperimentalNativeApi::class)
+        fun create(
+            imageSourceHost: IosImageSourceHost,
+            textRecognitionHost: IosTextRecognitionHost,
+            crashReportingHost: IosCrashReportingHost,
+        ): IosRootHolder {
             val lifecycle = LifecycleRegistry()
             lifecycle.create()
             val database = BulbMatchDatabaseFactory.create(IosDatabaseDriverFactory())
@@ -169,7 +258,16 @@ private class IosRootHolder private constructor(
                 targetVoltage = requireNotNull(VoltageMarking.range(220.0, 240.0)),
                 targetFrequency = requireNotNull(FrequencyMarking.from(50.0)),
             )
-            val platform = IosUnavailablePlatformBridge()
+            val platform = IosPlatformBridge(
+                imageSource = IosImageSourceService(imageSourceHost),
+                recognitionService = IosTextRecognitionService(textRecognitionHost),
+                parser = MarkingParser(),
+                aliases = BaseAliasIndex.from(catalogProvider.searchEntries("")),
+                crashReporter = IosCrashReporter(
+                    host = crashReportingHost,
+                    collectionEnabled = !Platform.isDebugBinary,
+                ),
+            )
             val root = DefaultRootComponent(
                 componentContext = DefaultComponentContext(lifecycle = lifecycle),
                 storeFactory = DefaultStoreFactory(),
@@ -205,35 +303,88 @@ private fun loadIosCatalogBytes(): ByteArray {
     return ByteArray(length) { index -> source[index] }
 }
 
-private class IosUnavailablePlatformBridge :
+private class IosPlatformBridge(
+    private val imageSource: IosImageSourceService,
+    private val recognitionService: IosTextRecognitionService,
+    private val parser: MarkingParser,
+    private val aliases: BaseAliasIndex,
+    private val crashReporter: CrashReporter,
+) :
     ImageActions,
     RecognitionGateway,
     InterstitialGateway {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     lateinit var root: RootComponent
     var interstitialPresenter: (((Boolean) -> Unit) -> Unit)? = null
 
     override fun requestCameraPermission() {
-        currentCamera()?.onCameraStatusChanged(CameraStatus.Unavailable)
+        launch(OperationCode.CAMERA_PERMISSION_REQUEST) {
+            val status = imageSource.requestCameraPermission().toAppStatus()
+            currentCamera()?.onCameraStatusChanged(status)
+            currentCamera()?.onCameraCapabilitiesChanged(false)
+        }
     }
 
-    override fun openSystemCameraSettings() = Unit
+    override fun openSystemCameraSettings() {
+        if (!imageSource.openAppSettings()) {
+            currentCamera()?.onCameraStatusChanged(CameraStatus.DeniedOpenSettings)
+        }
+    }
 
     override fun openPhotoPicker() {
-        root.match.onImageSelectionFailed(
-            com.sedsoftware.bulbmatch.app.ImageFailure.CameraUnavailable,
-        )
+        launch(OperationCode.IMAGE_PICK) {
+            when (val result = imageSource.pickSingleImage()) {
+                is ImageAcquisitionResult.Success ->
+                    root.match.onPickedImageAvailable(IosEphemeralImage(result.image))
+                is ImageAcquisitionResult.Cancelled ->
+                    root.match.onImageSelectionCancelled()
+                is ImageAcquisitionResult.Failure ->
+                    root.match.onImageSelectionFailed(result.code.toAppFailure())
+            }
+        }
     }
 
     override fun capturePhoto() {
-        root.match.onImageSelectionFailed(
-            com.sedsoftware.bulbmatch.app.ImageFailure.CameraUnavailable,
-        )
+        launch(OperationCode.CAMERA_CAPTURE) {
+            when (val result = imageSource.captureCameraImage()) {
+                is ImageAcquisitionResult.Success ->
+                    root.match.onCameraImageAvailable(IosEphemeralImage(result.image))
+                is ImageAcquisitionResult.Cancelled ->
+                    root.match.onImageSelectionCancelled()
+                is ImageAcquisitionResult.Failure ->
+                    root.match.onImageSelectionFailed(result.code.toAppFailure())
+            }
+        }
     }
 
     override fun setTorch(enabled: Boolean) = Unit
 
-    override suspend fun recognize(image: EphemeralImage): RecognitionResult =
-        RecognitionResult.Failure(RecognitionFailure.RecognitionFailed)
+    override suspend fun recognize(image: EphemeralImage): RecognitionResult {
+        val handle = (image as? IosEphemeralImage)?.handle
+            ?: return RecognitionResult.Failure(RecognitionFailure.UnsupportedImage)
+        return when (val result = recognitionService.recognize(handle)) {
+            is TextRecognitionResult.Success -> {
+                val observations = parser.parse(
+                    lines = result.observations.map { observation ->
+                        RawTextObservation(
+                            text = observation.text,
+                            geometry = observation.bounds?.let {
+                                ObservationGeometry(it.left, it.top, it.right, it.bottom)
+                            },
+                        )
+                    },
+                    baseAliases = aliases,
+                )
+                if (observations.isEmpty()) {
+                    RecognitionResult.Failure(RecognitionFailure.NoTextFound)
+                } else {
+                    RecognitionResult.Success(observations)
+                }
+            }
+            is TextRecognitionResult.Failure ->
+                RecognitionResult.Failure(result.code.toAppFailure())
+        }
+    }
 
     override fun showMatchExit(onComplete: (impressionRecorded: Boolean) -> Unit) {
         val presenter = interstitialPresenter
@@ -242,6 +393,80 @@ private class IosUnavailablePlatformBridge :
 
     private fun currentCamera(): CameraComponent? =
         (root.match.stack.value.active.instance as? MatchComponent.Child.Camera)?.component
+
+    fun onForegroundResume() {
+        launch(OperationCode.CAMERA_PERMISSION_CHECK) {
+            currentCamera()?.onCameraStatusChanged(
+                imageSource.onForegroundResume().toAppStatus(),
+            )
+        }
+    }
+
+    fun close() {
+        interstitialPresenter = null
+        recognitionService.close()
+        scope.cancel()
+    }
+
+    private fun launch(
+        operation: OperationCode,
+        block: suspend () -> Unit,
+    ) {
+        scope.launch {
+            try {
+                block()
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (failure: Throwable) {
+                crashReporter.recordNonFatal(
+                    failure,
+                    CrashContext(screen = null, operation = operation),
+                )
+                root.match.onImageSelectionFailed(
+                    com.sedsoftware.bulbmatch.app.ImageFailure.Unknown,
+                )
+            }
+        }
+    }
+}
+
+private class IosEphemeralImage(
+    val handle: EphemeralImageHandle,
+) : EphemeralImage {
+    override val debugLabel: String = "ios-ephemeral-image"
+
+    override fun release() = handle.release()
+}
+
+private fun CameraPermissionState.toAppStatus(): CameraStatus = when (this) {
+    CameraPermissionState.Unknown,
+    CameraPermissionState.Checking,
+    CameraPermissionState.Requesting,
+    -> CameraStatus.Checking
+    CameraPermissionState.Granted -> CameraStatus.Granted
+    CameraPermissionState.DeniedCanAsk -> CameraStatus.DeniedCanAsk
+    CameraPermissionState.DeniedOpenSettings,
+    CameraPermissionState.SettingsPending,
+    -> CameraStatus.DeniedOpenSettings
+    CameraPermissionState.Unavailable -> CameraStatus.Unavailable
+}
+
+private fun ImageFailureCode.toAppFailure():
+    com.sedsoftware.bulbmatch.app.ImageFailure = when (this) {
+    ImageFailureCode.PERMISSION_DENIED ->
+        com.sedsoftware.bulbmatch.app.ImageFailure.PermissionDenied
+    ImageFailureCode.CAMERA_UNAVAILABLE,
+    ImageFailureCode.CAMERA_NOT_READY,
+    ImageFailureCode.CAPTURE_FAILED,
+    -> com.sedsoftware.bulbmatch.app.ImageFailure.CameraUnavailable
+    ImageFailureCode.UNREADABLE_IMAGE ->
+        com.sedsoftware.bulbmatch.app.ImageFailure.UnreadableImage
+}
+
+private fun TextRecognitionFailureCode.toAppFailure(): RecognitionFailure = when (this) {
+    TextRecognitionFailureCode.NO_TEXT_FOUND -> RecognitionFailure.NoTextFound
+    TextRecognitionFailureCode.UNSUPPORTED_IMAGE -> RecognitionFailure.UnsupportedImage
+    TextRecognitionFailureCode.RECOGNITION_FAILED -> RecognitionFailure.RecognitionFailed
 }
 
 @Composable
