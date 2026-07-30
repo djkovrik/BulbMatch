@@ -141,8 +141,6 @@ a hard check to make a test or release gate pass.
   simulator tests/framework link.
 - `docs/IOS-RELEASE-MANUAL-CHECKLIST.md` — current manual iOS release and device
   acceptance checklist.
-- `docs/PRODUCTION-CATALOG-APPROVAL-GUIDE.md` — required human catalog/ruleset
-  review and sign-off process.
 
 The main composition boundaries are
 `androidApp/.../AndroidRootHolder.kt`,
