@@ -14,6 +14,7 @@ import com.sedsoftware.bulbmatch.compose.model.ReviewUiModel
 import com.sedsoftware.bulbmatch.compose.model.ScreenLoadState
 import com.sedsoftware.bulbmatch.compose.model.previewCompatibleResult
 import com.sedsoftware.bulbmatch.compose.components.AdvertisementSlot
+import com.sedsoftware.bulbmatch.compose.localization.tr
 import com.sedsoftware.bulbmatch.compose.screens.BaseReferenceDetailScreen
 import com.sedsoftware.bulbmatch.compose.screens.BaseReferenceListScreen
 import com.sedsoftware.bulbmatch.compose.screens.CameraCaptureScreen
@@ -28,7 +29,10 @@ import com.sedsoftware.bulbmatch.compose.screens.SettingsScreen
 import com.sedsoftware.bulbmatch.compose.theme.BulbMatchTheme
 import androidx.compose.ui.tooling.preview.Preview
 
-@Preview(name = "SCREEN-001 Match EN", widthDp = 390, heightDp = 844)
+@Preview(name = "SCREEN-001 Match EN light", widthDp = 390, heightDp = 844, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-001 Match EN dark", widthDp = 390, heightDp = 844, uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "SCREEN-001 Match EN 200 light", widthDp = 390, heightDp = 844, fontScale = 2f, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-001 Match EN 200 dark", widthDp = 390, heightDp = 844, fontScale = 2f, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun MatchHomePreview() = PreviewTheme {
     MatchHomeScreen(
@@ -41,7 +45,8 @@ private fun MatchHomePreview() = PreviewTheme {
     )
 }
 
-@Preview(name = "SCREEN-002 Permission RU", widthDp = 390, heightDp = 844)
+@Preview(name = "SCREEN-002 Permission RU light", widthDp = 390, heightDp = 844, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-002 Permission RU dark", widthDp = 390, heightDp = 844, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun CameraPermissionPreview() = PreviewTheme(language = AppLanguage.Russian) {
     CameraCaptureScreen(
@@ -56,9 +61,10 @@ private fun CameraPermissionPreview() = PreviewTheme(language = AppLanguage.Russ
     )
 }
 
-@Preview(name = "SCREEN-003 Processing dark", widthDp = 390, heightDp = 844)
+@Preview(name = "SCREEN-003 Processing light", widthDp = 390, heightDp = 844, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-003 Processing dark", widthDp = 390, heightDp = 844, uiMode = UI_MODE_NIGHT_YES)
 @Composable
-private fun ImageProcessingPreview() = PreviewTheme(theme = AppThemeMode.Dark) {
+private fun ImageProcessingPreview() = PreviewTheme {
     ImageReviewScreen(
         state = ScreenLoadState.Loading,
         onBack = {},
@@ -70,7 +76,8 @@ private fun ImageProcessingPreview() = PreviewTheme(theme = AppThemeMode.Dark) {
     )
 }
 
-@Preview(name = "SCREEN-004 OCR review", widthDp = 390, heightDp = 844)
+@Preview(name = "SCREEN-004 OCR review light", widthDp = 390, heightDp = 1400, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-004 OCR review dark", widthDp = 390, heightDp = 1400, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun DataReviewPreview() = PreviewTheme {
     DataReviewScreen(
@@ -82,7 +89,21 @@ private fun DataReviewPreview() = PreviewTheme {
     )
 }
 
-@Preview(name = "SCREEN-005 Compatible", widthDp = 390, heightDp = 1000)
+@Preview(name = "SCREEN-004 OCR review RU 200 light", widthDp = 390, heightDp = 844, fontScale = 2f, uiMode = UI_MODE_NIGHT_NO)
+@Composable
+private fun DataReviewLargeTextPreview() = PreviewTheme(language = AppLanguage.Russian) {
+    DataReviewScreen(
+        model = previewReview(),
+        onBack = {},
+        onValueChange = { _, _ -> },
+        onDecision = { _, _ -> },
+        onAssess = {},
+    )
+}
+
+@Preview(name = "SCREEN-005 Compatible light", widthDp = 390, heightDp = 2000, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-005 Compatible dark", widthDp = 390, heightDp = 2000, uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "SCREEN-005 Compatible 200 light", widthDp = 390, heightDp = 2800, fontScale = 2f, uiMode = UI_MODE_NIGHT_NO)
 @Composable
 private fun CompatibleResultPreview() = PreviewTheme {
     ReplacementResultScreen(
@@ -96,14 +117,26 @@ private fun CompatibleResultPreview() = PreviewTheme {
     )
 }
 
-@Preview(name = "SCREEN-005 Conflict RU dark", widthDp = 390, heightDp = 1000)
+@Preview(name = "SCREEN-005 Conflict RU light", widthDp = 390, heightDp = 1800, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-005 Conflict RU dark", widthDp = 390, heightDp = 1800, uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "SCREEN-005 Conflict RU 200 dark", widthDp = 390, heightDp = 1800, fontScale = 2f, uiMode = UI_MODE_NIGHT_YES)
 @Composable
-private fun ConflictResultPreview() = PreviewTheme(AppThemeMode.Dark, AppLanguage.Russian) {
+private fun ConflictResultPreview() = PreviewTheme(language = AppLanguage.Russian) {
     ReplacementResultScreen(
         previewCompatibleResult().copy(
             outcome = AssessmentOutcome.PotentialConflict,
-            reasons = listOf("Confirmed voltage is outside the supported regional supply family."),
-            unresolvedChecks = listOf("The lamp is marked 110–120 V. Do not use this shopping profile on 220–240 V supply."),
+            reasons = listOf(
+                tr(
+                    "Confirmed voltage is outside the supported regional supply family.",
+                    "Подтверждённое напряжение выходит за пределы поддерживаемого регионального диапазона.",
+                ),
+            ),
+            unresolvedChecks = listOf(
+                tr(
+                    "The lamp is marked 110–120 V. Do not use this shopping profile on 220–240 V supply.",
+                    "На лампе указано 110–120 В. Не используйте этот профиль для сети 220–240 В.",
+                ),
+            ),
             profile = emptyList(),
             showInlineAd = false,
         ),
@@ -115,7 +148,8 @@ private fun ConflictResultPreview() = PreviewTheme(AppThemeMode.Dark, AppLanguag
     )
 }
 
-@Preview(name = "SCREEN-006 Save error", widthDp = 390, heightDp = 700)
+@Preview(name = "SCREEN-006 Save error light", widthDp = 390, heightDp = 700, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-006 Save error dark", widthDp = 390, heightDp = 700, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun SavePreview() = PreviewTheme {
     SaveResultScreen(
@@ -128,14 +162,25 @@ private fun SavePreview() = PreviewTheme {
     )
 }
 
-@Preview(name = "SCREEN-007 History", widthDp = 700, heightDp = 900)
+@Preview(name = "SCREEN-007 History light", widthDp = 700, heightDp = 900, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-007 History dark", widthDp = 700, heightDp = 900, uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "SCREEN-007 History phone light", widthDp = 390, heightDp = 900, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-007 History phone dark", widthDp = 390, heightDp = 900, uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "SCREEN-007 History phone 200 light", widthDp = 390, heightDp = 900, fontScale = 2f, uiMode = UI_MODE_NIGHT_NO)
 @Composable
 private fun HistoryPreview() = PreviewTheme {
     HistoryScreen(
         state = ScreenLoadState.Content,
         items = listOf(
             HistoryItemUiModel("1", null, AssessmentOutcome.Compatible, "E27", "220–240 V", "29 Jul 2026"),
-            HistoryItemUiModel("2", "Kitchen", AssessmentOutcome.NeedClarification, "Unknown GX…", "Not provided", "27 Jul 2026"),
+            HistoryItemUiModel(
+                "2",
+                "Kitchen",
+                AssessmentOutcome.NeedClarification,
+                "Unknown GX24q-3 base marking",
+                "Not provided",
+                "27 Jul 2026",
+            ),
         ),
         onOpen = {},
         onDeleteRequest = {},
@@ -150,7 +195,9 @@ private fun HistoryPreview() = PreviewTheme {
     )
 }
 
-@Preview(name = "SCREEN-008 Saved detail", widthDp = 390, heightDp = 1000)
+@Preview(name = "SCREEN-008 Saved detail light", widthDp = 390, heightDp = 2100, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-008 Saved detail dark", widthDp = 390, heightDp = 2100, uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "SCREEN-008 Saved detail 200 light", widthDp = 390, heightDp = 2100, fontScale = 2f, uiMode = UI_MODE_NIGHT_NO)
 @Composable
 private fun SavedDetailPreview() = PreviewTheme {
     SavedResultDetailScreen(
@@ -162,7 +209,10 @@ private fun SavedDetailPreview() = PreviewTheme {
     )
 }
 
-@Preview(name = "SCREEN-009 Reference", widthDp = 700, heightDp = 900)
+@Preview(name = "SCREEN-009 Reference light", widthDp = 700, heightDp = 900, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-009 Reference dark", widthDp = 700, heightDp = 900, uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "SCREEN-009 Reference phone light", widthDp = 390, heightDp = 900, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-009 Reference phone dark", widthDp = 390, heightDp = 900, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun ReferenceListPreview() = PreviewTheme {
     BaseReferenceListScreen(
@@ -180,7 +230,8 @@ private fun ReferenceListPreview() = PreviewTheme {
     )
 }
 
-@Preview(name = "SCREEN-010 Reference detail RU", widthDp = 390, heightDp = 900)
+@Preview(name = "SCREEN-010 Reference detail RU light", widthDp = 390, heightDp = 940, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-010 Reference detail RU dark", widthDp = 390, heightDp = 940, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun ReferenceDetailPreview() = PreviewTheme(language = AppLanguage.Russian) {
     BaseReferenceDetailScreen(
@@ -191,12 +242,13 @@ private fun ReferenceDetailPreview() = PreviewTheme(language = AppLanguage.Russi
     )
 }
 
-@Preview(name = "SCREEN-011 Settings dark", widthDp = 390, heightDp = 1000)
+@Preview(name = "SCREEN-011 Settings light", widthDp = 390, heightDp = 1000, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-011 Settings dark", widthDp = 390, heightDp = 1000, uiMode = UI_MODE_NIGHT_YES)
 @Composable
-private fun SettingsPreview() = PreviewTheme(theme = AppThemeMode.Dark) {
+private fun SettingsPreview() = PreviewTheme {
     SettingsScreen(
         language = AppLanguage.System,
-        themeMode = AppThemeMode.Dark,
+        themeMode = AppThemeMode.System,
         catalogVersion = "Development catalog",
         rulesetVersion = "1",
         catalogApproved = false,
@@ -212,22 +264,109 @@ private fun SettingsPreview() = PreviewTheme(theme = AppThemeMode.Dark) {
     )
 }
 
+@Preview(name = "SCREEN-011 Settings lower RU light", widthDp = 390, heightDp = 1000, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-011 Settings lower RU dark", widthDp = 390, heightDp = 1000, uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "SCREEN-011 Settings lower RU 200 light", widthDp = 390, heightDp = 1000, fontScale = 2f, uiMode = UI_MODE_NIGHT_NO)
+@Composable
+private fun SettingsLowerContentPreview() = PreviewTheme(language = AppLanguage.Russian) {
+    SettingsScreen(
+        language = AppLanguage.Russian,
+        themeMode = AppThemeMode.System,
+        catalogVersion = "Каталог для разработки 2026.07",
+        rulesetVersion = "Набор правил 1",
+        catalogApproved = false,
+        initialListIndex = 3,
+        onBack = {},
+        onLanguageChange = {},
+        onThemeChange = {},
+        onOpenPrivacy = {},
+        onOpenSources = {},
+        onEmailSupport = {},
+        onClearRequest = {},
+        onClearConfirm = {},
+        onClearDismiss = {},
+    )
+}
+
+@Preview(name = "SCREEN-011 Settings destructive RU light", widthDp = 390, heightDp = 700, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-011 Settings destructive RU dark", widthDp = 390, heightDp = 700, uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun SettingsDestructivePreview() = PreviewTheme(language = AppLanguage.Russian) {
+    SettingsScreen(
+        language = AppLanguage.Russian,
+        themeMode = AppThemeMode.System,
+        catalogVersion = "Каталог для разработки 2026.07",
+        rulesetVersion = "Набор правил 1",
+        catalogApproved = false,
+        initialListIndex = 5,
+        onBack = {},
+        onLanguageChange = {},
+        onThemeChange = {},
+        onOpenPrivacy = {},
+        onOpenSources = {},
+        onEmailSupport = {},
+        onClearRequest = {},
+        onClearConfirm = {},
+        onClearDismiss = {},
+    )
+}
+
 @Composable
 private fun PreviewTheme(
-    theme: AppThemeMode = AppThemeMode.Light,
     language: AppLanguage = AppLanguage.English,
     content: @Composable () -> Unit,
-) = BulbMatchTheme(themeMode = theme, language = language, content = content)
+) = BulbMatchTheme(themeMode = AppThemeMode.System, language = language, content = content)
 
+@Composable
 private fun previewReview() = ReviewUiModel(
     fromOcr = true,
     unresolvedCount = 2,
     canAssess = false,
     fields = listOf(
-        FieldUiModel("base_code", "Base", "E27", "E27", FieldOrigin.Detected, ReviewDecision.Confirmed, true),
-        FieldUiModel("electrical_voltage", "Voltage", "220–240 V", "230 V", FieldOrigin.Detected, ReviewDecision.Unreviewed, true),
-        FieldUiModel("electrical_source_watts", "Source lamp power", "8 W", "8 W", FieldOrigin.Detected, ReviewDecision.Unreviewed),
-        FieldUiModel("light_lumens", "Luminous flux", "806 lm", "806 lm", FieldOrigin.Detected, ReviewDecision.Confirmed),
-        FieldUiModel("fixture_max_watts", "Fixture max wattage", "", "Read from fixture label", FieldOrigin.Manual, ReviewDecision.Confirmed),
+        FieldUiModel(
+            "base_code",
+            tr("Base", "Цоколь"),
+            "E27",
+            "E27",
+            FieldOrigin.Detected,
+            ReviewDecision.Confirmed,
+            true,
+        ),
+        FieldUiModel(
+            "electrical_voltage",
+            tr("Voltage", "Напряжение"),
+            "220–240 V",
+            "230 V",
+            FieldOrigin.Detected,
+            ReviewDecision.Unreviewed,
+            true,
+        ),
+        FieldUiModel(
+            "electrical_source_watts",
+            tr("Source lamp power", "Мощность старой лампы"),
+            "8 W",
+            "8 W",
+            FieldOrigin.Detected,
+            ReviewDecision.Unreviewed,
+        ),
+        FieldUiModel(
+            "light_lumens",
+            tr("Luminous flux", "Световой поток"),
+            "806 lm",
+            "806 lm",
+            FieldOrigin.Detected,
+            ReviewDecision.Confirmed,
+        ),
+        FieldUiModel(
+            "fixture_max_watts",
+            tr("Fixture max wattage", "Макс. мощность светильника"),
+            "",
+            tr("Read from fixture label", "Смотрите маркировку светильника"),
+            FieldOrigin.Manual,
+            ReviewDecision.Confirmed,
+        ),
     ),
 )
+
+private const val UI_MODE_NIGHT_NO = 0x10
+private const val UI_MODE_NIGHT_YES = 0x20

@@ -12,8 +12,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sedsoftware.bulbmatch.compose.localization.LocalAppLanguage
 import com.sedsoftware.bulbmatch.compose.model.AppLanguage
 import com.sedsoftware.bulbmatch.compose.model.AppThemeMode
@@ -60,6 +62,57 @@ private val DarkColors = darkColorScheme(
     surfaceVariant = NeutralVariantDark,
     onSurfaceVariant = NeutralOnVariantDark,
     outline = OutlineDark,
+)
+
+private val DefaultTypography = Typography()
+
+private val BulbMatchTypography = Typography(
+    headlineMedium = DefaultTypography.headlineMedium.copy(
+        fontSize = 28.sp,
+        lineHeight = 36.sp,
+        fontWeight = FontWeight.SemiBold,
+    ),
+    headlineSmall = DefaultTypography.headlineSmall.copy(
+        fontSize = 24.sp,
+        lineHeight = 32.sp,
+        fontWeight = FontWeight.SemiBold,
+    ),
+    titleLarge = DefaultTypography.titleLarge.copy(
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
+        fontWeight = FontWeight.SemiBold,
+    ),
+    titleMedium = DefaultTypography.titleMedium.copy(
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        fontWeight = FontWeight.SemiBold,
+    ),
+    titleSmall = DefaultTypography.titleSmall.copy(
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        fontWeight = FontWeight.SemiBold,
+    ),
+    bodyLarge = DefaultTypography.bodyLarge.copy(fontSize = 16.sp, lineHeight = 24.sp),
+    bodyMedium = DefaultTypography.bodyMedium.copy(fontSize = 14.sp, lineHeight = 20.sp),
+    bodySmall = DefaultTypography.bodySmall.copy(fontSize = 12.sp, lineHeight = 16.sp),
+    labelLarge = DefaultTypography.labelLarge.copy(
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        fontWeight = FontWeight.Medium,
+    ),
+    labelMedium = DefaultTypography.labelMedium.copy(
+        fontSize = 12.sp,
+        lineHeight = 16.sp,
+        fontWeight = FontWeight.Medium,
+    ),
+)
+
+private val BulbMatchShapes = Shapes(
+    extraSmall = androidx.compose.foundation.shape.RoundedCornerShape(4.dp),
+    small = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+    medium = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+    large = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+    extraLarge = androidx.compose.foundation.shape.RoundedCornerShape(28.dp),
 )
 
 @Immutable
@@ -134,8 +187,8 @@ fun BulbMatchTheme(
     ) {
         MaterialTheme(
             colorScheme = if (isDark) DarkColors else LightColors,
-            typography = Typography(),
-            shapes = Shapes(),
+            typography = BulbMatchTypography,
+            shapes = BulbMatchShapes,
         ) {
             onThemeChanged(isDark)
             Surface(content = content)

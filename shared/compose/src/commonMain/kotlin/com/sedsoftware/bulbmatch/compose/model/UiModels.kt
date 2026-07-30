@@ -1,6 +1,8 @@
 package com.sedsoftware.bulbmatch.compose.model
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Composable
+import com.sedsoftware.bulbmatch.compose.localization.tr
 
 enum class AppLanguage { System, English, Russian }
 enum class AppThemeMode { System, Light, Dark }
@@ -126,35 +128,60 @@ internal val PreviewBases = listOf(
     ),
 )
 
+@Composable
 internal fun previewCompatibleResult() = ResultUiModel(
     outcome = AssessmentOutcome.Compatible,
     confirmedFacts = listOf(
-        FactUiModel("Base", "E27", "Manual"),
-        FactUiModel("Voltage", "220–240 V", "Edited"),
-        FactUiModel("Source lamp power", "8 W", "Detected"),
-        FactUiModel("Light output", "806 lm", "Detected"),
+        FactUiModel(tr("Base", "Цоколь"), "E27", tr("Manual", "Вручную")),
+        FactUiModel(tr("Voltage", "Напряжение"), "220–240 V", tr("Edited", "Изменено")),
+        FactUiModel(tr("Source lamp power", "Мощность старой лампы"), "8 W", tr("Detected", "Распознано")),
+        FactUiModel(tr("Light output", "Световой поток"), "806 lm", tr("Detected", "Распознано")),
     ),
     reasons = listOf(
-        "The confirmed base is present in the reviewed catalog.",
-        "The confirmed voltage marking is within the supported 220–240 V supply family.",
+        tr(
+            "The confirmed base is present in the reviewed catalog.",
+            "Подтверждённый цоколь есть в проверенном каталоге.",
+        ),
+        tr(
+            "The confirmed voltage marking is within the supported 220–240 V supply family.",
+            "Подтверждённое напряжение входит в поддерживаемый диапазон 220–240 В.",
+        ),
     ),
     unresolvedChecks = listOf(
-        "Physical clearance, enclosure rating, dimmer support, and fixture condition are not established.",
+        tr(
+            "Physical clearance, enclosure rating, dimmer support, and fixture condition are not established.",
+            "Габариты, тип корпуса, поддержка диммера и состояние светильника не определены.",
+        ),
     ),
     profile = listOf(
-        FactUiModel("Base", "E27"),
-        FactUiModel("Voltage", "220–240 V"),
-        FactUiModel("Lamp power", "8 W"),
-        FactUiModel("Brightness", "725–887 lm"),
-        FactUiModel("Colour temperature", "2700 K"),
+        FactUiModel(tr("Base", "Цоколь"), "E27"),
+        FactUiModel(tr("Voltage", "Напряжение"), "220–240 V"),
+        FactUiModel(tr("Lamp power", "Мощность лампы"), "8 W"),
+        FactUiModel(tr("Brightness", "Яркость"), "725–887 lm"),
+        FactUiModel(tr("Colour temperature", "Цветовая температура"), "2700 K"),
     ),
     checklist = listOf(
-        "Switch power off before removing or fitting a lamp.",
-        "Check the fixture label and its maximum wattage separately.",
-        "Confirm physical size, enclosure, dimmer, heat, moisture, and wiring suitability.",
-        "Ask a qualified person if anything is damaged, hot, wet, loose, or unclear.",
+        tr(
+            "Switch power off before removing or fitting a lamp.",
+            "Отключите питание перед снятием или установкой лампы.",
+        ),
+        tr(
+            "Check the fixture label and its maximum wattage separately.",
+            "Отдельно проверьте маркировку светильника и его максимальную мощность.",
+        ),
+        tr(
+            "Confirm physical size, enclosure, dimmer, heat, moisture, and wiring suitability.",
+            "Проверьте габариты, корпус, диммер, нагрев, влагу и пригодность проводки.",
+        ),
+        tr(
+            "Ask a qualified person if anything is damaged, hot, wet, loose, or unclear.",
+            "Обратитесь к специалисту, если что-либо повреждено, нагрето, влажно, закреплено ненадёжно или вызывает сомнения.",
+        ),
     ),
-    catalogVersion = "Development catalog · pending Sergey V. approval",
-    rulesetVersion = "Ruleset 1",
+    catalogVersion = tr(
+        "Development catalog · pending Sergey V. approval",
+        "Каталог для разработки · ожидается подтверждение Sergey V.",
+    ),
+    rulesetVersion = tr("Ruleset 1", "Набор правил 1"),
     showInlineAd = true,
 )

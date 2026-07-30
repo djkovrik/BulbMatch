@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
@@ -26,9 +25,13 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
+import com.sedsoftware.bulbmatch.compose.components.AppIcon
+import com.sedsoftware.bulbmatch.compose.components.AppIcons
 import com.sedsoftware.bulbmatch.compose.components.AppScreenScaffold
 import com.sedsoftware.bulbmatch.compose.components.MessageCard
+import com.sedsoftware.bulbmatch.compose.components.MessageTone
 import com.sedsoftware.bulbmatch.compose.components.PrimaryAction
+import com.sedsoftware.bulbmatch.compose.components.ProvenanceBadge
 import com.sedsoftware.bulbmatch.compose.components.SectionCard
 import com.sedsoftware.bulbmatch.compose.localization.tr
 import com.sedsoftware.bulbmatch.compose.model.FieldOrigin
@@ -114,7 +117,7 @@ fun DataReviewScreen(
                     MessageCard(
                         tr("Review summary", "Итоги проверки"),
                         model.message ?: summary,
-                        isError = model.unresolvedCount > 0,
+                        tone = if (model.unresolvedCount > 0) MessageTone.Warning else MessageTone.Success,
                         modifier = Modifier.semantics {
                             liveRegion = LiveRegionMode.Polite
                             contentDescription = summary
@@ -155,6 +158,7 @@ fun DataReviewScreen(
                             "Fixture max wattage must come from the fixture label and can only be entered manually. It is never inferred from the old lamp.",
                             "Максимальную мощность берите только с маркировки светильника и вводите вручную. Она не определяется по старой лампе.",
                         ),
+                        tone = MessageTone.Warning,
                     )
                 }
             }
@@ -167,6 +171,7 @@ fun DataReviewScreen(
                     onClick = onAssess,
                     enabled = model.canAssess,
                     modifier = Modifier.padding(LocalAppSpacing.current.md).imePadding(),
+                    leadingIcon = { AppIcon(AppIcons.CheckCircle, contentDescription = null) },
                 )
             }
         }
@@ -211,7 +216,7 @@ private fun ReviewField(
                 Text(field.error ?: "$requiredText · $origin")
             },
             isError = field.error != null,
-            singleLine = false,
+            singleLine = true,
             keyboardOptions = KeyboardOptions.Default,
         )
         FlowRow(
@@ -219,23 +224,20 @@ private fun ReviewField(
             horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
             verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
         ) {
-            AssistChip(
-                onClick = {},
-                enabled = false,
-                label = { Text(origin) },
-                modifier = Modifier.sizeIn(minHeight = 48.dp),
-            )
+            ProvenanceBadge(origin)
             if (field.origin == FieldOrigin.Detected || field.origin == FieldOrigin.Edited) {
                 FilterChip(
                     selected = field.decision == ReviewDecision.Confirmed,
                     onClick = { onDecision(ReviewDecision.Confirmed) },
                     label = { Text(tr("Confirm", "Подтвердить")) },
+                    leadingIcon = { AppIcon(AppIcons.CheckCircle, contentDescription = null) },
                     modifier = Modifier.sizeIn(minHeight = 48.dp),
                 )
                 FilterChip(
                     selected = field.decision == ReviewDecision.Rejected,
                     onClick = { onDecision(ReviewDecision.Rejected) },
                     label = { Text(tr("Reject", "Отклонить")) },
+                    leadingIcon = { AppIcon(AppIcons.Cancel, contentDescription = null) },
                     modifier = Modifier.sizeIn(minHeight = 48.dp),
                 )
             }

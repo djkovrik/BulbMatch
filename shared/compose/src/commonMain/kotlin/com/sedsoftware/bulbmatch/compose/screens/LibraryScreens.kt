@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,12 +22,18 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.CustomAccessibilityAction
@@ -34,12 +42,16 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sedsoftware.bulbmatch.compose.components.AppIcon
+import com.sedsoftware.bulbmatch.compose.components.AppIconButton
+import com.sedsoftware.bulbmatch.compose.components.AppIcons
 import com.sedsoftware.bulbmatch.compose.components.AppScreenScaffold
 import com.sedsoftware.bulbmatch.compose.components.BaseDiagram
 import com.sedsoftware.bulbmatch.compose.components.BulletText
 import com.sedsoftware.bulbmatch.compose.components.KeyValueRow
 import com.sedsoftware.bulbmatch.compose.components.LoadingOrErrorState
 import com.sedsoftware.bulbmatch.compose.components.MessageCard
+import com.sedsoftware.bulbmatch.compose.components.MessageTone
 import com.sedsoftware.bulbmatch.compose.components.PrimaryAction
 import com.sedsoftware.bulbmatch.compose.components.SectionCard
 import com.sedsoftware.bulbmatch.compose.components.SecondaryAction
@@ -70,6 +82,7 @@ fun HistoryScreen(
     onRootDestination: (RootDestination) -> Unit,
     stickyAdContent: (@Composable () -> Unit)? = null,
 ) {
+    var overflowExpanded by remember { mutableStateOf(false) }
     if (confirmation != null) {
         AlertDialog(
             onDismissRequest = onDismissConfirmation,
@@ -106,12 +119,26 @@ fun HistoryScreen(
         modifier = modifier,
         onSettings = onSettings,
         topAction = {
-            TextButton(
-                onClick = onClearAllRequest,
-                enabled = items.isNotEmpty(),
-                modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp),
-            ) {
-                Text(tr("Clear all", "Очистить"))
+            Box {
+                AppIconButton(
+                    resource = AppIcons.MoreVert,
+                    contentDescription = tr("More actions", "Дополнительные действия"),
+                    onClick = { overflowExpanded = true },
+                    enabled = items.isNotEmpty(),
+                )
+                DropdownMenu(
+                    expanded = overflowExpanded,
+                    onDismissRequest = { overflowExpanded = false },
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(tr("Clear all", "Очистить всё")) },
+                        leadingIcon = { AppIcon(AppIcons.Delete, contentDescription = null) },
+                        onClick = {
+                            overflowExpanded = false
+                            onClearAllRequest()
+                        },
+                    )
+                }
             }
         },
         rootDestination = RootDestination.History,
@@ -157,7 +184,11 @@ private fun EmptyHistory(insets: PaddingValues, onStartMatch: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.md),
         ) {
-            Text("○", style = MaterialTheme.typography.displayLarge)
+            AppIcon(
+                AppIcons.History,
+                contentDescription = null,
+                modifier = Modifier.sizeIn(minWidth = 64.dp, minHeight = 64.dp),
+            )
             Text(
                 tr("Saved results appear here", "Здесь появятся сохранённые результаты"),
                 modifier = Modifier.semantics { heading() },
@@ -166,7 +197,11 @@ private fun EmptyHistory(insets: PaddingValues, onStartMatch: () -> Unit) {
             Text(
                 tr("Save a completed assessment to reopen it later.", "Сохраните завершённую оценку, чтобы вернуться к ней позже."),
             )
-            PrimaryAction(tr("Start a match", "Начать подбор"), onStartMatch)
+            PrimaryAction(
+                tr("Start a match", "Начать подбор"),
+                onStartMatch,
+                leadingIcon = { AppIcon(AppIcons.Lightbulb, contentDescription = null) },
+            )
         }
     }
 }
@@ -225,16 +260,41 @@ private fun HistoryCard(
             Modifier.fillMaxWidth().padding(LocalAppSpacing.current.md),
             verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
         ) {
-            Text(item.name?.takeIf(String::isNotBlank) ?: defaultName, style = MaterialTheme.typography.titleMedium)
-            Text(status, style = MaterialTheme.typography.labelLarge, color = outcomeColor(item.outcome))
-            KeyValueRow(tr("Base", "Цоколь"), item.base)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    item.name?.takeIf(String::isNotBlank) ?: defaultName,
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                AppIcon(AppIcons.ChevronRight, contentDescription = null)
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                AppIcon(
+                    outcomeIcon(item.outcome),
+                    contentDescription = null,
+                    modifier = Modifier.sizeIn(minWidth = 20.dp, minHeight = 20.dp),
+                )
+                Text(status, style = MaterialTheme.typography.labelLarge, color = outcomeColor(item.outcome))
+            }
+            KeyValueRow(tr("Base", "Цоколь"), item.base, valueMaxLines = 2)
             KeyValueRow(tr("Voltage", "Напряжение"), item.voltage)
             Text(item.date, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                 TextButton(onClick = onDelete, modifier = Modifier.sizeIn(minHeight = 48.dp)) {
+                    AppIcon(AppIcons.Delete, contentDescription = null)
+                    Spacer(Modifier.width(LocalAppSpacing.current.xs))
                     Text(tr("Delete", "Удалить"))
                 }
                 TextButton(onClick = onOpen, modifier = Modifier.sizeIn(minHeight = 48.dp)) {
+                    AppIcon(AppIcons.ChevronRight, contentDescription = null)
+                    Spacer(Modifier.width(LocalAppSpacing.current.xs))
                     Text(tr("Open", "Открыть"))
                 }
             }
@@ -244,10 +304,17 @@ private fun HistoryCard(
 
 @Composable
 private fun outcomeText(outcome: AssessmentOutcome) = when (outcome) {
-    AssessmentOutcome.Compatible -> tr("✓ Compatible profile", "✓ Совместимый профиль")
-    AssessmentOutcome.NeedClarification -> tr("! Need clarification", "! Нужно уточнение")
-    AssessmentOutcome.PotentialConflict -> tr("× Potential conflict", "× Возможен конфликт")
-    AssessmentOutcome.Unavailable -> tr("! Unavailable", "! Недоступно")
+    AssessmentOutcome.Compatible -> tr("Compatible profile", "Совместимый профиль")
+    AssessmentOutcome.NeedClarification -> tr("Need clarification", "Нужно уточнение")
+    AssessmentOutcome.PotentialConflict -> tr("Potential conflict", "Возможен конфликт")
+    AssessmentOutcome.Unavailable -> tr("Unavailable", "Недоступно")
+}
+
+private fun outcomeIcon(outcome: AssessmentOutcome) = when (outcome) {
+    AssessmentOutcome.Compatible -> AppIcons.CheckCircle
+    AssessmentOutcome.NeedClarification -> AppIcons.Warning
+    AssessmentOutcome.PotentialConflict -> AppIcons.Cancel
+    AssessmentOutcome.Unavailable -> AppIcons.Error
 }
 
 @Composable
@@ -256,6 +323,58 @@ private fun outcomeColor(outcome: AssessmentOutcome) = when (outcome) {
     AssessmentOutcome.NeedClarification -> com.sedsoftware.bulbmatch.compose.theme.LocalStatusColors.current.warning
     AssessmentOutcome.PotentialConflict, AssessmentOutcome.Unavailable ->
         com.sedsoftware.bulbmatch.compose.theme.LocalStatusColors.current.conflict
+}
+
+@Composable
+private fun ReferenceSearchControls(
+    query: String,
+    selectedCategory: String,
+    onQueryChange: (String) -> Unit,
+    onCategoryChange: (String) -> Unit,
+    onClearSearch: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
+    ) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = onQueryChange,
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(tr("Search code or name", "Поиск по коду или названию")) },
+            leadingIcon = { AppIcon(AppIcons.Search, contentDescription = null) },
+            trailingIcon = if (query.isNotBlank()) {
+                {
+                    AppIconButton(
+                        resource = AppIcons.Clear,
+                        contentDescription = tr("Clear search", "Очистить поиск"),
+                        onClick = onClearSearch,
+                    )
+                }
+            } else {
+                null
+            },
+            singleLine = true,
+        )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
+            verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+        ) {
+            listOf(
+                "all" to tr("All", "Все"),
+                "screw" to tr("Screw", "Резьбовые"),
+                "pin" to tr("Pin", "Штырьковые"),
+            ).forEach { (id, label) ->
+                FilterChip(
+                    selected = selectedCategory == id,
+                    onClick = { onCategoryChange(id) },
+                    label = { Text(label) },
+                    modifier = Modifier.sizeIn(minHeight = 48.dp),
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -295,35 +414,14 @@ fun BaseReferenceListScreen(
             onRetry,
         ) {
             Column(Modifier.fillMaxSize().padding(insets)) {
-                Column(
-                    Modifier.fillMaxWidth().padding(LocalAppSpacing.current.md),
-                    verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
-                ) {
-                    OutlinedTextField(
-                        value = query,
-                        onValueChange = onQueryChange,
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text(tr("Search code or name", "Поиск по коду или названию")) },
-                        singleLine = false,
-                    )
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
-                        verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
-                    ) {
-                        listOf(
-                            "all" to tr("All", "Все"),
-                            "screw" to tr("Screw", "Резьбовые"),
-                            "pin" to tr("Pin", "Штырьковые"),
-                        ).forEach { (id, label) ->
-                            FilterChip(
-                                selected = selectedCategory == id,
-                                onClick = { onCategoryChange(id) },
-                                label = { Text(label) },
-                                modifier = Modifier.sizeIn(minHeight = 48.dp),
-                            )
-                        }
-                    }
-                }
+                ReferenceSearchControls(
+                    query = query,
+                    selectedCategory = selectedCategory,
+                    onQueryChange = onQueryChange,
+                    onCategoryChange = onCategoryChange,
+                    onClearSearch = onClearSearch,
+                    modifier = Modifier.fillMaxWidth().padding(LocalAppSpacing.current.md),
+                )
                 if (entries.isEmpty()) {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(
@@ -338,7 +436,11 @@ fun BaseReferenceListScreen(
                                     "Это не означает, что цоколь не поддерживается, пока вы явно не выберете «Неизвестный цоколь» в подборе.",
                                 ),
                             )
-                            SecondaryAction(tr("Clear search", "Очистить поиск"), onClearSearch)
+                            SecondaryAction(
+                                tr("Clear search", "Очистить поиск"),
+                                onClearSearch,
+                                leadingIcon = { AppIcon(AppIcons.Clear, contentDescription = null) },
+                            )
                         }
                     }
                 } else {
@@ -375,7 +477,7 @@ private fun BaseReferenceCard(entry: BaseReferenceUiModel, onOpen: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             BaseDiagram(entry.code, hint, Modifier.weight(.42f))
-            Column(Modifier.weight(.58f), verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm)) {
+            Column(Modifier.weight(.52f), verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm)) {
                 Text(entry.code, style = MaterialTheme.typography.headlineSmall)
                 Text(name, style = MaterialTheme.typography.titleMedium)
                 Text(hint, style = MaterialTheme.typography.bodyMedium)
@@ -385,6 +487,7 @@ private fun BaseReferenceCard(entry: BaseReferenceUiModel, onOpen: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            AppIcon(AppIcons.ChevronRight, contentDescription = null)
         }
     }
 }
@@ -450,9 +553,13 @@ fun BaseReferenceDetailScreen(
                             "Base shape does not establish voltage, power, physical clearance, or fixture suitability.",
                             "Форма цоколя не определяет напряжение, мощность, габариты или пригодность светильника.",
                         ),
-                        isError = true,
+                        tone = MessageTone.Warning,
                     )
-                    PrimaryAction(tr("Use this base", "Использовать этот цоколь"), { onUseBase(entry.code) })
+                    PrimaryAction(
+                        tr("Use this base", "Использовать этот цоколь"),
+                        { onUseBase(entry.code) },
+                        leadingIcon = { AppIcon(AppIcons.CheckCircle, contentDescription = null) },
+                    )
                 }
             }
         }
