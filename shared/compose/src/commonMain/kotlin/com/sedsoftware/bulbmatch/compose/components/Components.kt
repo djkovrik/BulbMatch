@@ -367,7 +367,7 @@ fun OutcomeBanner(
     detail: String? = null,
 ) {
     val status = LocalStatusColors.current
-    val (icon, title, container, content) = when (outcome) {
+    val style = when (outcome) {
         AssessmentOutcome.Compatible -> StatusTuple(
             AppIcons.CheckCircle,
             tr("Compatible profile", "Совместимый профиль"),
@@ -395,26 +395,30 @@ fun OutcomeBanner(
     }
     Surface(
         modifier = modifier.fillMaxWidth().semantics(mergeDescendants = true) {
-            contentDescription = listOfNotNull(title, detail).joinToString(". ")
+            contentDescription = listOfNotNull(style.title, detail).joinToString(". ")
         },
         shape = MaterialTheme.shapes.large,
-        color = container,
-        contentColor = content,
+        color = style.container,
+        contentColor = style.content,
     ) {
         Row(
             modifier = Modifier.padding(LocalAppSpacing.current.lg),
             horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.md),
             verticalAlignment = Alignment.Top,
         ) {
-            Surface(shape = RoundedCornerShape(50), color = content.copy(alpha = 0.12f)) {
+            Surface(shape = RoundedCornerShape(50), color = style.content.copy(alpha = 0.12f)) {
                 AppIcon(
-                    icon,
+                    style.icon,
                     contentDescription = null,
                     modifier = Modifier.size(48.dp).padding(12.dp),
                 )
             }
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs)) {
-                Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    style.title,
+                    modifier = Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.headlineSmall,
+                )
                 if (detail != null) Text(detail, style = MaterialTheme.typography.bodyMedium)
             }
         }

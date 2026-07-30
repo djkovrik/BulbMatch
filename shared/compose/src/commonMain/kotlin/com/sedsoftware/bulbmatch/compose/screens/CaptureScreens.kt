@@ -367,6 +367,79 @@ private fun CameraRecovery(
 }
 
 @Composable
+private fun SelectedPhotoPreview(
+    contentDescription: String,
+    previewContent: (@Composable () -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .widthIn(max = 760.dp)
+            .heightIn(min = 180.dp, max = 360.dp)
+            .semantics { this.contentDescription = contentDescription },
+        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+        shape = MaterialTheme.shapes.large,
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            if (previewContent == null) {
+                Text(tr("Selected marking photo", "Выбранное фото маркировки"))
+            } else {
+                previewContent()
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecognitionStateActions(
+    state: ScreenLoadState,
+    errorMessage: String?,
+    readingDescription: String,
+    onUsePhoto: () -> Unit,
+    onCancelRecognition: () -> Unit,
+) {
+    when (state) {
+        ScreenLoadState.Loading -> {
+            LinearProgressIndicator(
+                modifier = Modifier.fillMaxWidth().semantics {
+                    contentDescription = readingDescription
+                },
+            )
+            MessageCard(
+                tr("Reading text on this device", "Распознаём текст на устройстве"),
+                tr("The photo is not being uploaded.", "Фото не отправляется в сеть."),
+            )
+            SecondaryAction(
+                tr("Cancel", "Отмена"),
+                onCancelRecognition,
+                leadingIcon = { AppIcon(AppIcons.Close, contentDescription = null) },
+            )
+        }
+        ScreenLoadState.Error -> {
+            MessageCard(
+                tr("Could not read this photo", "Не удалось прочитать фото"),
+                errorMessage ?: tr(
+                    "No readable text was found.",
+                    "Читаемый текст не найден.",
+                ),
+                isError = true,
+            )
+            PrimaryAction(
+                tr("Try again", "Повторить"),
+                onUsePhoto,
+                leadingIcon = { AppIcon(AppIcons.RestartAlt, contentDescription = null) },
+            )
+        }
+        else -> PrimaryAction(
+            tr("Use photo", "Использовать фото"),
+            onUsePhoto,
+            leadingIcon = { AppIcon(AppIcons.CheckCircle, contentDescription = null) },
+        )
+    }
+}
+
+@Composable
 fun ImageReviewScreen(
     state: ScreenLoadState,
     modifier: Modifier = Modifier,
@@ -404,20 +477,7 @@ fun ImageReviewScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                Surface(
-                    modifier = Modifier.fillMaxWidth().widthIn(max = 760.dp).heightIn(min = 180.dp, max = 360.dp)
-                        .semantics { contentDescription = selectedPhotoDescription },
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    shape = MaterialTheme.shapes.large,
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        if (previewContent == null) {
-                            Text(tr("Selected marking photo", "Выбранное фото маркировки"))
-                        } else {
-                            previewContent()
-                        }
-                    }
-                }
+                SelectedPhotoPreview(selectedPhotoDescription, previewContent)
             }
             item {
                 Column(
@@ -436,44 +496,13 @@ fun ImageReviewScreen(
                         ),
                         style = MaterialTheme.typography.bodyLarge,
                     )
-                    when (state) {
-                        ScreenLoadState.Loading -> {
-                            LinearProgressIndicator(
-                                modifier = Modifier.fillMaxWidth().semantics {
-                                    contentDescription = readingDescription
-                                },
-                            )
-                            MessageCard(
-                                tr("Reading text on this device", "Распознаём текст на устройстве"),
-                                tr("The photo is not being uploaded.", "Фото не отправляется в сеть."),
-                            )
-                            SecondaryAction(
-                                tr("Cancel", "Отмена"),
-                                onCancelRecognition,
-                                leadingIcon = { AppIcon(AppIcons.Close, contentDescription = null) },
-                            )
-                        }
-                        ScreenLoadState.Error -> {
-                            MessageCard(
-                                tr("Could not read this photo", "Не удалось прочитать фото"),
-                                errorMessage ?: tr(
-                                    "No readable text was found.",
-                                    "Читаемый текст не найден.",
-                                ),
-                                isError = true,
-                            )
-                            PrimaryAction(
-                                tr("Try again", "Повторить"),
-                                onUsePhoto,
-                                leadingIcon = { AppIcon(AppIcons.RestartAlt, contentDescription = null) },
-                            )
-                        }
-                        else -> PrimaryAction(
-                            tr("Use photo", "Использовать фото"),
-                            onUsePhoto,
-                            leadingIcon = { AppIcon(AppIcons.CheckCircle, contentDescription = null) },
-                        )
-                    }
+                    RecognitionStateActions(
+                        state = state,
+                        errorMessage = errorMessage,
+                        readingDescription = readingDescription,
+                        onUsePhoto = onUsePhoto,
+                        onCancelRecognition = onCancelRecognition,
+                    )
                     SecondaryAction(
                         tr("Retake", "Переснять"),
                         onRetake,

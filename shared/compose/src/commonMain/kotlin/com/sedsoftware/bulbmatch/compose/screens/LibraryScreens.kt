@@ -326,6 +326,58 @@ private fun outcomeColor(outcome: AssessmentOutcome) = when (outcome) {
 }
 
 @Composable
+private fun ReferenceSearchControls(
+    query: String,
+    selectedCategory: String,
+    onQueryChange: (String) -> Unit,
+    onCategoryChange: (String) -> Unit,
+    onClearSearch: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
+    ) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = onQueryChange,
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(tr("Search code or name", "Поиск по коду или названию")) },
+            leadingIcon = { AppIcon(AppIcons.Search, contentDescription = null) },
+            trailingIcon = if (query.isNotBlank()) {
+                {
+                    AppIconButton(
+                        resource = AppIcons.Clear,
+                        contentDescription = tr("Clear search", "Очистить поиск"),
+                        onClick = onClearSearch,
+                    )
+                }
+            } else {
+                null
+            },
+            singleLine = true,
+        )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
+            verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+        ) {
+            listOf(
+                "all" to tr("All", "Все"),
+                "screw" to tr("Screw", "Резьбовые"),
+                "pin" to tr("Pin", "Штырьковые"),
+            ).forEach { (id, label) ->
+                FilterChip(
+                    selected = selectedCategory == id,
+                    onClick = { onCategoryChange(id) },
+                    label = { Text(label) },
+                    modifier = Modifier.sizeIn(minHeight = 48.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun BaseReferenceListScreen(
     state: ScreenLoadState,
     entries: List<BaseReferenceUiModel>,
@@ -362,47 +414,14 @@ fun BaseReferenceListScreen(
             onRetry,
         ) {
             Column(Modifier.fillMaxSize().padding(insets)) {
-                Column(
-                    Modifier.fillMaxWidth().padding(LocalAppSpacing.current.md),
-                    verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
-                ) {
-                    OutlinedTextField(
-                        value = query,
-                        onValueChange = onQueryChange,
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text(tr("Search code or name", "Поиск по коду или названию")) },
-                        leadingIcon = { AppIcon(AppIcons.Search, contentDescription = null) },
-                        trailingIcon = if (query.isNotBlank()) {
-                            {
-                                AppIconButton(
-                                    resource = AppIcons.Clear,
-                                    contentDescription = tr("Clear search", "Очистить поиск"),
-                                    onClick = onClearSearch,
-                                )
-                            }
-                        } else {
-                            null
-                        },
-                        singleLine = true,
-                    )
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
-                        verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
-                    ) {
-                        listOf(
-                            "all" to tr("All", "Все"),
-                            "screw" to tr("Screw", "Резьбовые"),
-                            "pin" to tr("Pin", "Штырьковые"),
-                        ).forEach { (id, label) ->
-                            FilterChip(
-                                selected = selectedCategory == id,
-                                onClick = { onCategoryChange(id) },
-                                label = { Text(label) },
-                                modifier = Modifier.sizeIn(minHeight = 48.dp),
-                            )
-                        }
-                    }
-                }
+                ReferenceSearchControls(
+                    query = query,
+                    selectedCategory = selectedCategory,
+                    onQueryChange = onQueryChange,
+                    onCategoryChange = onCategoryChange,
+                    onClearSearch = onClearSearch,
+                    modifier = Modifier.fillMaxWidth().padding(LocalAppSpacing.current.md),
+                )
                 if (entries.isEmpty()) {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(
