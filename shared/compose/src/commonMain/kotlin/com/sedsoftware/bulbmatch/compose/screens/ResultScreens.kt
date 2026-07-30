@@ -25,14 +25,20 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.sedsoftware.bulbmatch.compose.components.AppIcon
+import com.sedsoftware.bulbmatch.compose.components.AppIcons
 import com.sedsoftware.bulbmatch.compose.components.AppScreenScaffold
 import com.sedsoftware.bulbmatch.compose.components.BulletText
+import com.sedsoftware.bulbmatch.compose.components.DestructiveAction
 import com.sedsoftware.bulbmatch.compose.components.KeyValueRow
 import com.sedsoftware.bulbmatch.compose.components.MessageCard
+import com.sedsoftware.bulbmatch.compose.components.MessageTone
 import com.sedsoftware.bulbmatch.compose.components.OutcomeBanner
 import com.sedsoftware.bulbmatch.compose.components.PrimaryAction
 import com.sedsoftware.bulbmatch.compose.components.SectionCard
+import com.sedsoftware.bulbmatch.compose.components.SectionTone
 import com.sedsoftware.bulbmatch.compose.components.SecondaryAction
+import com.sedsoftware.bulbmatch.compose.components.TertiaryAction
 import com.sedsoftware.bulbmatch.compose.localization.tr
 import com.sedsoftware.bulbmatch.compose.model.AssessmentOutcome
 import com.sedsoftware.bulbmatch.compose.model.ResultUiModel
@@ -80,8 +86,16 @@ fun ReplacementResultScreen(
                     ),
                     isError = true,
                 )
-                PrimaryAction(tr("Edit details", "Изменить данные"), onEdit)
-                SecondaryAction(tr("Reference and sources", "Справочник и источники"), onReference)
+                PrimaryAction(
+                    tr("Edit details", "Изменить данные"),
+                    onEdit,
+                    leadingIcon = { AppIcon(AppIcons.Edit, contentDescription = null) },
+                )
+                SecondaryAction(
+                    tr("Reference and sources", "Справочник и источники"),
+                    onReference,
+                    leadingIcon = { AppIcon(AppIcons.MenuBook, contentDescription = null) },
+                )
             }
             else -> ResultEvidenceList(
                 model = model,
@@ -142,17 +156,24 @@ private fun ResultEvidenceList(
                         "Используйте этот профиль только в регионах 220–240 В / 50 Гц. Перед покупкой и установкой проверьте маркировку светильника.",
                     ),
                     isError = model.outcome == AssessmentOutcome.PotentialConflict,
+                    tone = MessageTone.Warning,
                 )
             }
         }
         item(key = "reasons") {
             MaxWidthItem {
-                SectionCard(tr("Confirmed facts and reasons", "Подтверждённые данные и причины")) {
+                SectionCard(
+                    tr("Confirmed facts and reasons", "Подтверждённые данные и причины"),
+                    tone = SectionTone.Information,
+                    icon = AppIcons.CheckCircle,
+                ) {
                     model.confirmedFacts.forEach { fact ->
                         KeyValueRow(
                             fact.label,
                             fact.value,
-                            supporting = fact.source?.let { tr("Source: $it", "Источник: $it") },
+                            supporting = fact.source?.let {
+                                "${tr("Source", "Источник")}: ${it.localizedFactSource()}"
+                            },
                         )
                     }
                     model.reasons.forEach { BulletText(it) }
@@ -161,7 +182,15 @@ private fun ResultEvidenceList(
         }
         item(key = "unresolved") {
             MaxWidthItem {
-                SectionCard(tr("Checks that remain", "Что ещё нужно проверить")) {
+                SectionCard(
+                    tr("Checks that remain", "Что ещё нужно проверить"),
+                    tone = if (model.outcome == AssessmentOutcome.PotentialConflict) {
+                        SectionTone.Conflict
+                    } else {
+                        SectionTone.Warning
+                    },
+                    icon = if (model.outcome == AssessmentOutcome.PotentialConflict) AppIcons.Cancel else AppIcons.Warning,
+                ) {
                     if (model.unresolvedChecks.isEmpty()) {
                         Text(
                             tr(
@@ -173,19 +202,22 @@ private fun ResultEvidenceList(
                         model.unresolvedChecks.forEach { BulletText(it) }
                     }
                     if (showActions) {
-                        TextButton(
-                            onClick = onEdit,
-                            modifier = Modifier.fillMaxWidth().sizeIn(minHeight = 48.dp),
-                        ) {
-                            Text(tr("Edit details", "Изменить данные"))
-                        }
+                        TertiaryAction(
+                            tr("Edit details", "Изменить данные"),
+                            onEdit,
+                            leadingIcon = { AppIcon(AppIcons.Edit, contentDescription = null) },
+                        )
                     }
                 }
             }
         }
         item(key = "profile") {
             MaxWidthItem {
-                SectionCard(tr("Replacement profile", "Профиль замены")) {
+                SectionCard(
+                    tr("Replacement profile", "Профиль замены"),
+                    tone = SectionTone.Information,
+                    icon = AppIcons.Lightbulb,
+                ) {
                     if (model.profile.isEmpty()) {
                         Text(
                             tr(
@@ -201,9 +233,17 @@ private fun ResultEvidenceList(
         }
         item(key = "checklist") {
             MaxWidthItem {
-                SectionCard(tr("Before you buy or fit", "Перед покупкой или установкой")) {
+                SectionCard(
+                    tr("Before you buy or fit", "Перед покупкой или установкой"),
+                    tone = SectionTone.Information,
+                    icon = AppIcons.Warning,
+                ) {
                     model.checklist.forEach { BulletText(it) }
-                    SecondaryAction(tr("Open base reference", "Открыть справочник цоколей"), onReference)
+                    SecondaryAction(
+                        tr("Open base reference", "Открыть справочник цоколей"),
+                        onReference,
+                        leadingIcon = { AppIcon(AppIcons.MenuBook, contentDescription = null) },
+                    )
                 }
             }
         }
@@ -211,8 +251,16 @@ private fun ResultEvidenceList(
             item(key = "actions") {
                 MaxWidthItem {
                     Column(verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm)) {
-                        PrimaryAction(tr("Save", "Сохранить"), onSave)
-                        SecondaryAction(tr("Match another", "Подобрать ещё"), onMatchAnother)
+                        PrimaryAction(
+                            tr("Save", "Сохранить"),
+                            onSave,
+                            leadingIcon = { AppIcon(AppIcons.Save, contentDescription = null) },
+                        )
+                        SecondaryAction(
+                            tr("Match another", "Подобрать ещё"),
+                            onMatchAnother,
+                            leadingIcon = { AppIcon(AppIcons.RestartAlt, contentDescription = null) },
+                        )
                     }
                 }
             }
@@ -274,11 +322,12 @@ fun SaveResultScreen(
                     enabled = !saving,
                     label = { Text(tr("Name (optional)", "Название (необязательно)")) },
                     supportingText = { Text(tr("Up to 80 characters", "До 80 символов")) },
-                    singleLine = false,
+                    singleLine = true,
                 )
                 MessageCard(
-                    tr("Saved locally", "Сохраняется локально"),
+                    tr("Snapshot to save", "Снимок для сохранения"),
                     summary,
+                    icon = AppIcons.Save,
                 )
                 if (error != null) {
                     MessageCard(
@@ -292,14 +341,19 @@ fun SaveResultScreen(
                     if (saving) tr("Saving…", "Сохраняем…") else tr("Save", "Сохранить"),
                     onSave,
                     enabled = !saving,
+                    leadingIcon = {
+                        AppIcon(
+                            if (error == null) AppIcons.Save else AppIcons.RestartAlt,
+                            contentDescription = null,
+                        )
+                    },
                 )
-                TextButton(
-                    onClick = onCancel,
+                TertiaryAction(
+                    tr("Cancel", "Отмена"),
+                    onCancel,
                     enabled = !saving,
-                    modifier = Modifier.fillMaxWidth().sizeIn(minHeight = 48.dp),
-                ) {
-                    Text(tr("Cancel", "Отмена"))
-                }
+                    leadingIcon = { AppIcon(AppIcons.Close, contentDescription = null) },
+                )
             }
         }
     }
@@ -351,7 +405,11 @@ fun SavedResultDetailScreen(
                     ),
                     isError = true,
                 )
-                SecondaryAction(tr("Delete record", "Удалить запись"), onDelete)
+                DestructiveAction(
+                    tr("Delete record", "Удалить запись"),
+                    onDelete,
+                    leadingIcon = { AppIcon(AppIcons.Delete, contentDescription = null) },
+                )
             }
         } else {
             ResultEvidenceList(
@@ -363,7 +421,11 @@ fun SavedResultDetailScreen(
                 onMatchAnother = {},
                 onReference = {},
                 historicalHeader = {
-                    SectionCard(tr("Historical snapshot", "Исторический снимок")) {
+                    SectionCard(
+                        tr("Historical snapshot", "Исторический снимок"),
+                        tone = SectionTone.Information,
+                        icon = AppIcons.History,
+                    ) {
                         Text(name, style = MaterialTheme.typography.headlineSmall)
                         Text(date, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
@@ -372,11 +434,22 @@ fun SavedResultDetailScreen(
                                 "Показан в сохранённом виде и не пересчитывается.",
                             ),
                         )
-                        Text("${model.catalogVersion} · ${model.rulesetVersion}", style = MaterialTheme.typography.bodySmall)
+                        KeyValueRow(
+                            tr("Catalog", "Каталог"),
+                            model.catalogVersion,
+                        )
+                        KeyValueRow(
+                            tr("Ruleset", "Набор правил"),
+                            model.rulesetVersion,
+                        )
                     }
                 },
                 destructiveAction = {
-                    SecondaryAction(tr("Delete saved result", "Удалить сохранённый результат"), onDelete)
+                    DestructiveAction(
+                        tr("Delete saved result", "Удалить сохранённый результат"),
+                        onDelete,
+                        leadingIcon = { AppIcon(AppIcons.Delete, contentDescription = null) },
+                    )
                 },
                 inlineAdContent = null,
             )
@@ -393,4 +466,12 @@ private fun String.codePointLength(): Int {
         count++
     }
     return count
+}
+
+@Composable
+private fun String.localizedFactSource(): String = when (this) {
+    "Manual" -> tr("Manual", "Вручную")
+    "Edited" -> tr("Edited", "Изменено")
+    "Detected" -> tr("Detected", "Распознано")
+    else -> this
 }

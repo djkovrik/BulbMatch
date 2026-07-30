@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,15 +37,20 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sedsoftware.bulbmatch.compose.components.AppScreenScaffold
+import com.sedsoftware.bulbmatch.compose.components.AppIcon
+import com.sedsoftware.bulbmatch.compose.components.AppIcons
+import com.sedsoftware.bulbmatch.compose.components.AppNavigationIcon
 import com.sedsoftware.bulbmatch.compose.components.MessageCard
 import com.sedsoftware.bulbmatch.compose.components.PrimaryAction
 import com.sedsoftware.bulbmatch.compose.components.ReadableContent
 import com.sedsoftware.bulbmatch.compose.components.SecondaryAction
+import com.sedsoftware.bulbmatch.compose.components.TertiaryAction
 import com.sedsoftware.bulbmatch.compose.localization.tr
 import com.sedsoftware.bulbmatch.compose.model.CameraState
 import com.sedsoftware.bulbmatch.compose.model.RootDestination
 import com.sedsoftware.bulbmatch.compose.model.ScreenLoadState
 import com.sedsoftware.bulbmatch.compose.theme.LocalAppSpacing
+import org.jetbrains.compose.resources.DrawableResource
 
 @Composable
 fun MatchHomeScreen(
@@ -65,8 +71,14 @@ fun MatchHomeScreen(
         rootDestination = RootDestination.Match,
         onRootDestination = onRootDestination,
     ) { insets ->
-        Box(Modifier.fillMaxSize().padding(insets), contentAlignment = Alignment.Center) {
-            ReadableContent(Modifier.padding(LocalAppSpacing.current.md)) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(insets)
+                .verticalScroll(rememberScrollState())
+                .padding(LocalAppSpacing.current.md),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            ReadableContent {
                 Text(
                     tr(
                         "Match a replacement from what is printed on your old bulb.",
@@ -100,14 +112,23 @@ fun MatchHomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
                 ) {
-                    PrimaryAction(tr("Camera", "Камера"), onCamera, enabled = catalogAvailable)
-                    SecondaryAction(tr("Choose photo", "Выбрать фото"), onChoosePhoto, enabled = catalogAvailable)
-                    TextButton(
-                        onClick = onManual,
-                        modifier = Modifier.fillMaxWidth().sizeIn(minHeight = 48.dp),
-                    ) {
-                        Text(tr("Enter manually", "Ввести вручную"))
-                    }
+                    PrimaryAction(
+                        tr("Camera", "Камера"),
+                        onCamera,
+                        enabled = catalogAvailable,
+                        leadingIcon = { AppIcon(AppIcons.PhotoCamera, contentDescription = null) },
+                    )
+                    SecondaryAction(
+                        tr("Choose photo", "Выбрать фото"),
+                        onChoosePhoto,
+                        enabled = catalogAvailable,
+                        leadingIcon = { AppIcon(AppIcons.PhotoLibrary, contentDescription = null) },
+                    )
+                    TertiaryAction(
+                        tr("Enter manually", "Ввести вручную"),
+                        onManual,
+                        leadingIcon = { AppIcon(AppIcons.Edit, contentDescription = null) },
+                    )
                 }
                 if (unfinishedDraftMessage) {
                     MessageCard(
@@ -142,6 +163,7 @@ fun CameraCaptureScreen(
         title = tr("Capture marking", "Снимок маркировки"),
         modifier = modifier,
         onBack = onClose,
+        navigationIcon = AppNavigationIcon.Close,
     ) { insets ->
         Column(
             modifier = Modifier.fillMaxSize().padding(insets),
@@ -168,6 +190,7 @@ fun CameraCaptureScreen(
                     onTryAgain,
                     onChoosePhoto,
                     onManual,
+                    AppIcons.RestartAlt,
                 )
                 CameraState.DeniedOpenSettings -> CameraRecovery(
                     tr(
@@ -178,6 +201,7 @@ fun CameraCaptureScreen(
                     onOpenSettings,
                     onChoosePhoto,
                     onManual,
+                    AppIcons.Settings,
                 )
                 CameraState.Unavailable -> CameraRecovery(
                     tr("No camera is available on this device.", "На этом устройстве камера недоступна."),
@@ -185,6 +209,7 @@ fun CameraCaptureScreen(
                     {},
                     onChoosePhoto,
                     onManual,
+                    null,
                 )
                 CameraState.Error -> CameraRecovery(
                     tr(
@@ -195,6 +220,7 @@ fun CameraCaptureScreen(
                     onTryAgain,
                     onChoosePhoto,
                     onManual,
+                    AppIcons.RestartAlt,
                 )
             }
         }
@@ -256,7 +282,7 @@ private fun CameraContent(
                     shape = CircleShape,
                     contentPadding = PaddingValues(0.dp),
                 ) {
-                    Text("●", style = MaterialTheme.typography.headlineMedium)
+                    AppIcon(AppIcons.PhotoCamera, contentDescription = null, Modifier.size(32.dp))
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -311,14 +337,32 @@ private fun CameraRecovery(
     onPrimary: () -> Unit,
     onChoosePhoto: () -> Unit,
     onManual: () -> Unit,
+    primaryIcon: DrawableResource?,
 ) {
     CenteredCameraMessage {
-        MessageCard(tr("Camera unavailable", "Камера недоступна"), message, isError = true)
-        if (primaryLabel != null) PrimaryAction(primaryLabel, onPrimary)
-        SecondaryAction(tr("Choose photo", "Выбрать фото"), onChoosePhoto)
-        TextButton(onClick = onManual, modifier = Modifier.fillMaxWidth().sizeIn(minHeight = 48.dp)) {
-            Text(tr("Enter manually", "Ввести вручную"))
+        MessageCard(
+            tr("Camera unavailable", "Камера недоступна"),
+            message,
+            isError = true,
+            icon = AppIcons.CameraOff,
+        )
+        if (primaryLabel != null) {
+            PrimaryAction(
+                primaryLabel,
+                onPrimary,
+                leadingIcon = primaryIcon?.let { icon -> { AppIcon(icon, contentDescription = null) } },
+            )
         }
+        SecondaryAction(
+            tr("Choose photo", "Выбрать фото"),
+            onChoosePhoto,
+            leadingIcon = { AppIcon(AppIcons.PhotoLibrary, contentDescription = null) },
+        )
+        TertiaryAction(
+            tr("Enter manually", "Ввести вручную"),
+            onManual,
+            leadingIcon = { AppIcon(AppIcons.Edit, contentDescription = null) },
+        )
     }
 }
 
@@ -338,6 +382,10 @@ fun ImageReviewScreen(
     val selectedPhotoDescription = tr(
         "Selected photo of the printed bulb marking",
         "Выбранное фото маркировки лампы",
+    )
+    val readingDescription = tr(
+        "Reading text on this device",
+        "Распознаём текст на устройстве",
     )
     AppScreenScaffold(
         title = tr("Review photo", "Проверьте фото"),
@@ -390,11 +438,20 @@ fun ImageReviewScreen(
                     )
                     when (state) {
                         ScreenLoadState.Loading -> {
+                            LinearProgressIndicator(
+                                modifier = Modifier.fillMaxWidth().semantics {
+                                    contentDescription = readingDescription
+                                },
+                            )
                             MessageCard(
                                 tr("Reading text on this device", "Распознаём текст на устройстве"),
                                 tr("The photo is not being uploaded.", "Фото не отправляется в сеть."),
                             )
-                            SecondaryAction(tr("Cancel", "Отмена"), onCancelRecognition)
+                            SecondaryAction(
+                                tr("Cancel", "Отмена"),
+                                onCancelRecognition,
+                                leadingIcon = { AppIcon(AppIcons.Close, contentDescription = null) },
+                            )
                         }
                         ScreenLoadState.Error -> {
                             MessageCard(
@@ -405,15 +462,33 @@ fun ImageReviewScreen(
                                 ),
                                 isError = true,
                             )
-                            PrimaryAction(tr("Try again", "Повторить"), onUsePhoto)
+                            PrimaryAction(
+                                tr("Try again", "Повторить"),
+                                onUsePhoto,
+                                leadingIcon = { AppIcon(AppIcons.RestartAlt, contentDescription = null) },
+                            )
                         }
-                        else -> PrimaryAction(tr("Use photo", "Использовать фото"), onUsePhoto)
+                        else -> PrimaryAction(
+                            tr("Use photo", "Использовать фото"),
+                            onUsePhoto,
+                            leadingIcon = { AppIcon(AppIcons.CheckCircle, contentDescription = null) },
+                        )
                     }
-                    SecondaryAction(tr("Retake", "Переснять"), onRetake)
-                    SecondaryAction(tr("Choose another", "Выбрать другое"), onChooseAnother)
-                    TextButton(onClick = onManual, modifier = Modifier.fillMaxWidth().sizeIn(minHeight = 48.dp)) {
-                        Text(tr("Enter manually", "Ввести вручную"))
-                    }
+                    SecondaryAction(
+                        tr("Retake", "Переснять"),
+                        onRetake,
+                        leadingIcon = { AppIcon(AppIcons.RestartAlt, contentDescription = null) },
+                    )
+                    SecondaryAction(
+                        tr("Choose another", "Выбрать другое"),
+                        onChooseAnother,
+                        leadingIcon = { AppIcon(AppIcons.PhotoLibrary, contentDescription = null) },
+                    )
+                    TertiaryAction(
+                        tr("Enter manually", "Ввести вручную"),
+                        onManual,
+                        leadingIcon = { AppIcon(AppIcons.Edit, contentDescription = null) },
+                    )
                 }
             }
         }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,6 +25,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -47,6 +49,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sedsoftware.bulbmatch.compose.localization.tr
 import com.sedsoftware.bulbmatch.compose.model.AssessmentOutcome
@@ -54,6 +57,27 @@ import com.sedsoftware.bulbmatch.compose.model.RootDestination
 import com.sedsoftware.bulbmatch.compose.model.ScreenLoadState
 import com.sedsoftware.bulbmatch.compose.theme.LocalAppSpacing
 import com.sedsoftware.bulbmatch.compose.theme.LocalStatusColors
+import org.jetbrains.compose.resources.DrawableResource
+
+enum class AppNavigationIcon {
+    Back,
+    Close,
+}
+
+enum class SectionTone {
+    Neutral,
+    Information,
+    Warning,
+    Success,
+    Conflict,
+}
+
+enum class MessageTone {
+    Information,
+    Warning,
+    Success,
+    Error,
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +85,7 @@ fun AppScreenScaffold(
     title: String,
     modifier: Modifier = Modifier,
     onBack: (() -> Unit)? = null,
+    navigationIcon: AppNavigationIcon = AppNavigationIcon.Back,
     onSettings: (() -> Unit)? = null,
     topAction: (@Composable () -> Unit)? = null,
     rootDestination: RootDestination? = null,
@@ -75,9 +100,12 @@ fun AppScreenScaffold(
             TopAppBar(
                 navigationIcon = {
                     if (onBack != null) {
-                        TextButton(onClick = onBack, modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)) {
-                            Text(tr("Back", "Назад"))
-                        }
+                        val isClose = navigationIcon == AppNavigationIcon.Close
+                        AppIconButton(
+                            resource = if (isClose) AppIcons.Close else AppIcons.ArrowBack,
+                            contentDescription = if (isClose) tr("Close", "Закрыть") else tr("Back", "Назад"),
+                            onClick = onBack,
+                        )
                     }
                 },
                 title = {
@@ -85,14 +113,18 @@ fun AppScreenScaffold(
                         text = title,
                         modifier = Modifier.semantics { heading() },
                         style = MaterialTheme.typography.titleLarge,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 actions = {
                     topAction?.invoke()
                     if (onSettings != null) {
-                        TextButton(onClick = onSettings, modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)) {
-                            Text(tr("Settings", "Настройки"))
-                        }
+                        AppIconButton(
+                            resource = AppIcons.Settings,
+                            contentDescription = tr("Settings", "Настройки"),
+                            onClick = onSettings,
+                        )
                     }
                 },
             )
@@ -116,16 +148,16 @@ fun RootNavigationBar(
     modifier: Modifier = Modifier,
 ) {
     val entries = listOf(
-        Triple(RootDestination.Match, "◉", tr("Match", "Подбор")),
-        Triple(RootDestination.History, "≡", tr("History", "История")),
-        Triple(RootDestination.Reference, "⌁", tr("Reference", "Справочник")),
+        Triple(RootDestination.Match, AppIcons.Lightbulb, tr("Match", "Подбор")),
+        Triple(RootDestination.History, AppIcons.History, tr("History", "История")),
+        Triple(RootDestination.Reference, AppIcons.MenuBook, tr("Reference", "Справочник")),
     )
     NavigationBar(modifier = modifier.fillMaxWidth()) {
-        entries.forEach { (destination, glyph, label) ->
+        entries.forEach { (destination, icon, label) ->
             NavigationBarItem(
                 selected = selected == destination,
                 onClick = { onSelect(destination) },
-                icon = { Text(glyph, modifier = Modifier.semantics { contentDescription = label }) },
+                icon = { AppIcon(icon, contentDescription = null) },
                 label = { Text(label) },
             )
         }
@@ -153,12 +185,17 @@ fun PrimaryAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
 ) {
     Button(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.fillMaxWidth().sizeIn(minHeight = 52.dp),
     ) {
+        if (leadingIcon != null) {
+            leadingIcon()
+            Spacer(Modifier.width(LocalAppSpacing.current.sm))
+        }
         Text(text, textAlign = TextAlign.Center)
     }
 }
@@ -169,13 +206,81 @@ fun SecondaryAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
 ) {
     OutlinedButton(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.fillMaxWidth().sizeIn(minHeight = 52.dp),
     ) {
+        if (leadingIcon != null) {
+            leadingIcon()
+            Spacer(Modifier.width(LocalAppSpacing.current.sm))
+        }
         Text(text, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+fun TertiaryAction(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
+) {
+    TextButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier.fillMaxWidth().sizeIn(minHeight = 48.dp),
+    ) {
+        if (leadingIcon != null) {
+            leadingIcon()
+            Spacer(Modifier.width(LocalAppSpacing.current.sm))
+        }
+        Text(text, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+fun DestructiveAction(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null,
+) {
+    OutlinedButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier.fillMaxWidth().sizeIn(minHeight = 52.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.error,
+            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+        ),
+    ) {
+        if (leadingIcon != null) {
+            leadingIcon()
+            Spacer(Modifier.width(LocalAppSpacing.current.sm))
+        }
+        Text(text, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+internal fun AppIconButton(
+    resource: DrawableResource,
+    contentDescription: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    IconButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp),
+    ) {
+        AppIcon(resource, contentDescription, Modifier.size(24.dp))
     }
 }
 
@@ -183,17 +288,40 @@ fun SecondaryAction(
 fun SectionCard(
     title: String,
     modifier: Modifier = Modifier,
+    tone: SectionTone = SectionTone.Neutral,
+    icon: DrawableResource? = null,
     content: @Composable () -> Unit,
 ) {
+    val status = LocalStatusColors.current
+    val (containerColor, contentColor) = when (tone) {
+        SectionTone.Neutral -> MaterialTheme.colorScheme.surfaceContainerLow to MaterialTheme.colorScheme.onSurface
+        SectionTone.Information -> MaterialTheme.colorScheme.surfaceContainer to MaterialTheme.colorScheme.onSurface
+        SectionTone.Warning -> status.warningContainer to status.onWarningContainer
+        SectionTone.Success -> status.successContainer to status.onSuccessContainer
+        SectionTone.Conflict -> status.conflictContainer to status.onConflictContainer
+    }
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+        ),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(LocalAppSpacing.current.md),
             verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
         ) {
-            Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (icon != null) AppIcon(icon, contentDescription = null, Modifier.size(22.dp))
+                Text(
+                    title,
+                    modifier = Modifier.weight(1f).semantics { heading() },
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
             content()
         }
     }
@@ -205,13 +333,19 @@ fun KeyValueRow(
     value: String,
     modifier: Modifier = Modifier,
     supporting: String? = null,
+    valueMaxLines: Int = Int.MAX_VALUE,
 ) {
     Column(
         modifier = modifier.fillMaxWidth().semantics(mergeDescendants = true) {},
         verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
     ) {
         Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(value, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            value,
+            style = MaterialTheme.typography.bodyLarge,
+            maxLines = valueMaxLines,
+            overflow = if (valueMaxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
+        )
         if (supporting != null) {
             Text(supporting, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -233,27 +367,27 @@ fun OutcomeBanner(
     detail: String? = null,
 ) {
     val status = LocalStatusColors.current
-    val (symbol, title, container, content) = when (outcome) {
+    val (icon, title, container, content) = when (outcome) {
         AssessmentOutcome.Compatible -> StatusTuple(
-            "✓",
+            AppIcons.CheckCircle,
             tr("Compatible profile", "Совместимый профиль"),
             status.successContainer,
             status.onSuccessContainer,
         )
         AssessmentOutcome.NeedClarification -> StatusTuple(
-            "!",
+            AppIcons.Warning,
             tr("Need clarification", "Нужно уточнение"),
             status.warningContainer,
             status.onWarningContainer,
         )
         AssessmentOutcome.PotentialConflict -> StatusTuple(
-            "×",
+            AppIcons.Cancel,
             tr("Potential conflict", "Возможен конфликт"),
             status.conflictContainer,
             status.onConflictContainer,
         )
         AssessmentOutcome.Unavailable -> StatusTuple(
-            "!",
+            AppIcons.Error,
             tr("Assessment unavailable", "Оценка недоступна"),
             MaterialTheme.colorScheme.errorContainer,
             MaterialTheme.colorScheme.onErrorContainer,
@@ -273,11 +407,10 @@ fun OutcomeBanner(
             verticalAlignment = Alignment.Top,
         ) {
             Surface(shape = RoundedCornerShape(50), color = content.copy(alpha = 0.12f)) {
-                Text(
-                    symbol,
-                    modifier = Modifier.size(48.dp).padding(LocalAppSpacing.current.sm),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.headlineSmall,
+                AppIcon(
+                    icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp).padding(12.dp),
                 )
             }
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs)) {
@@ -289,7 +422,7 @@ fun OutcomeBanner(
 }
 
 private data class StatusTuple(
-    val symbol: String,
+    val icon: DrawableResource,
     val title: String,
     val container: Color,
     val content: Color,
@@ -301,19 +434,68 @@ fun MessageCard(
     body: String,
     modifier: Modifier = Modifier,
     isError: Boolean = false,
+    tone: MessageTone = MessageTone.Information,
+    icon: DrawableResource? = null,
 ) {
+    val effectiveTone = if (isError) MessageTone.Error else tone
+    val status = LocalStatusColors.current
+    val (containerColor, contentColor, defaultIcon) = when (effectiveTone) {
+        MessageTone.Information -> Triple(
+            MaterialTheme.colorScheme.surfaceContainer,
+            MaterialTheme.colorScheme.onSurface,
+            AppIcons.Info,
+        )
+        MessageTone.Warning -> Triple(status.warningContainer, status.onWarningContainer, AppIcons.Warning)
+        MessageTone.Success -> Triple(status.successContainer, status.onSuccessContainer, AppIcons.CheckCircle)
+        MessageTone.Error -> Triple(
+            MaterialTheme.colorScheme.errorContainer,
+            MaterialTheme.colorScheme.onErrorContainer,
+            AppIcons.Error,
+        )
+    }
     Surface(
         modifier = modifier.fillMaxWidth().semantics(mergeDescendants = true) {},
-        color = if (isError) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.surfaceContainer,
-        contentColor = if (isError) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurface,
+        color = containerColor,
+        contentColor = contentColor,
         shape = MaterialTheme.shapes.medium,
     ) {
-        Column(
+        Row(
             modifier = Modifier.padding(LocalAppSpacing.current.md),
-            verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+            horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
+            verticalAlignment = Alignment.Top,
         ) {
-            Text(title, style = MaterialTheme.typography.titleSmall)
-            Text(body, style = MaterialTheme.typography.bodyMedium)
+            AppIcon(icon ?: defaultIcon, contentDescription = null, Modifier.size(22.dp))
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+            ) {
+                Text(title, style = MaterialTheme.typography.titleSmall)
+                Text(body, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+    }
+}
+
+@Composable
+fun ProvenanceBadge(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        shape = RoundedCornerShape(50),
+    ) {
+        Row(
+            modifier = Modifier
+                .sizeIn(minHeight = 48.dp)
+                .padding(horizontal = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            AppIcon(AppIcons.Source, contentDescription = null, Modifier.size(18.dp))
+            Text(text, style = MaterialTheme.typography.labelLarge)
         }
     }
 }

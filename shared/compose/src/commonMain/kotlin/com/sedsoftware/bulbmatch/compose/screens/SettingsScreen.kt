@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -19,22 +20,28 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.sedsoftware.bulbmatch.compose.components.AppIcon
+import com.sedsoftware.bulbmatch.compose.components.AppIcons
 import com.sedsoftware.bulbmatch.compose.components.AppScreenScaffold
 import com.sedsoftware.bulbmatch.compose.components.BulletText
+import com.sedsoftware.bulbmatch.compose.components.DestructiveAction
 import com.sedsoftware.bulbmatch.compose.components.MessageCard
 import com.sedsoftware.bulbmatch.compose.components.SectionCard
+import com.sedsoftware.bulbmatch.compose.components.SectionTone
 import com.sedsoftware.bulbmatch.compose.localization.LocalAppLanguage
 import com.sedsoftware.bulbmatch.compose.localization.displayName
 import com.sedsoftware.bulbmatch.compose.localization.tr
 import com.sedsoftware.bulbmatch.compose.model.AppLanguage
 import com.sedsoftware.bulbmatch.compose.model.AppThemeMode
 import com.sedsoftware.bulbmatch.compose.theme.LocalAppSpacing
+import org.jetbrains.compose.resources.DrawableResource
 
 @Composable
 fun SettingsScreen(
@@ -47,6 +54,7 @@ fun SettingsScreen(
     catalogApproved: Boolean,
     showClearConfirmation: Boolean = false,
     message: String? = null,
+    initialListIndex: Int = 0,
     onBack: () -> Unit,
     onLanguageChange: (AppLanguage) -> Unit,
     onThemeChange: (AppThemeMode) -> Unit,
@@ -57,6 +65,7 @@ fun SettingsScreen(
     onClearConfirm: () -> Unit,
     onClearDismiss: () -> Unit,
 ) {
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialListIndex)
     val clearDescription = tr(
         "Clear local data. Destructive action.",
         "Очистить локальные данные. Опасное действие.",
@@ -88,6 +97,7 @@ fun SettingsScreen(
     ) { insets ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
+            state = listState,
             contentPadding = PaddingValues(
                 start = LocalAppSpacing.current.md,
                 top = insets.calculateTopPadding() + LocalAppSpacing.current.sm,
@@ -104,7 +114,10 @@ fun SettingsScreen(
             }
             item(key = "language") {
                 SettingsWidth {
-                    SectionCard(tr("Language", "Язык")) {
+                    SectionCard(
+                        tr("Language", "Язык"),
+                        icon = AppIcons.Language,
+                    ) {
                         AppLanguage.entries.forEach { candidate ->
                             SelectionRow(
                                 label = candidate.displayName(LocalAppLanguage.current == AppLanguage.Russian),
@@ -117,7 +130,10 @@ fun SettingsScreen(
             }
             item(key = "theme") {
                 SettingsWidth {
-                    SectionCard(tr("Theme", "Тема")) {
+                    SectionCard(
+                        tr("Theme", "Тема"),
+                        icon = AppIcons.Palette,
+                    ) {
                         AppThemeMode.entries.forEach { candidate ->
                             val label = when (candidate) {
                                 AppThemeMode.System -> tr("System", "Системная")
@@ -131,7 +147,11 @@ fun SettingsScreen(
             }
             item(key = "privacy") {
                 SettingsWidth {
-                    SectionCard(tr("Privacy and network services", "Конфиденциальность и сетевые сервисы")) {
+                    SectionCard(
+                        tr("Privacy and network services", "Конфиденциальность и сетевые сервисы"),
+                        tone = SectionTone.Information,
+                        icon = AppIcons.Shield,
+                    ) {
                         BulletText(
                             tr(
                                 "Photos and OCR text stay on device and are discarded when the in-memory flow ends.",
@@ -155,13 +175,18 @@ fun SettingsScreen(
                             if (offline) tr("Internet required", "Требуется интернет") else "sedsoftware.com",
                             enabled = !offline,
                             onClick = onOpenPrivacy,
+                            trailingIcon = AppIcons.OpenInNew,
                         )
                     }
                 }
             }
             item(key = "catalog") {
                 SettingsWidth {
-                    SectionCard(tr("Catalog and sources", "Каталог и источники")) {
+                    SectionCard(
+                        tr("Catalog and sources", "Каталог и источники"),
+                        tone = SectionTone.Information,
+                        icon = AppIcons.Source,
+                    ) {
                         InfoRow(tr("Catalog version", "Версия каталога"), catalogVersion)
                         InfoRow(tr("Ruleset version", "Версия правил"), rulesetVersion)
                         MessageCard(
@@ -182,13 +207,18 @@ fun SettingsScreen(
                             catalogVersion,
                             enabled = true,
                             onClick = onOpenSources,
+                            trailingIcon = AppIcons.ChevronRight,
                         )
                     }
                 }
             }
             item(key = "safety") {
                 SettingsWidth {
-                    SectionCard(tr("Safety disclaimer", "Предупреждение о безопасности")) {
+                    SectionCard(
+                        tr("Safety disclaimer", "Предупреждение о безопасности"),
+                        tone = SectionTone.Warning,
+                        icon = AppIcons.Warning,
+                    ) {
                         Text(
                             tr(
                                 "BulbMatch creates a conservative shopping profile from confirmed markings. It does not inspect wiring, certify a fixture, or guarantee physical fit.",
@@ -206,23 +236,32 @@ fun SettingsScreen(
             }
             item(key = "about") {
                 SettingsWidth {
-                    SectionCard(tr("About and support", "О приложении и поддержка")) {
+                    SectionCard(
+                        tr("About and support", "О приложении и поддержка"),
+                        icon = AppIcons.Mail,
+                    ) {
                         InfoRow(tr("Publisher", "Издатель"), "Sergey V.")
-                        LinkRow(tr("Support", "Поддержка"), "info@sedsoftware.com", true, onEmailSupport)
+                        LinkRow(
+                            tr("Support", "Поддержка"),
+                            "info@sedsoftware.com",
+                            true,
+                            onEmailSupport,
+                            trailingIcon = AppIcons.Mail,
+                        )
                     }
                 }
             }
             item(key = "clear") {
                 SettingsWidth {
-                    TextButton(
+                    DestructiveAction(
+                        text = tr("Clear local data", "Очистить локальные данные"),
                         onClick = onClearRequest,
-                        modifier = Modifier.fillMaxWidth().sizeIn(minHeight = 56.dp).semantics {
+                        modifier = Modifier.semantics {
                             role = Role.Button
                             contentDescription = clearDescription
                         },
-                    ) {
-                        Text(tr("Clear local data", "Очистить локальные данные"), color = MaterialTheme.colorScheme.error)
-                    }
+                        leadingIcon = { AppIcon(AppIcons.Delete, contentDescription = null) },
+                    )
                 }
             }
         }
@@ -249,18 +288,33 @@ private fun SelectionRow(label: String, selected: Boolean, onClick: () -> Unit) 
 
 @Composable
 private fun InfoRow(label: String, value: String) {
-    Row(
-        Modifier.fillMaxWidth().semantics(mergeDescendants = true) {},
-        horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.md),
-        verticalAlignment = Alignment.Top,
-    ) {
-        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-        Text(
-            value,
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+    val stackContent = LocalDensity.current.fontScale >= 1.5f
+    if (stackContent) {
+        Column(
+            Modifier.fillMaxWidth().semantics(mergeDescendants = true) {},
+            verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+        ) {
+            Text(label, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    } else {
+        Row(
+            Modifier.fillMaxWidth().semantics(mergeDescendants = true) {},
+            horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.md),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+            Text(
+                value,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
@@ -270,19 +324,36 @@ private fun LinkRow(
     value: String,
     enabled: Boolean,
     onClick: () -> Unit,
+    trailingIcon: DrawableResource = AppIcons.ChevronRight,
 ) {
+    val stackContent = LocalDensity.current.fontScale >= 1.5f
     Row(
         modifier = Modifier.fillMaxWidth().clickable(enabled = enabled, onClick = onClick).sizeIn(minHeight = 56.dp)
             .semantics(mergeDescendants = true) { role = Role.Button },
         horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.md),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-        Text(
-            value,
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (stackContent) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+            ) {
+                Text(label, style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    value,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        } else {
+            Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+            Text(
+                value,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        AppIcon(trailingIcon, contentDescription = null)
     }
 }
