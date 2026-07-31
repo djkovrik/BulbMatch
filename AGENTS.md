@@ -67,6 +67,11 @@ evidence before making design decisions, and route Compose API implementation
 through Compose Expert as directed by the product-design skill. Do not update
 goldens until the visual change has been reviewed and approved.
 
+Every new dedicated `BaseDiagram` rendering branch must add, in the same
+change, a deterministic component preview for that base in both light and dark
+themes and the corresponding verified Paparazzi goldens. Keep the combined
+catalog diagram board in sync when the production catalog gains a base.
+
 Before editing:
 
 1. Read the selected skill and every required reference it names.

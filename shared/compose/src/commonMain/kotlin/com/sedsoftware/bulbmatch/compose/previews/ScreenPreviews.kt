@@ -255,8 +255,8 @@ private fun ReferenceDetailPreview() = PreviewTheme(language = AppLanguage.Russi
     )
 }
 
-@Preview(name = "SCREEN-010 Catalog diagrams light", widthDp = 700, heightDp = 620, uiMode = UI_MODE_NIGHT_NO)
-@Preview(name = "SCREEN-010 Catalog diagrams dark", widthDp = 700, heightDp = 620, uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "SCREEN-010 Catalog diagrams light", widthDp = 700, heightDp = 700, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-010 Catalog diagrams dark", widthDp = 700, heightDp = 700, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun CatalogDiagramBoardPreview() = PreviewTheme {
     val rows = listOf(
