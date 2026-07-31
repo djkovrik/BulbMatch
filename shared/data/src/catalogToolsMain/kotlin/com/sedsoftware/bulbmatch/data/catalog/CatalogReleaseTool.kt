@@ -9,28 +9,37 @@ import kotlin.io.path.isRegularFile
 import kotlin.io.path.name
 
 private const val PRODUCTION_CATALOG_FILENAME = "bulbmatch-catalog-production.json"
+private const val OPERATION_INDEX = 0
+private const val CATALOG_PATH_INDEX = 1
+private const val CATALOG_RELEASES_ROOT_INDEX = 2
+private const val RUNTIME_RULES_SOURCE_INDEX = 3
+private const val SHIPPING_CATALOG_DIRECTORY_INDEX = 4
+private const val UPDATE_HASH_ARGUMENT_COUNT = 2
+private const val VALIDATE_RELEASE_ARGUMENT_COUNT = 5
 private val fullCommitRegex = Regex("[0-9a-f]{40}")
 private val sha256Regex = Regex("[0-9a-f]{64}")
 
 fun main(args: Array<String>) {
     require(args.isNotEmpty()) { "Expected a catalog tool operation." }
-    when (args[0]) {
+    when (args[OPERATION_INDEX]) {
         "update-hash" -> {
-            require(args.size == 2) { "update-hash expects the production catalog path." }
-            updateCatalogHash(Path.of(args[1]))
+            require(args.size == UPDATE_HASH_ARGUMENT_COUNT) {
+                "update-hash expects the production catalog path."
+            }
+            updateCatalogHash(Path.of(args[CATALOG_PATH_INDEX]))
         }
         "validate-release" -> {
-            require(args.size == 5) {
+            require(args.size == VALIDATE_RELEASE_ARGUMENT_COUNT) {
                 "validate-release expects catalog, releases root, runtime rules, and shipping directory."
             }
             validateRelease(
-                catalogPath = Path.of(args[1]),
-                catalogReleasesRoot = Path.of(args[2]),
-                runtimeRulesSource = Path.of(args[3]),
-                shippingCatalogDirectory = Path.of(args[4]),
+                catalogPath = Path.of(args[CATALOG_PATH_INDEX]),
+                catalogReleasesRoot = Path.of(args[CATALOG_RELEASES_ROOT_INDEX]),
+                runtimeRulesSource = Path.of(args[RUNTIME_RULES_SOURCE_INDEX]),
+                shippingCatalogDirectory = Path.of(args[SHIPPING_CATALOG_DIRECTORY_INDEX]),
             )
         }
-        else -> error("Unknown catalog tool operation: ${args[0]}")
+        else -> error("Unknown catalog tool operation: ${args[OPERATION_INDEX]}")
     }
 }
 

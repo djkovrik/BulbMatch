@@ -128,6 +128,7 @@ class CatalogSafetyFixtureTest {
             }
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun CatalogSafetyFixtureInput.toDomain(): ConfirmedMatchInput {
         val observedKeys = when (observationDecision) {
             "REJECTED", "EDITED", "UNREVIEWED" -> setOf(FieldKey.Base)
@@ -200,6 +201,7 @@ class CatalogSafetyFixtureTest {
         }
     }
 
+    @Suppress("MagicNumber")
     private fun assertProfile(
         assertion: String,
         assessment: Assessment,
