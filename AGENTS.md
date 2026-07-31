@@ -211,9 +211,10 @@ Known intentional release boundaries include:
   version, while `validateAdSdkReleaseVersion` intentionally blocks release
   until the documented required version is available and aligned. Do not remove
   or relax this gate.
-- Android `google-services.json` and iOS `GoogleService-Info.plist` are local
-  ignored release configuration. Signing keys, certificates, provisioning
-  profiles, and CI secrets must also remain out of Git.
+- Android `androidApp/google-services.json` is committed release configuration;
+  CI validates its package client directly from the checkout. The iOS
+  `GoogleService-Info.plist`, signing keys, certificates, provisioning profiles,
+  service-account credentials, and CI secrets must remain out of Git.
 - Production validation tasks are expected to fail while required approval or
   configuration is absent. Do not replace a truthful red gate with a mock,
   demo data, a test ad ID, or weaker validation.

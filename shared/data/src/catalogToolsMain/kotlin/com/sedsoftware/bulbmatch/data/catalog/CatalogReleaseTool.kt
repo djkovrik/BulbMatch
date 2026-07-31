@@ -135,9 +135,9 @@ private fun validateRelease(
     require(signoff.sourceManifestVersion == catalog.sourceManifestVersion)
     require(signoff.catalogContentHashAlgorithm == "SHA-256")
     require(signoff.catalogContentHash == catalog.contentHash)
-    require(signoff.rulesetReviewFileSha256 == sha256(rulesetPath))
-    require(signoff.runtimeRulesSourceSha256 == sha256(runtimeRulesSource))
-    require(signoff.safetyFixtureSuiteFileSha256 == sha256(fixturePath))
+    require(signoff.rulesetReviewFileSha256 == sha256GitText(rulesetPath))
+    require(signoff.runtimeRulesSourceSha256 == sha256GitText(runtimeRulesSource))
+    require(signoff.safetyFixtureSuiteFileSha256 == sha256GitText(fixturePath))
     require(fullCommitRegex.matches(signoff.reviewedCommit))
     require(signoff.reviewer == "Sergey V.")
     require(signoff.reviewedAt == catalog.release.reviewedAt)
@@ -193,15 +193,11 @@ private fun verifyRulesMetadata(document: BundledCatalogDocument) {
     }
 }
 
-private fun sha256(path: Path): String {
+private fun sha256GitText(path: Path): String {
+    val gitCanonicalBytes = Files.readString(path, StandardCharsets.UTF_8)
+        .replace("\r\n", "\n")
+        .toByteArray(StandardCharsets.UTF_8)
     val digest = MessageDigest.getInstance("SHA-256")
-    Files.newInputStream(path).use { input ->
-        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-        while (true) {
-            val read = input.read(buffer)
-            if (read < 0) break
-            digest.update(buffer, 0, read)
-        }
-    }
+    digest.update(gitCanonicalBytes)
     return digest.digest().joinToString("") { byte -> "%02x".format(byte) }
 }

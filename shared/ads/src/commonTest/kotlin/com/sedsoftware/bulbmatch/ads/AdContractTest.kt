@@ -2,6 +2,7 @@ package com.sedsoftware.bulbmatch.ads
 
 import com.sedsoftware.bulbmatch.domain.AdFrequencyState
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -17,14 +18,50 @@ class AdContractTest {
     }
 
     @Test
+    fun debugUsesOnlyPlatformSuppliedTestIds() {
+        val units = AdUnitSet(
+            resultInline = "test-result",
+            historySticky = "test-history",
+            referenceSticky = "test-reference",
+            matchExitInterstitial = "test-exit",
+        )
+        val configuration = BulbMatchAdConfiguration.forBuild(
+            platform = AdPlatform.Android,
+            mode = AdBuildMode.DebugDevice,
+            debugUnits = units,
+        )
+
+        assertTrue(configuration.enabled)
+        assertEquals(units, configuration.units)
+    }
+
+    @Test
     fun releaseUsesOnlyProductionShapedIds() {
-        BulbMatchAdConfiguration.forBuild(
+        val android = BulbMatchAdConfiguration.forBuild(
             AdPlatform.Android,
             AdBuildMode.Release,
         )
-        BulbMatchAdConfiguration.forBuild(
+        val ios = BulbMatchAdConfiguration.forBuild(
             AdPlatform.Ios,
             AdBuildMode.Release,
+        )
+        assertEquals(
+            listOf(
+                "R-M-19664981-1",
+                "R-M-19664981-2",
+                "R-M-19664981-3",
+                "R-M-19664981-4",
+            ),
+            AdPlacement.entries.map(requireNotNull(android.units)::id),
+        )
+        assertEquals(
+            listOf(
+                "R-M-19664982-1",
+                "R-M-19664982-2",
+                "R-M-19664982-3",
+                "R-M-19664982-4",
+            ),
+            AdPlacement.entries.map(requireNotNull(ios.units)::id),
         )
     }
 
