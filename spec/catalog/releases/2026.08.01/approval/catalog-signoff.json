@@ -1,0 +1,15 @@
+{
+  "catalogVersion": "2026.08.01",
+  "rulesetVersion": "2026.08.01",
+  "safetyFixtureSuiteVersion": "2026.08.01",
+  "sourceManifestVersion": "2",
+  "catalogContentHashAlgorithm": "SHA-256",
+  "catalogContentHash": "881d91ec1c8a3ebd494bac0dfa615e109c25e573548d325ec90d5ba98f32ce7b",
+  "rulesetReviewFileSha256": "04f177b455001c36933f0a46d2ecc281658e0b5bf2d3d5c9fa90d0b90b10ef10",
+  "runtimeRulesSourceSha256": "61242f331bbebb36f84cbe8b2258081e818f0017834deb96baf60a8052fac569",
+  "safetyFixtureSuiteFileSha256": "70d54ed133bc71484753cefd418a10b24db00a20ccee719bb8af929d32168f00",
+  "reviewedCommit": "328b2657825510aa7fde4479314ac95007d02ae8",
+  "reviewer": "Sergey V.",
+  "reviewedAt": "2026-07-31T07:21:40Z",
+  "decision": "APPROVED"
+}
