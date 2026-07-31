@@ -24,9 +24,9 @@ class DefaultSettingsRepositoryTest {
             repository.localeOverride.take(2).toList()
         }
 
-        assertEquals(LocaleOverride.System, repository.localeOverride.value)
+        assertEquals(LocaleOverride.English, repository.localeOverride.value)
         assertEquals(ThemeOverride.System, repository.themeOverride.value)
-        assertEquals(listOf(LocaleOverride.System), repository.localeOverride.replayCache)
+        assertEquals(listOf(LocaleOverride.English), repository.localeOverride.replayCache)
 
         assertIs<RepositoryResult.Success<Unit>>(
             repository.setLocaleOverride(LocaleOverride.Russian),
@@ -37,7 +37,7 @@ class DefaultSettingsRepositoryTest {
         runCurrent()
 
         assertEquals(
-            listOf(LocaleOverride.System, LocaleOverride.Russian),
+            listOf(LocaleOverride.English, LocaleOverride.Russian),
             localeValues.await(),
         )
         assertEquals(LocaleOverride.Russian, repository.localeOverride.value)

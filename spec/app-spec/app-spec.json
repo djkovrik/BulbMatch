@@ -120,7 +120,7 @@
     },
     {
       "id": "REQ-016",
-      "title": "Support system-selected and manually selected English or Russian",
+      "title": "Support manually selected English or Russian with English as the default",
       "priority": "must",
       "status": "approved",
       "acceptanceScenarioIds": ["AC-016"]

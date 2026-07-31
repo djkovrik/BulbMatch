@@ -58,7 +58,7 @@ Use Multiplatform Settings with centralized keys and typed defaults:
 
 | Key | Type/default | Notes |
 |---|---|---|
-| `locale_override_v1` | `SYSTEM` | `SYSTEM`, `EN`, or `RU`; malformed falls back to `SYSTEM` |
+| `locale_override_v1` | `EN` | `EN` or `RU`; legacy `SYSTEM`, missing, or malformed values fall back to `EN` |
 | `theme_override_v1` | `SYSTEM` | `SYSTEM`, `LIGHT`, or `DARK` |
 | `completed_compatible_matches_v1` | `0` | Local ad eligibility counter; not analytics |
 | `last_interstitial_epoch_ms_v1` | absent | Local frequency cap only |

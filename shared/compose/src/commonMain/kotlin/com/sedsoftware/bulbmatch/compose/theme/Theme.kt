@@ -152,7 +152,6 @@ val LocalStatusColors = staticCompositionLocalOf {
 fun BulbMatchTheme(
     themeMode: AppThemeMode = AppThemeMode.System,
     language: AppLanguage = AppLanguage.English,
-    systemIsRussian: Boolean = false,
     onThemeChanged: @Composable (isDark: Boolean) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
@@ -161,10 +160,6 @@ fun BulbMatchTheme(
         AppThemeMode.System -> systemDark
         AppThemeMode.Light -> false
         AppThemeMode.Dark -> true
-    }
-    val effectiveLanguage = when (language) {
-        AppLanguage.System -> if (systemIsRussian) AppLanguage.Russian else AppLanguage.English
-        else -> language
     }
     val status = if (isDark) {
         StatusColors(
@@ -183,7 +178,7 @@ fun BulbMatchTheme(
     CompositionLocalProvider(
         LocalAppSpacing provides AppSpacing(),
         LocalStatusColors provides status,
-        LocalAppLanguage provides effectiveLanguage,
+        LocalAppLanguage provides language,
     ) {
         MaterialTheme(
             colorScheme = if (isDark) DarkColors else LightColors,

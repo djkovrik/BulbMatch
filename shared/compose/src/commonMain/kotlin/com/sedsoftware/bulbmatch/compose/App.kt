@@ -23,7 +23,7 @@ fun App(
 ) {
     BulbMatchTheme(
         themeMode = AppThemeMode.System,
-        language = AppLanguage.System,
+        language = AppLanguage.English,
         onThemeChanged = onThemeChanged,
     ) {
         Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
@@ -40,7 +40,6 @@ fun App(
 @Composable
 fun App(
     root: RootComponent,
-    systemIsRussian: Boolean = false,
     onThemeChanged: @Composable (isDark: Boolean) -> Unit = {},
     slots: BulbMatchSlots = BulbMatchSlots(),
     formatEpochMillis: (Long) -> String = { it.toString() },
@@ -55,7 +54,6 @@ fun App(
         onOpenPrivacyPolicy = onOpenPrivacyPolicy,
         onOpenSourceSummary = onOpenSourceSummary,
         onEmailSupport = onEmailSupport,
-        systemIsRussian = systemIsRussian,
         onThemeChanged = onThemeChanged,
     )
 }

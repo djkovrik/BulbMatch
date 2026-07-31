@@ -88,7 +88,6 @@ fun BulbMatchRoot(
     onOpenPrivacyPolicy: () -> Unit = {},
     onOpenSourceSummary: () -> Unit = {},
     onEmailSupport: () -> Unit = {},
-    systemIsRussian: Boolean = false,
     onThemeChanged: @Composable (isDark: Boolean) -> Unit = {},
 ) {
     val locale by root.localeOverride.subscribeAsState()
@@ -101,11 +100,9 @@ fun BulbMatchRoot(
             ThemeOverride.Dark -> AppThemeMode.Dark
         },
         language = when (locale) {
-            LocaleOverride.System -> AppLanguage.System
             LocaleOverride.English -> AppLanguage.English
             LocaleOverride.Russian -> AppLanguage.Russian
         },
-        systemIsRussian = systemIsRussian,
         onThemeChanged = onThemeChanged,
     ) {
         BulbMatchRootContent(
@@ -510,7 +507,6 @@ private fun SettingsContent(
     val settingsError = if (settingsErrorCode != null) validationError(settingsErrorCode) else null
     SettingsScreen(
         language = when (model.locale) {
-            LocaleOverride.System -> com.sedsoftware.bulbmatch.compose.model.AppLanguage.System
             LocaleOverride.English -> com.sedsoftware.bulbmatch.compose.model.AppLanguage.English
             LocaleOverride.Russian -> com.sedsoftware.bulbmatch.compose.model.AppLanguage.Russian
         },
@@ -532,7 +528,6 @@ private fun SettingsContent(
         onLanguageChange = {
             component.onLanguageSelected(
                 when (it) {
-                    com.sedsoftware.bulbmatch.compose.model.AppLanguage.System -> LocaleOverride.System
                     com.sedsoftware.bulbmatch.compose.model.AppLanguage.English -> LocaleOverride.English
                     com.sedsoftware.bulbmatch.compose.model.AppLanguage.Russian -> LocaleOverride.Russian
                 },

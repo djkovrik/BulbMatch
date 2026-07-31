@@ -18,7 +18,7 @@ Expose product controls and accountability. Order: back; Language; Theme; Privac
 
 ## Actions, outputs, navigation, and validation
 
-Language: System/English/Русский. Theme: System/Light/Dark. Privacy opens the app-owned summary and `https://sedsoftware.com/apps/bulbmatch/policy.html`. About shows publisher `Sergey V.` and support `info@sedsoftware.com`. Sources opens the packaged manifest summary. Clear local data uses destructive confirmation and preserves language/theme. Back returns to the prior root destination.
+Language: English/Русский, with English as the default. Theme: System/Light/Dark. Privacy opens the app-owned summary and `https://sedsoftware.com/apps/bulbmatch/policy.html`. About shows publisher `Sergey V.` and support `info@sedsoftware.com`. Sources opens the packaged manifest summary. Clear local data uses destructive confirmation and preserves language/theme. Back returns to the prior root destination.
 
 ## Responsive layout and insets
 

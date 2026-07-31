@@ -12,8 +12,7 @@ val LocalAppLanguage = compositionLocalOf { AppLanguage.English }
 fun tr(english: String, russian: String): String =
     if (LocalAppLanguage.current == AppLanguage.Russian) russian else english
 
-fun AppLanguage.displayName(isRussian: Boolean): String = when (this) {
-    AppLanguage.System -> if (isRussian) "Системный" else "System"
+fun AppLanguage.displayName(): String = when (this) {
     AppLanguage.English -> "English"
     AppLanguage.Russian -> "Русский"
 }

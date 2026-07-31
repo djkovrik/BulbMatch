@@ -33,7 +33,7 @@ When a lamp fails, help me capture or enter what is actually printed on it, make
 - Deterministic three-way assessment and a safety-first result card.
 - Explicit local save with optional name; local history, reopen, delete one, and clear all.
 - Offline base reference with original line diagrams.
-- System language plus manual EN/RU override; system/light/dark theme.
+- Manual EN/RU language selection with English as the default; system/light/dark theme.
 - Firebase Crashlytics only; no product analytics.
 - Yandex inline, sticky, and conservatively capped interstitial advertising.
 
@@ -79,7 +79,7 @@ The first visual implementation should follow the locally researched “safety-f
 
 ## Localization
 
-The first run follows the system locale when it is `ru`; all other locales fall back to English. Settings can force English or Russian without restart.
+The first run uses English. Settings can switch between English and Russian without restart; no system-language option is exposed.
 
 Units remain internationally recognizable: `V`, `Hz`, `W`, `lm`, and `K`. Numbers use locale-appropriate decimal separators, while catalog identifiers such as `E27`, `GU10`, and `R7s` are never translated. Search accepts Latin and Cyrillic aliases defined in the catalog.
 

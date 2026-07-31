@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Composable
 import com.sedsoftware.bulbmatch.compose.localization.tr
 
-enum class AppLanguage { System, English, Russian }
+enum class AppLanguage { English, Russian }
 enum class AppThemeMode { System, Light, Dark }
 enum class RootDestination { Match, History, Reference }
 enum class ScreenLoadState { Content, Loading, Empty, Error }

@@ -103,7 +103,6 @@ private fun AppActivity.AndroidBulbMatchApp(holder: AndroidRootHolder) {
 
     App(
         root = holder.root,
-        systemIsRussian = resources.configuration.locales[0].language == "ru",
         onThemeChanged = { ThemeChanged(it) },
         slots = BulbMatchSlots(
             cameraPreview = { AndroidCameraPreview(holder.bridge) },

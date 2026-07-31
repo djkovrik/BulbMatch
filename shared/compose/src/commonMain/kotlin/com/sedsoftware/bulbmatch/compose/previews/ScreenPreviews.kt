@@ -294,7 +294,7 @@ private fun CatalogDiagramBoardPreview() = PreviewTheme {
 @Composable
 private fun SettingsPreview() = PreviewTheme {
     SettingsScreen(
-        language = AppLanguage.System,
+        language = AppLanguage.English,
         themeMode = AppThemeMode.System,
         catalogVersion = "Development catalog",
         rulesetVersion = "1",

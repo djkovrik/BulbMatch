@@ -13,7 +13,7 @@ Enter from the top app bar on a root destination. Exit back to that destination.
 
 ## Ordered steps
 
-1. Show Language with System, English, and Русский.
+1. Show Language with English and Русский; English is selected by default.
 2. Show Theme with System, Light, and Dark.
 3. Show Privacy summary and the production policy at `https://sedsoftware.com/apps/bulbmatch/policy.html`.
 4. Show catalog/ruleset/source-manifest versions and licenses link.
