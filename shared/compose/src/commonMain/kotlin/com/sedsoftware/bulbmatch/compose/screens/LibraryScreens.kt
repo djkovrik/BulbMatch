@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sedsoftware.bulbmatch.compose.components.AppIcon
@@ -541,6 +542,16 @@ fun BaseReferenceDetailScreen(
                     Text(entry.code, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.displaySmall)
                     Text(name, style = MaterialTheme.typography.headlineSmall)
                     BaseDiagram(entry.code, hint)
+                    Text(
+                        tr(
+                            "Identification diagram only; not to scale.",
+                            "Схема только для распознавания; не в масштабе.",
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                    )
                     SectionCard(tr("Distinguishing features", "Отличительные признаки")) {
                         features.forEach { BulletText(it) }
                     }

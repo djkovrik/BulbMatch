@@ -40,8 +40,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -568,43 +571,190 @@ fun BaseDiagram(
     val strokeColor = MaterialTheme.colorScheme.onSurface
     val accent = MaterialTheme.colorScheme.primary
     Canvas(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .height(144.dp)
+            .then(modifier)
             .clip(MaterialTheme.shapes.medium)
             .semantics { contentDescription = "$code. $alternativeText" },
     ) {
-        val centerX = size.width / 2f
-        val top = size.height * 0.12f
-        val bottom = size.height * 0.86f
-        val half = size.width * 0.14f
-        drawRoundRect(
-            color = strokeColor,
-            topLeft = Offset(centerX - half, top),
-            size = androidx.compose.ui.geometry.Size(half * 2f, bottom - top),
-            style = Stroke(width = 4f),
-        )
-        when {
-            code.startsWith("E") -> {
-                repeat(5) { index ->
-                    val y = size.height * (0.48f + index * 0.065f)
-                    drawLine(strokeColor, Offset(centerX - half, y), Offset(centerX + half, y), 4f)
-                }
-                drawLine(accent, Offset(centerX - half / 2f, bottom), Offset(centerX + half / 2f, bottom), 7f, StrokeCap.Round)
-            }
-            code == "GU10" -> {
-                drawLine(strokeColor, Offset(centerX - half / 2f, bottom), Offset(centerX - half / 2f, size.height * .97f), 7f)
-                drawLine(strokeColor, Offset(centerX + half / 2f, bottom), Offset(centerX + half / 2f, size.height * .97f), 7f)
-                drawCircle(accent, 7f, Offset(centerX - half / 2f, size.height * .97f))
-                drawCircle(accent, 7f, Offset(centerX + half / 2f, size.height * .97f))
-            }
-            else -> {
-                drawLine(strokeColor, Offset(centerX - half / 2f, bottom), Offset(centerX - half / 2f, size.height * .97f), 5f)
-                drawLine(strokeColor, Offset(centerX + half / 2f, bottom), Offset(centerX + half / 2f, size.height * .97f), 5f)
-            }
+        when (code.uppercase()) {
+            "E27" -> drawScrewBase(size.width * .15f, strokeColor, accent)
+            "E14" -> drawScrewBase(size.width * .105f, strokeColor, accent)
+            "B22D" -> drawBayonetBase(strokeColor, accent)
+            "GU10" -> drawGu10Base(strokeColor, accent)
+            "G9" -> drawG9Base(strokeColor, accent)
+            "R7S" -> drawR7sBase(strokeColor, accent)
+            else -> drawGenericPinBase(strokeColor, accent)
         }
-        drawLine(accent, Offset(centerX - half, top + 12f), Offset(centerX + half, top + 12f), 5f, StrokeCap.Round)
     }
+}
+
+private fun DrawScope.drawScrewBase(
+    bodyHalfWidth: Float,
+    strokeColor: Color,
+    contactColor: Color,
+) {
+    val centerX = size.width / 2f
+    val top = size.height * .12f
+    val bottom = size.height * .86f
+    val stroke = size.minDimension * .022f
+    drawBaseBody(centerX, bodyHalfWidth, top, bottom, strokeColor, stroke)
+    repeat(5) { index ->
+        val y = size.height * (.48f + index * .065f)
+        drawLine(
+            strokeColor,
+            Offset(centerX - bodyHalfWidth, y),
+            Offset(centerX + bodyHalfWidth, y),
+            stroke,
+        )
+    }
+    drawLine(
+        contactColor,
+        Offset(centerX - bodyHalfWidth * .42f, bottom),
+        Offset(centerX + bodyHalfWidth * .42f, bottom),
+        stroke * 1.8f,
+        StrokeCap.Round,
+    )
+}
+
+private fun DrawScope.drawBayonetBase(
+    strokeColor: Color,
+    contactColor: Color,
+) {
+    val centerX = size.width / 2f
+    val half = size.width * .13f
+    val top = size.height * .12f
+    val bottom = size.height * .82f
+    val stroke = size.minDimension * .022f
+    drawBaseBody(centerX, half, top, bottom, strokeColor, stroke)
+
+    val pinY = size.height * .5f
+    val pinLength = half * .42f
+    drawLine(
+        strokeColor,
+        Offset(centerX - half - pinLength, pinY),
+        Offset(centerX - half, pinY),
+        stroke * 1.6f,
+        StrokeCap.Round,
+    )
+    drawLine(
+        strokeColor,
+        Offset(centerX + half, pinY),
+        Offset(centerX + half + pinLength, pinY),
+        stroke * 1.6f,
+        StrokeCap.Round,
+    )
+    val contactOffset = half * .42f
+    drawCircle(contactColor, stroke * 1.25f, Offset(centerX - contactOffset, bottom))
+    drawCircle(contactColor, stroke * 1.25f, Offset(centerX + contactOffset, bottom))
+}
+
+private fun DrawScope.drawGu10Base(
+    strokeColor: Color,
+    contactColor: Color,
+) {
+    val centerX = size.width / 2f
+    val half = size.width * .14f
+    val top = size.height * .12f
+    val bottom = size.height * .78f
+    val pinBottom = size.height * .95f
+    val stroke = size.minDimension * .022f
+    drawBaseBody(centerX, half, top, bottom, strokeColor, stroke)
+    listOf(centerX - half * .48f, centerX + half * .48f).forEach { x ->
+        drawLine(strokeColor, Offset(x, bottom), Offset(x, pinBottom), stroke * 1.6f)
+        drawCircle(contactColor, stroke * 1.7f, Offset(x, pinBottom))
+    }
+}
+
+private fun DrawScope.drawG9Base(
+    strokeColor: Color,
+    contactColor: Color,
+) {
+    val centerX = size.width / 2f
+    val half = size.width * .105f
+    val top = size.height * .12f
+    val bottom = size.height * .68f
+    val stroke = size.minDimension * .022f
+    drawBaseBody(centerX, half, top, bottom, strokeColor, stroke)
+
+    val loopBottom = size.height * .93f
+    val loopHalf = half * .2f
+    listOf(centerX - half * .5f, centerX + half * .5f).forEach { loopCenter ->
+        val loop = Path().apply {
+            moveTo(loopCenter - loopHalf, bottom)
+            lineTo(loopCenter - loopHalf, loopBottom - loopHalf)
+            quadraticBezierTo(loopCenter, loopBottom + loopHalf, loopCenter + loopHalf, loopBottom - loopHalf)
+            lineTo(loopCenter + loopHalf, bottom)
+        }
+        drawPath(loop, contactColor, style = Stroke(width = stroke, cap = StrokeCap.Round))
+    }
+}
+
+private fun DrawScope.drawR7sBase(
+    strokeColor: Color,
+    contactColor: Color,
+) {
+    val stroke = size.minDimension * .022f
+    val left = size.width * .18f
+    val right = size.width * .82f
+    val top = size.height * .36f
+    val bottom = size.height * .64f
+    drawRoundRect(
+        color = strokeColor,
+        topLeft = Offset(left, top),
+        size = Size(right - left, bottom - top),
+        style = Stroke(width = stroke),
+    )
+    val centerY = size.height / 2f
+    drawLine(strokeColor, Offset(left + stroke * 2f, top), Offset(left + stroke * 2f, bottom), stroke)
+    drawLine(strokeColor, Offset(right - stroke * 2f, top), Offset(right - stroke * 2f, bottom), stroke)
+    drawLine(
+        contactColor,
+        Offset(size.width * .09f, centerY),
+        Offset(left, centerY),
+        stroke * 1.8f,
+        StrokeCap.Round,
+    )
+    drawLine(
+        contactColor,
+        Offset(right, centerY),
+        Offset(size.width * .91f, centerY),
+        stroke * 1.8f,
+        StrokeCap.Round,
+    )
+}
+
+private fun DrawScope.drawGenericPinBase(
+    strokeColor: Color,
+    contactColor: Color,
+) {
+    val centerX = size.width / 2f
+    val half = size.width * .12f
+    val top = size.height * .12f
+    val bottom = size.height * .78f
+    val pinBottom = size.height * .96f
+    val stroke = size.minDimension * .022f
+    drawBaseBody(centerX, half, top, bottom, strokeColor, stroke)
+    listOf(centerX - half * .45f, centerX + half * .45f).forEach { x ->
+        drawLine(contactColor, Offset(x, bottom), Offset(x, pinBottom), stroke * 1.4f, StrokeCap.Round)
+    }
+}
+
+private fun DrawScope.drawBaseBody(
+    centerX: Float,
+    halfWidth: Float,
+    top: Float,
+    bottom: Float,
+    color: Color,
+    stroke: Float,
+) {
+    drawRoundRect(
+        color = color,
+        topLeft = Offset(centerX - halfWidth, top),
+        size = Size(halfWidth * 2f, bottom - top),
+        style = Stroke(width = stroke),
+    )
 }
 
 @Composable

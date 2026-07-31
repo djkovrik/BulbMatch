@@ -1,0 +1,319 @@
+{
+  "schemaVersion": "1.0",
+  "app": {
+    "name": "BulbMatch",
+    "summary": "An offline-first mobile utility that turns confirmed lamp markings into a conservative replacement shopping profile for 220–240 V / 50 Hz regions.",
+    "targets": ["android", "ios"],
+    "releaseOrder": ["android", "ios"],
+    "locales": ["en", "ru"],
+    "electricalScope": {
+      "nominalVoltage": "220–240 V",
+      "frequency": "50 Hz",
+      "marketPosition": "Regional guidance only; not a fixture-safety certification."
+    }
+  },
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "title": "Start immediately with Match, History, and Reference navigation",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-001"]
+    },
+    {
+      "id": "REQ-002",
+      "title": "Capture a bulb-marking photo with the device camera",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-002"]
+    },
+    {
+      "id": "REQ-003",
+      "title": "Import one image through the system photo picker",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-003"]
+    },
+    {
+      "id": "REQ-004",
+      "title": "Enter all matching data manually without a photo",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-004"]
+    },
+    {
+      "id": "REQ-005",
+      "title": "Require an explicit decision for every OCR-derived field",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-005"]
+    },
+    {
+      "id": "REQ-006",
+      "title": "Gate assessment on a confirmed known base and voltage",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-006"]
+    },
+    {
+      "id": "REQ-007",
+      "title": "Treat an unknown base as Need clarification",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-007"]
+    },
+    {
+      "id": "REQ-008",
+      "title": "Return deterministic compatible, clarification, or conflict outcomes",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-008"]
+    },
+    {
+      "id": "REQ-009",
+      "title": "Block a positive outcome for voltage conflicts, out-of-scope voltage, or confirmed non-50 Hz frequency",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-009"]
+    },
+    {
+      "id": "REQ-010",
+      "title": "Keep fixture maximum wattage separate and never infer it",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-010"]
+    },
+    {
+      "id": "REQ-011",
+      "title": "Explain the result before showing a shopping checklist",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-011"]
+    },
+    {
+      "id": "REQ-012",
+      "title": "Save a result explicitly with an optional name",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-012"]
+    },
+    {
+      "id": "REQ-013",
+      "title": "Review, delete, and clear locally saved history",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-013"]
+    },
+    {
+      "id": "REQ-014",
+      "title": "Browse an offline reference for common lamp bases",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-014"]
+    },
+    {
+      "id": "REQ-015",
+      "title": "Bundle the catalog and OCR models for first-run offline use",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-015"]
+    },
+    {
+      "id": "REQ-016",
+      "title": "Support system-selected and manually selected English or Russian",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-016"]
+    },
+    {
+      "id": "REQ-017",
+      "title": "Support accessible, responsive light and dark UI",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-017"]
+    },
+    {
+      "id": "REQ-018",
+      "title": "Process photos ephemerally and keep unfinished work in memory only",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-018"]
+    },
+    {
+      "id": "REQ-019",
+      "title": "Report crashes without OCR, photo, or custom user data",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-019"]
+    },
+    {
+      "id": "REQ-020",
+      "title": "Place Yandex ads only in four approved placements per platform",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-020"]
+    },
+    {
+      "id": "REQ-021",
+      "title": "Apply a conservative interstitial eligibility and frequency cap",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-021"]
+    },
+    {
+      "id": "REQ-022",
+      "title": "Collapse failed ads and enforce test and release ad configuration",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-022"]
+    },
+    {
+      "id": "REQ-023",
+      "title": "Version and audit every catalog and rule source",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-023"]
+    },
+    {
+      "id": "REQ-024",
+      "title": "Recover from permissions, unavailable camera, blur, and OCR failure",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-024"]
+    },
+    {
+      "id": "REQ-025",
+      "title": "Make false-positive prevention the release guardrail",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-025"]
+    },
+    {
+      "id": "REQ-026",
+      "title": "Expose language, theme, privacy, source, and local-data controls",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-026"]
+    }
+  ],
+  "flows": [
+    "FLOW-001",
+    "FLOW-002",
+    "FLOW-003",
+    "FLOW-004",
+    "FLOW-005",
+    "FLOW-006",
+    "FLOW-007",
+    "FLOW-008"
+  ],
+  "screens": [
+    "SCREEN-001",
+    "SCREEN-002",
+    "SCREEN-003",
+    "SCREEN-004",
+    "SCREEN-005",
+    "SCREEN-006",
+    "SCREEN-007",
+    "SCREEN-008",
+    "SCREEN-009",
+    "SCREEN-010",
+    "SCREEN-011"
+  ],
+  "capabilities": {
+    "network": true,
+    "database": true,
+    "settings": true,
+    "sync": false,
+    "authentication": false,
+    "notifications": false,
+    "exactAlarms": false,
+    "ads": true
+  },
+  "constraints": {
+    "offlineMode": "Core capture, bundled on-device OCR, manual entry, assessment, catalog browsing, save, and history work without connectivity. Advertising and crash delivery may wait or fail without affecting the core flow.",
+    "privacy": [
+      "Do not persist photos, thumbnails, full OCR transcripts, or unfinished scans.",
+      "Do not send photos, OCR text, confirmed lamp values, saved-result names, or stable user identifiers to Firebase Crashlytics.",
+      "Use non-personalized Yandex ad configuration globally: do not request ATT, remove Android advertising-ID permission, disable location signals, do not pass targeting parameters, and set user-consent state before SDK initialization.",
+      "The product is not directed to children and must not claim child-directed treatment."
+    ],
+    "accessibility": [
+      "Meet WCAG 2.2 AA intent for contrast, semantics, focus order, touch targets, non-color status cues, and text scaling.",
+      "At 200% font scale, safety content and primary actions remain reachable without clipping or horizontal scrolling.",
+      "All diagrams have meaningful text alternatives and all advertisement containers expose an Advertisement label."
+    ],
+    "performance": [
+      "Show Match home without waiting for network SDKs.",
+      "On a supported mid-range device and a legible image, provide OCR candidates within 2.5 seconds at p95 after image confirmation.",
+      "Run a confirmed compatibility assessment within 100 ms at p95.",
+      "Never delay safety content, saving, or navigation while an advertisement loads."
+    ],
+    "releaseBoundary": [
+      "Android is delivered first; iOS remains a first-class build and acceptance target.",
+      "No account, product analytics, catalog download, backend, export, cloud backup, or cross-device data transfer in MVP.",
+      "No result may claim that a fixture, wiring, enclosure, dimmer, or installation is safe."
+    ]
+  },
+  "monetization": {
+    "provider": "Yandex Mobile Ads Compose Multiplatform",
+    "strategy": "Advertising is subordinate to task completion and safety comprehension.",
+    "placements": [
+      "RESULT_INLINE",
+      "HISTORY_STICKY",
+      "REFERENCE_STICKY",
+      "MATCH_EXIT_INTERSTITIAL"
+    ],
+    "adUnitConfigurationKeys": [
+      "android.resultInline",
+      "android.historySticky",
+      "android.referenceSticky",
+      "android.matchExitInterstitial",
+      "ios.resultInline",
+      "ios.historySticky",
+      "ios.referenceSticky",
+      "ios.matchExitInterstitial"
+    ],
+    "productionAdUnitIds": {
+      "android.resultInline": "R-M-19664981-1",
+      "android.historySticky": "R-M-19664981-2",
+      "android.referenceSticky": "R-M-19664981-3",
+      "android.matchExitInterstitial": "R-M-19664981-4",
+      "ios.resultInline": "R-M-19664982-1",
+      "ios.historySticky": "R-M-19664982-2",
+      "ios.referenceSticky": "R-M-19664982-3",
+      "ios.matchExitInterstitial": "R-M-19664982-4"
+    }
+  },
+  "catalogReview": {
+    "finalReviewer": {
+      "name": "Sergey V.",
+      "role": "Product owner and final catalog/ruleset reviewer"
+    },
+    "reviewMethod": [
+      "Automated checks and multiple AI models may generate cases, challenge rules, and flag inconsistencies.",
+      "AI output is advisory; Sergey V. makes and records the final approval decision for each production catalog, ruleset, and safety fixture suite version."
+    ],
+    "requiredSignOffFields": [
+      "catalogVersion",
+      "rulesetVersion",
+      "safetyFixtureSuiteVersion",
+      "reviewer",
+      "reviewedAt",
+      "decision"
+    ]
+  },
+  "releaseMetadata": {
+    "publisher": "Sergey V.",
+    "supportEmail": "info@sedsoftware.com",
+    "privacyPolicyUrl": "https://sedsoftware.com/apps/bulbmatch/policy.html"
+  },
+  "successCriteria": {
+    "primary": "Zero known false-positive compatible recommendations in the approved safety fixture suite and field-review sample.",
+    "guardrail": "When required facts are unknown, contradictory, unsupported, or outside 220–240 V / 50 Hz, the app must withhold a positive recommendation.",
+    "secondary": [
+      "Users can reopen a useful saved result without rescanning.",
+      "Ad revenue is observable in the Yandex console without product analytics."
+    ]
+  },
+  "openQuestions": []
+}

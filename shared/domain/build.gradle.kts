@@ -16,6 +16,10 @@ kotlin {
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
     }
 
+    jvm("catalogTools") {
+        compilerOptions { jvmTarget = JvmTarget.JVM_17 }
+    }
+
     iosArm64()
     iosSimulatorArm64()
 

@@ -1,6 +1,17 @@
 package com.sedsoftware.bulbmatch.compose.previews
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.sedsoftware.bulbmatch.compose.model.AppLanguage
 import com.sedsoftware.bulbmatch.compose.model.AppThemeMode
 import com.sedsoftware.bulbmatch.compose.model.AssessmentOutcome
@@ -14,6 +25,7 @@ import com.sedsoftware.bulbmatch.compose.model.ReviewUiModel
 import com.sedsoftware.bulbmatch.compose.model.ScreenLoadState
 import com.sedsoftware.bulbmatch.compose.model.previewCompatibleResult
 import com.sedsoftware.bulbmatch.compose.components.AdvertisementSlot
+import com.sedsoftware.bulbmatch.compose.components.BaseDiagram
 import com.sedsoftware.bulbmatch.compose.localization.tr
 import com.sedsoftware.bulbmatch.compose.screens.BaseReferenceDetailScreen
 import com.sedsoftware.bulbmatch.compose.screens.BaseReferenceListScreen
@@ -232,6 +244,7 @@ private fun ReferenceListPreview() = PreviewTheme {
 
 @Preview(name = "SCREEN-010 Reference detail RU light", widthDp = 390, heightDp = 940, uiMode = UI_MODE_NIGHT_NO)
 @Preview(name = "SCREEN-010 Reference detail RU dark", widthDp = 390, heightDp = 940, uiMode = UI_MODE_NIGHT_YES)
+@Preview(name = "SCREEN-010 Reference detail RU 200 light", widthDp = 390, heightDp = 1500, fontScale = 2f, uiMode = UI_MODE_NIGHT_NO)
 @Composable
 private fun ReferenceDetailPreview() = PreviewTheme(language = AppLanguage.Russian) {
     BaseReferenceDetailScreen(
@@ -240,6 +253,40 @@ private fun ReferenceDetailPreview() = PreviewTheme(language = AppLanguage.Russi
         onUseBase = {},
         stickyAdContent = { AdvertisementSlot(true) },
     )
+}
+
+@Preview(name = "SCREEN-010 Catalog diagrams light", widthDp = 700, heightDp = 620, uiMode = UI_MODE_NIGHT_NO)
+@Preview(name = "SCREEN-010 Catalog diagrams dark", widthDp = 700, heightDp = 620, uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun CatalogDiagramBoardPreview() = PreviewTheme {
+    val rows = listOf(
+        listOf("E27", "E14"),
+        listOf("B22d", "GU10"),
+        listOf("G9", "R7s"),
+    )
+    Surface(Modifier.fillMaxSize()) {
+        Column(
+            Modifier.fillMaxSize().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            rows.forEach { codes ->
+                Row(
+                    Modifier.fillMaxWidth().weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    codes.forEach { code ->
+                        Column(Modifier.weight(1f)) {
+                            Text(code, style = MaterialTheme.typography.titleMedium)
+                            BaseDiagram(
+                                code = code,
+                                alternativeText = "Original identification diagram for $code",
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Preview(name = "SCREEN-011 Settings light", widthDp = 390, heightDp = 1000, uiMode = UI_MODE_NIGHT_NO)

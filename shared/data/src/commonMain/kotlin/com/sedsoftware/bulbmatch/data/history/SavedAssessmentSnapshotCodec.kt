@@ -278,6 +278,7 @@ private fun ClarificationReason.toDto(): ReasonDto = when (this) {
 private fun ConflictReason.toDto(): ReasonDto = when (this) {
     ConflictReason.ContradictoryVoltage -> ReasonDto("CONTRADICTORY_VOLTAGE")
     ConflictReason.OutsideElectricalScope -> ReasonDto("OUTSIDE_ELECTRICAL_SCOPE")
+    ConflictReason.OutsideFrequencyScope -> ReasonDto("OUTSIDE_FREQUENCY_SCOPE")
     is ConflictReason.FixturePowerConflict -> ReasonDto(
         code = "FIXTURE_POWER_CONFLICT",
         sourcePowerW = sourcePower.value,
@@ -414,6 +415,7 @@ private fun ReasonDto.toClarificationReason(): ClarificationReason = when (code)
 private fun ReasonDto.toConflictReason(): ConflictReason = when (code) {
     "CONTRADICTORY_VOLTAGE" -> ConflictReason.ContradictoryVoltage
     "OUTSIDE_ELECTRICAL_SCOPE" -> ConflictReason.OutsideElectricalScope
+    "OUTSIDE_FREQUENCY_SCOPE" -> ConflictReason.OutsideFrequencyScope
     "FIXTURE_POWER_CONFLICT" -> ConflictReason.FixturePowerConflict(
         sourcePower = Watts.from(sourcePowerW ?: malformed()) ?: malformed(),
         fixtureMaximumPower = FixtureMaximumPower.manual(

@@ -7,6 +7,7 @@ import com.sedsoftware.bulbmatch.domain.BrightnessPreference
 import com.sedsoftware.bulbmatch.domain.CompatibleProfile
 import com.sedsoftware.bulbmatch.domain.ConfirmedBase
 import com.sedsoftware.bulbmatch.domain.ConfirmedMatchInput
+import com.sedsoftware.bulbmatch.domain.ConflictReason
 import com.sedsoftware.bulbmatch.domain.Dimmability
 import com.sedsoftware.bulbmatch.domain.ExplanationCode
 import com.sedsoftware.bulbmatch.domain.FieldKey
@@ -89,6 +90,25 @@ class SavedAssessmentSnapshotCodecTest {
         assertEquals("custom cap", write.summary.rawBaseText)
         assertEquals(null, write.summary.baseCode)
         assertEquals(1, write.summary.snapshotSchemaVersion)
+    }
+
+    @Test
+    fun outsideFrequencyConflictRoundTripsWithItsStableReasonCode() {
+        val input = completeInput().copy(frequency = frequency(60.0))
+        val assessment = Assessment.PotentialConflict(
+            reasons = listOf(ConflictReason.OutsideFrequencyScope),
+            retainedConfirmedInput = input,
+        )
+        val snapshot = SavedAssessmentSnapshot(input, assessment)
+
+        val encoded = SavedAssessmentSnapshotCodec.encode(snapshot)
+        val decoded = SavedAssessmentSnapshotCodec.decode(1, encoded)
+
+        assertEquals(
+            snapshot,
+            assertIs<SnapshotDecodeResult.Success<SavedAssessmentSnapshot>>(decoded).value,
+        )
+        assertEquals(true, encoded.contains("OUTSIDE_FREQUENCY_SCOPE"))
     }
 
     @Test

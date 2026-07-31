@@ -36,6 +36,7 @@ import com.sedsoftware.bulbmatch.compose.BulbMatchSlots
 import com.sedsoftware.bulbmatch.data.DefaultCatalogProvider
 import com.sedsoftware.bulbmatch.data.DefaultSavedMatchRepository
 import com.sedsoftware.bulbmatch.data.DefaultSettingsRepository
+import com.sedsoftware.bulbmatch.data.catalog.BundledCatalogRules
 import com.sedsoftware.bulbmatch.data.catalog.CatalogValidationMode
 import com.sedsoftware.bulbmatch.data.db.BulbMatchDatabaseFactory
 import com.sedsoftware.bulbmatch.data.db.BulbMatchDatabaseHandle
@@ -46,11 +47,9 @@ import com.sedsoftware.bulbmatch.data.history.SqlDelightSavedMatchStore
 import com.sedsoftware.bulbmatch.data.settings.BulbMatchSettingsStore
 import com.sedsoftware.bulbmatch.domain.BaseAliasIndex
 import com.sedsoftware.bulbmatch.domain.CompatibilityEngine
-import com.sedsoftware.bulbmatch.domain.FrequencyMarking
 import com.sedsoftware.bulbmatch.domain.MarkingParser
 import com.sedsoftware.bulbmatch.domain.ObservationGeometry
 import com.sedsoftware.bulbmatch.domain.RawTextObservation
-import com.sedsoftware.bulbmatch.domain.VoltageMarking
 import com.sedsoftware.bulbmatch.platform.CameraPermissionState
 import com.sedsoftware.bulbmatch.platform.CrashContext
 import com.sedsoftware.bulbmatch.platform.CrashReporter
@@ -254,9 +253,7 @@ private class IosRootHolder private constructor(
             val catalogProvider = DefaultCatalogProvider(
                 utf8Catalog = loadIosCatalogBytes(),
                 mode = CatalogValidationMode.Production,
-                voltageRules = emptyList(),
-                targetVoltage = requireNotNull(VoltageMarking.range(220.0, 240.0)),
-                targetFrequency = requireNotNull(FrequencyMarking.from(50.0)),
+                ruleset = BundledCatalogRules.ruleset,
             )
             val platform = IosPlatformBridge(
                 imageSource = IosImageSourceService(imageSourceHost),
@@ -292,7 +289,7 @@ private class IosRootHolder private constructor(
 @OptIn(ExperimentalForeignApi::class)
 private fun loadIosCatalogBytes(): ByteArray {
     val path = NSBundle.mainBundle.pathForResource(
-        name = "bulbmatch-catalog-development",
+        name = "bulbmatch-catalog-production",
         ofType = "json",
         inDirectory = "catalog",
     ) ?: return ByteArray(0)
