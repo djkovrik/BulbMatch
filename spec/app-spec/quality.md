@@ -18,7 +18,7 @@ Every `REQ-NNN` owns exactly one `AC-NNN` in the flow files. Implementation test
 
 - table-driven value-object boundaries for voltage, watts, lumens, Kelvin, names, and ranges;
 - every ordered branch of `CompatibilityEngine`;
-- a property invariant that any unknown/missing base or missing/out-of-scope voltage never yields `Compatible`;
+- a property invariant that any unknown/missing base, missing/out-of-scope voltage, or confirmed non-50 Hz frequency never yields `Compatible`;
 - exact-base matching with no implicit substitutions;
 - fixture maximum origin enforcement and proof that source watts cannot populate it;
 - brightness and printed-equivalent separation;
@@ -81,6 +81,7 @@ Minimum cases:
 - 110–120 V marking;
 - 12 V and 24 V markings;
 - contradictory voltage tokens;
+- confirmed 50 Hz and confirmed 60 Hz;
 - source watts with no fixture limit;
 - separately entered fixture limit below source watts;
 - lumens present/absent;

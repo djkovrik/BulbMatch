@@ -12,6 +12,7 @@ sealed interface ClarificationReason {
 sealed interface ConflictReason {
     data object ContradictoryVoltage : ConflictReason
     data object OutsideElectricalScope : ConflictReason
+    data object OutsideFrequencyScope : ConflictReason
     data class FixturePowerConflict(
         val sourcePower: Watts,
         val fixtureMaximumPower: FixtureMaximumPower,
@@ -136,6 +137,13 @@ class CompatibilityEngine {
                 )
             }
             VoltageDisposition.InScope -> Unit
+        }
+
+        if (input.frequency != null && input.frequency != catalog.targetFrequency) {
+            return Assessment.PotentialConflict(
+                reasons = listOf(ConflictReason.OutsideFrequencyScope),
+                retainedConfirmedInput = input,
+            )
         }
 
         val fixtureMaximum = input.fixtureMaximumPower

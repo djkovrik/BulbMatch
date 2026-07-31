@@ -20,7 +20,7 @@ Each field shows label, value/input, origin chip (`Detected`, `Edited`, `Manual`
 
 ## Actions, outputs, navigation, and validation
 
-Base picker searches canonical codes and EN/RU aliases and supports Unknown base raw text. Voltage accepts a nominal value or inclusive range with unit. Fixture maximum is in a visibly separate section and has Manual origin only. Assess sends immutable confirmed input to FLOW-004. Back with edits asks to discard.
+Base picker searches canonical codes and EN/RU aliases and supports Unknown base raw text. Voltage accepts a nominal value or inclusive range with unit. Frequency accepts an optional single value in hertz; any confirmed value other than 50 Hz is a blocking scope conflict. Fixture maximum is in a visibly separate section and has Manual origin only. Assess sends immutable confirmed input to FLOW-004. Back with edits asks to discard.
 
 Validation never autocorrects a materially different value. OCR confidence may influence a subtle review cue but is never described as compatibility confidence.
 

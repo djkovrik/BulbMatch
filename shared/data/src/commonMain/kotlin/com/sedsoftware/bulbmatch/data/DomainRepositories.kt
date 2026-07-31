@@ -4,6 +4,7 @@ import com.sedsoftware.bulbmatch.data.catalog.BundledCatalogEntry
 import com.sedsoftware.bulbmatch.data.catalog.BundledCatalogLoader
 import com.sedsoftware.bulbmatch.data.catalog.CatalogLoadResult
 import com.sedsoftware.bulbmatch.data.catalog.CatalogValidationMode
+import com.sedsoftware.bulbmatch.data.catalog.ReviewedCatalogRuleset
 import com.sedsoftware.bulbmatch.data.catalog.normalizeSearchTerm
 import com.sedsoftware.bulbmatch.data.history.SavedAssessmentSnapshot
 import com.sedsoftware.bulbmatch.data.history.SavedMatchLookup
@@ -23,7 +24,6 @@ import com.sedsoftware.bulbmatch.domain.CatalogProvider
 import com.sedsoftware.bulbmatch.domain.CatalogSnapshot
 import com.sedsoftware.bulbmatch.domain.ConfirmedBase
 import com.sedsoftware.bulbmatch.domain.CreatedAtEpochMillis
-import com.sedsoftware.bulbmatch.domain.FrequencyMarking
 import com.sedsoftware.bulbmatch.domain.LocaleOverride
 import com.sedsoftware.bulbmatch.domain.RepositoryFailure
 import com.sedsoftware.bulbmatch.domain.RepositoryResult
@@ -33,8 +33,6 @@ import com.sedsoftware.bulbmatch.domain.SavedMatchRepository
 import com.sedsoftware.bulbmatch.domain.SavedMatchSummary
 import com.sedsoftware.bulbmatch.domain.SettingsRepository
 import com.sedsoftware.bulbmatch.domain.ThemeOverride
-import com.sedsoftware.bulbmatch.domain.VoltageFamilyRule
-import com.sedsoftware.bulbmatch.domain.VoltageMarking
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -155,9 +153,7 @@ class DefaultSettingsRepository(
 class DefaultCatalogProvider(
     utf8Catalog: ByteArray,
     mode: CatalogValidationMode,
-    voltageRules: List<VoltageFamilyRule>,
-    targetVoltage: VoltageMarking,
-    targetFrequency: FrequencyMarking,
+    ruleset: ReviewedCatalogRuleset,
     loader: BundledCatalogLoader = BundledCatalogLoader(),
 ) : CatalogProvider {
     private val entries: List<CatalogEntry>
@@ -183,10 +179,26 @@ class DefaultCatalogProvider(
             }
             is CatalogLoadResult.Valid -> {
                 val document = loaded.catalog
-                entries = document.entries.mapNotNull(BundledCatalogEntry::toDomain)
-                if (voltageRules.isEmpty()) {
+                val mappedEntries = document.entries.mapNotNull(BundledCatalogEntry::toDomain)
+                if (ruleset.voltageRules.isEmpty()) {
+                    entries = emptyList()
                     CatalogAvailability.Invalid("ReviewedVoltageRulesMissing")
+                } else if (document.rulesetVersion != ruleset.version) {
+                    entries = emptyList()
+                    CatalogAvailability.Invalid(
+                        reasonCode = "ReviewedRulesetVersionMismatch",
+                        catalogVersion = document.catalogVersion,
+                        rulesetVersion = document.rulesetVersion,
+                    )
+                } else if (document.reviewedRuleCodes != ruleset.reviewedRuleCodes) {
+                    entries = emptyList()
+                    CatalogAvailability.Invalid(
+                        reasonCode = "ReviewedRuleCodesMismatch",
+                        catalogVersion = document.catalogVersion,
+                        rulesetVersion = document.rulesetVersion,
+                    )
                 } else {
+                    entries = mappedEntries
                     CatalogAvailability.Available(
                         CatalogBundle(
                             snapshot = CatalogSnapshot(
@@ -195,9 +207,9 @@ class DefaultCatalogProvider(
                                 enabledBaseCodes = entries
                                     .filter(CatalogEntry::enabledForAssessment)
                                     .mapTo(linkedSetOf(), CatalogEntry::code),
-                                voltageRules = voltageRules,
-                                targetVoltage = targetVoltage,
-                                targetFrequency = targetFrequency,
+                                voltageRules = ruleset.voltageRules,
+                                targetVoltage = ruleset.targetVoltage,
+                                targetFrequency = ruleset.targetFrequency,
                             ),
                             entries = entries,
                             publishedAt = document.publishedAt,

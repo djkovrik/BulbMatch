@@ -71,7 +71,7 @@
     },
     {
       "id": "REQ-009",
-      "title": "Block a positive outcome for voltage conflicts or out-of-scope voltage",
+      "title": "Block a positive outcome for voltage conflicts, out-of-scope voltage, or confirmed non-50 Hz frequency",
       "priority": "must",
       "status": "approved",
       "acceptanceScenarioIds": ["AC-009"]

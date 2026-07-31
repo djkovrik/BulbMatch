@@ -10,8 +10,8 @@ private const val CONTENT_HASH_ALGORITHM = "SHA-256"
 private const val CONTENT_HASH_SCOPE =
     "kotlinx-serialization canonical UnsignedCatalogPayload v1"
 
-const val BUNDLED_DEVELOPMENT_CATALOG_RESOURCE_PATH =
-    "catalog/bulbmatch-catalog-development.json"
+const val BUNDLED_CATALOG_RESOURCE_PATH =
+    "catalog/bulbmatch-catalog-production.json"
 
 @Serializable
 data class BundledCatalogDocument(

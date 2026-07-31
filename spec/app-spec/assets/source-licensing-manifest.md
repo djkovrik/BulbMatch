@@ -1,7 +1,9 @@
 # BulbMatch source and licensing manifest
 
-Manifest version: `1`  
-Research/access date: `2026-07-28`  
+Manifest version: `2`
+
+Research/access date: `2026-07-31`
+
 Purpose: trace product rules, platform constraints, terminology, and design evidence. This file is not the production catalog itself.
 
 ## Intake rule
@@ -27,6 +29,12 @@ Final review owner: **Sergey V.** Automated checks and multiple AI models may ge
 | SRC-002 | [Commission Regulation (EU) 2019/2020](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32019R2020) and current consolidated text | Terminology for light sources, declared power, luminous flux, control gear, and mains/non-mains distinctions; source review context. | EU legal text is referenced, not bundled. Verify the current consolidated version at catalog release. Do not present regulation-derived calculations as fixture compatibility rules. |
 | SRC-003 | [Commission Delegated Regulation (EU) 2019/2015](https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX%3A32019R2015) and current consolidated text | Energy-label vocabulary and the separation of lumens, on-mode power, and efficiency. | Reference/citation only. Do not reproduce label artwork. Check EUR-Lex reuse terms before any excerpt beyond short attribution. |
 | SRC-004 | [European Commission light-sources overview](https://energy-efficient-products.ec.europa.eu/product-list/light-sources_en) | Consumer-facing confirmation that EPREL records include luminous flux, color temperature, and cap type; current regulation links. | European Commission reuse policy must be checked for copied material. BulbMatch uses original wording and no Commission images. |
+
+## Supplemental production-catalog evidence
+
+| ID | Source | Intended use | License/usage decision |
+|---|---|---|---|
+| SRC-005 | [LEDVANCE official lamp catalogue and product datasheets](https://www.ledvance.com/en-int/home-lighting/products/lamps) | Secondary product-level evidence that a specific currently documented lamp combines a stated cap designation with 220–240 V and operation including 50 Hz; negative evidence for specific 12 V G4/GU5.3 product families. | Product facts apply only to the cited model and access date. Do not generalize voltage, frequency, control-gear compatibility, power, dimensions, or application claims to every lamp with that cap. Reference URLs and short factual summaries only; do not ship product images, drawings, logos, tables, or marketing copy. |
 
 ## Platform and SDK sources
 

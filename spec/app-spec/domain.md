@@ -50,7 +50,7 @@ Value objects reject non-finite, zero, negative, reversed, or physically nonsens
 1. Every OCR-produced `FieldKey` must be present in either `reviewedFields` or `rejectedObservations` before assessment. (`REQ-005`, `AC-005`)
 2. `Compatible` requires a known catalog base and a confirmed voltage. (`REQ-006`, `AC-006`)
 3. `Unknown(rawText)` can never produce `Compatible`; the raw text is retained only as an explanation and optional saved value. (`REQ-007`, `AC-007`)
-4. A voltage that is unsupported, internally contradictory, or outside the target supply family can never produce `Compatible`. (`REQ-009`, `AC-009`)
+4. A voltage that is unsupported, internally contradictory, or outside the target supply family can never produce `Compatible`. A confirmed frequency other than exactly 50 Hz also can never produce `Compatible`; an absent frequency remains optional. (`REQ-009`, `AC-009`)
 5. `fixtureMaximumPower` can be created only from a dedicated manual input origin. It cannot be derived from `sourceRatedPower`, OCR, base defaults, or catalog typicals. (`REQ-010`, `AC-010`)
 6. A numeric brightness target is derived from confirmed lumens. Source wattage alone does not imply lumens unless a reviewed rule explicitly has every required technology input; MVP ships no such fallback rule by default. (`REQ-011`, `AC-011`)
 7. A printed “W equivalent” is stored separately from actual rated watts and is never used as a fixture limit.
@@ -72,8 +72,9 @@ Evaluation order:
 6. If voltage is missing, return `NeedClarification(MissingVoltage)`.
 7. If voltage is malformed or conflicts with another confirmed voltage token, return `PotentialConflict(ContradictoryVoltage)`.
 8. Classify the marking against the catalog's reviewed voltage family rules. Values clearly belonging to another family, including 100–127 V mains or explicit low-voltage values, return `PotentialConflict(OutsideElectricalScope)`. Ambiguous values return `NeedClarification`, not a best guess.
-9. If a manually confirmed fixture maximum is lower than a confirmed source rated power, add a blocking `FixturePowerConflict`; do not claim the existing installation is safe.
-10. Otherwise create `CompatibleProfile` with the exact base, required `220–240 V / 50 Hz` shopping scope, and only the confirmed optional targets described below.
+9. If frequency is confirmed and is not exactly the catalog target of 50 Hz, return `PotentialConflict(OutsideFrequencyScope)`. An absent frequency does not block assessment.
+10. If a manually confirmed fixture maximum is lower than a confirmed source rated power, add a blocking `FixturePowerConflict`; do not claim the existing installation is safe.
+11. Otherwise create `CompatibleProfile` with the exact base, required `220–240 V / 50 Hz` shopping scope, and only the confirmed optional targets described below.
 
 The positive UI phrase is “Compatible profile / Совместимый профиль”, followed immediately by “This does not certify the fixture / Это не подтверждает безопасность светильника.”
 

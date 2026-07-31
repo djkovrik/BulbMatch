@@ -83,6 +83,23 @@ class CompatibilityEngineTest {
     }
 
     @Test
+    fun confirmedFrequencyMustMatchTheCatalogTargetWhileMissingFrequencyRemainsOptional() {
+        val targetFrequency = requireNotNull(FrequencyMarking.from(50.0))
+        val outsideFrequency = requireNotNull(FrequencyMarking.from(60.0))
+
+        assertIs<Assessment.Compatible>(
+            engine.assess(compatibleInput().copy(frequency = targetFrequency), catalog),
+        )
+        assertIs<Assessment.Compatible>(
+            engine.assess(compatibleInput().copy(frequency = null), catalog),
+        )
+        val conflict = assertIs<Assessment.PotentialConflict>(
+            engine.assess(compatibleInput().copy(frequency = outsideFrequency), catalog),
+        )
+        assertEquals(listOf(ConflictReason.OutsideFrequencyScope), conflict.reasons)
+    }
+
+    @Test
     fun sourcePowerDoesNotBecomeFixtureLimit() {
         val result = assertIs<Assessment.Compatible>(
             engine.assess(

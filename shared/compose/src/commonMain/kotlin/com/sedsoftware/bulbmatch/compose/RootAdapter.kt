@@ -748,6 +748,7 @@ private fun ClarificationReason.clarificationText() = when (this) {
 private fun ConflictReason.conflictText() = when (this) {
     ConflictReason.ContradictoryVoltage -> tr("The confirmed voltage markings contradict each other.", "Подтверждённые значения напряжения противоречат друг другу.")
     ConflictReason.OutsideElectricalScope -> tr("The confirmed voltage is outside the supported 220–240 V supply family.", "Подтверждённое напряжение вне поддерживаемого диапазона 220–240 В.")
+    ConflictReason.OutsideFrequencyScope -> tr("The confirmed frequency is outside the supported 50 Hz scope.", "Подтверждённая частота не соответствует поддерживаемому значению 50 Гц.")
     is ConflictReason.FixturePowerConflict -> tr(
         "Source lamp power ${sourcePower.value.number()} W exceeds the manually entered fixture limit ${fixtureMaximumPower.watts.value.number()} W.",
         "Мощность старой лампы ${sourcePower.value.number()} Вт превышает введённый предел светильника ${fixtureMaximumPower.watts.value.number()} Вт.",

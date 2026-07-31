@@ -13,7 +13,8 @@ When a lamp fails, help me capture or enter what is actually printed on it, make
 ## Safety posture
 
 - A positive result means only that the confirmed markings form a supported replacement profile for the stated regional scope.
-- Base and voltage are mandatory for a positive result.
+- Base and voltage are mandatory for a positive result. Frequency is optional, but when
+  confirmed it must be exactly 50 Hz for the MVP electrical scope.
 - Every OCR-derived field is untrusted until the user confirms, edits, or rejects it.
 - A fixture's maximum wattage is a separate optional fact. It is never copied or inferred from the old lamp's wattage.
 - Missing, unknown, contradictory, unsupported, or out-of-scope facts produce `Need clarification` or `Potential conflict`, never `Compatible`.
@@ -27,7 +28,7 @@ When a lamp fails, help me capture or enter what is actually printed on it, make
 
 - Match home with camera, system photo picker, and manual entry.
 - On-device OCR used as a drafting aid.
-- Per-field review of base, voltage, source-lamp power, explicitly printed equivalent power, luminous flux, color temperature, shape, and dimmability.
+- Per-field review of base, voltage, frequency, source-lamp power, explicitly printed equivalent power, luminous flux, color temperature, shape, and dimmability.
 - Optional manually entered fixture maximum wattage.
 - Deterministic three-way assessment and a safety-first result card.
 - Explicit local save with optional name; local history, reopen, delete one, and clear all.

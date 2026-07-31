@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.gradle.api.tasks.testing.Test
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -14,6 +15,10 @@ kotlin {
         compileSdk = 36
         minSdk = 24
         withHostTestBuilder {}.configure {}
+        compilerOptions { jvmTarget = JvmTarget.JVM_17 }
+    }
+
+    jvm("catalogTools") {
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
     }
 
@@ -45,6 +50,10 @@ kotlin {
             implementation(libs.sqldelight.sqlite.driver)
         }
 
+        getByName("catalogToolsTest").dependencies {
+            implementation(kotlin("test"))
+        }
+
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
         }
@@ -61,23 +70,63 @@ sqldelight {
     }
 }
 
-tasks.register("validateProductionCatalog") {
+val catalogToolsCompilation = kotlin
+    .targets
+    .getByName("catalogTools")
+    .compilations
+    .getByName("main")
+
+val productionCatalogFile = layout.projectDirectory.file(
+    "src/commonMain/resources/catalog/bulbmatch-catalog-production.json",
+)
+val catalogReleasesRoot = rootProject.layout.projectDirectory.dir("spec/catalog/releases")
+val runtimeRulesSource = layout.projectDirectory.file(
+    "src/commonMain/kotlin/com/sedsoftware/bulbmatch/data/catalog/BundledCatalogRules.kt",
+)
+
+tasks.register<JavaExec>("updateProductionCatalogHash") {
+    group = "catalog"
+    description = "Updates only the canonical contentHash and validates the exact catalog."
+    dependsOn(catalogToolsCompilation.compileTaskProvider)
+    classpath(catalogToolsCompilation.output.allOutputs)
+    classpath(catalogToolsCompilation.runtimeDependencyFiles)
+    mainClass.set("com.sedsoftware.bulbmatch.data.catalog.CatalogReleaseToolKt")
+    args("update-hash", productionCatalogFile.asFile.absolutePath)
+    inputs.file(productionCatalogFile)
+    outputs.file(productionCatalogFile)
+    outputs.upToDateWhen { false }
+}
+
+tasks.register<JavaExec>("validateProductionCatalog") {
     group = "verification"
-    description = "Blocks release until the exact bundled catalog has human approval."
-    inputs.file(
-        layout.projectDirectory.file(
-            "src/commonMain/resources/catalog/bulbmatch-catalog-development.json",
-        ),
+    description = "Validates the approved catalog against its exact frozen release bundle."
+    dependsOn(catalogToolsCompilation.compileTaskProvider)
+    classpath(catalogToolsCompilation.output.allOutputs)
+    classpath(catalogToolsCompilation.runtimeDependencyFiles)
+    mainClass.set("com.sedsoftware.bulbmatch.data.catalog.CatalogReleaseToolKt")
+    args(
+        "validate-release",
+        productionCatalogFile.asFile.absolutePath,
+        catalogReleasesRoot.asFile.absolutePath,
+        runtimeRulesSource.asFile.absolutePath,
+        productionCatalogFile.asFile.parentFile.absolutePath,
     )
-    doLast {
-        val catalog = inputs.files.singleFile.readText(Charsets.UTF_8)
-        check(catalog.contains("\"requiredReviewer\": \"Sergey V.\""))
-        check(catalog.contains("\"state\": \"APPROVED\"")) {
-            "Production catalog is not approved by Sergey V."
-        }
-        check(catalog.contains("\"releaseEligible\": true"))
-        check(catalog.contains("\"decision\": \"APPROVED\""))
-        check(!catalog.contains("\"reviewState\": \"PENDING_HUMAN_SIGNOFF\""))
-        check(!catalog.contains("\"enabledForAssessment\": false"))
+    inputs.file(productionCatalogFile)
+    inputs.dir(catalogReleasesRoot)
+    inputs.file(runtimeRulesSource)
+}
+
+tasks.configureEach {
+    if (name == "testAndroidHostTest") {
+        dependsOn("catalogToolsTest")
+    }
+}
+
+tasks.withType<Test>().configureEach {
+    if (name == "catalogToolsTest") {
+        systemProperty(
+            "bulbmatch.projectRoot",
+            rootProject.layout.projectDirectory.asFile.absolutePath,
+        )
     }
 }

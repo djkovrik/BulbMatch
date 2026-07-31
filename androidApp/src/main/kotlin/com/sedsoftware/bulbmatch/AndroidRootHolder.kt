@@ -21,7 +21,8 @@ import com.sedsoftware.bulbmatch.app.RootComponent
 import com.sedsoftware.bulbmatch.data.DefaultCatalogProvider
 import com.sedsoftware.bulbmatch.data.DefaultSavedMatchRepository
 import com.sedsoftware.bulbmatch.data.DefaultSettingsRepository
-import com.sedsoftware.bulbmatch.data.catalog.BUNDLED_DEVELOPMENT_CATALOG_RESOURCE_PATH
+import com.sedsoftware.bulbmatch.data.catalog.BUNDLED_CATALOG_RESOURCE_PATH
+import com.sedsoftware.bulbmatch.data.catalog.BundledCatalogRules
 import com.sedsoftware.bulbmatch.data.catalog.CatalogValidationMode
 import com.sedsoftware.bulbmatch.data.db.AndroidDatabaseDriverFactory
 import com.sedsoftware.bulbmatch.data.db.BulbMatchDatabaseFactory
@@ -32,11 +33,9 @@ import com.sedsoftware.bulbmatch.data.history.SqlDelightSavedMatchStore
 import com.sedsoftware.bulbmatch.data.settings.BulbMatchSettingsStore
 import com.sedsoftware.bulbmatch.domain.BaseAliasIndex
 import com.sedsoftware.bulbmatch.domain.CompatibilityEngine
-import com.sedsoftware.bulbmatch.domain.FrequencyMarking
 import com.sedsoftware.bulbmatch.domain.MarkingParser
 import com.sedsoftware.bulbmatch.domain.ObservationGeometry
 import com.sedsoftware.bulbmatch.domain.RawTextObservation
-import com.sedsoftware.bulbmatch.domain.VoltageMarking
 import com.sedsoftware.bulbmatch.platform.AndroidCameraCaptureSession
 import com.sedsoftware.bulbmatch.platform.AndroidImageSourceService
 import com.sedsoftware.bulbmatch.platform.AndroidTextRecognitionService
@@ -90,15 +89,13 @@ internal class AndroidRootHolder private constructor(
                 ),
             )
             val catalogBytes = DefaultCatalogProvider::class.java.classLoader
-                ?.getResourceAsStream(BUNDLED_DEVELOPMENT_CATALOG_RESOURCE_PATH)
+                ?.getResourceAsStream(BUNDLED_CATALOG_RESOURCE_PATH)
                 ?.use { it.readBytes() }
                 ?: ByteArray(0)
             val catalogProvider = DefaultCatalogProvider(
                 utf8Catalog = catalogBytes,
                 mode = CatalogValidationMode.Production,
-                voltageRules = emptyList(),
-                targetVoltage = requireNotNull(VoltageMarking.range(220.0, 240.0)),
-                targetFrequency = requireNotNull(FrequencyMarking.from(50.0)),
+                ruleset = BundledCatalogRules.ruleset,
             )
             val bridge = AndroidPlatformBridge(
                 parser = MarkingParser(),

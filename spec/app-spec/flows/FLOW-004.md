@@ -37,7 +37,8 @@ Then it returns the same Compatible, Need clarification, or Potential conflict o
 
 ## AC-009
 
-Given confirmed voltage is contradictory, clearly low-voltage, or belongs to a 100–127 V supply family  
+Given confirmed voltage is contradictory, clearly low-voltage, or belongs to a 100–127 V supply family, or a confirmed frequency is not exactly 50 Hz
+
 When assessment runs for the 220–240 V / 50 Hz scope  
 Then the result is Potential conflict and no compatible shopping profile or result ad is shown.
 

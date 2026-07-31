@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2026.08.01",
+  "rulesetVersion": "2026.08.01",
+  "publishedAt": "2026-08-01",
+  "sourceManifestVersion": "2",
+  "contentHashAlgorithm": "SHA-256",
+  "contentHashScope": "kotlinx-serialization canonical UnsignedCatalogPayload v1",
+  "contentHash": "881d91ec1c8a3ebd494bac0dfa615e109c25e573548d325ec90d5ba98f32ce7b",
+  "release": {
+    "state": "APPROVED",
+    "releaseEligible": true,
+    "requiredReviewer": "Sergey V.",
+    "reviewedAt": "2026-07-31T07:21:40Z",
+    "decision": "APPROVED"
+  },
+  "reviewedRuleCodes": [
+    "CATALOG_KNOWN_BASE_ENABLED",
+    "BASE_NO_SUBSTITUTION",
+    "VOLTAGE_TARGET_220_240",
+    "VOLTAGE_OTHER_MAINS_100_127",
+    "VOLTAGE_LOW_1_48",
+    "VOLTAGE_UNCOVERED_AMBIGUOUS",
+    "VOLTAGE_CONTRADICTORY",
+    "FREQUENCY_CONFIRMED_TARGET_50",
+    "FIXTURE_MAXIMUM_MANUAL_ONLY",
+    "SOURCE_WATTS_NOT_FIXTURE_MAXIMUM",
+    "LUMENS_SEPARATE_FROM_EQUIVALENT_WATTS",
+    "FIXTURE_SAFETY_DISCLAIMER"
+  ],
+  "entries": [
+    {
+      "canonicalCode": "E27",
+      "commonNameEn": "E27 screw base",
+      "commonNameRu": "Резьбовой цоколь E27",
+      "aliasesEn": ["E27", "E 27", "E-27"],
+      "aliasesRu": ["E27", "Е27", "Е 27"],
+      "diagramId": "base_e27",
+      "distinguishingHintEn": "Threaded shell with one bottom contact; confirm the E27 marking",
+      "distinguishingHintRu": "Резьбовая гильза с одним нижним контактом; проверьте маркировку E27",
+      "sourceRecordIds": ["SRC-CAT-E27"],
+      "reviewState": "APPROVED",
+      "enabledForAssessment": true
+    },
+    {
+      "canonicalCode": "E14",
+      "commonNameEn": "E14 screw base",
+      "commonNameRu": "Резьбовой цоколь E14",
+      "aliasesEn": ["E14", "E 14", "E-14"],
+      "aliasesRu": ["E14", "Е14", "Е 14"],
+      "diagramId": "base_e14",
+      "distinguishingHintEn": "Narrow threaded shell with one bottom contact; confirm the E14 marking",
+      "distinguishingHintRu": "Узкая резьбовая гильза с одним нижним контактом; проверьте маркировку E14",
+      "sourceRecordIds": ["SRC-CAT-E14"],
+      "reviewState": "APPROVED",
+      "enabledForAssessment": true
+    },
+    {
+      "canonicalCode": "B22d",
+      "commonNameEn": "B22d bayonet base",
+      "commonNameRu": "Штифтовой цоколь B22d",
+      "aliasesEn": ["B22d", "B22D", "B 22 d"],
+      "aliasesRu": ["B22d", "B22D", "В22д"],
+      "diagramId": "base_b22d",
+      "distinguishingHintEn": "Two opposing side pins and two bottom contacts; confirm the B22d marking",
+      "distinguishingHintRu": "Два противоположных боковых штифта и два нижних контакта; проверьте маркировку B22d",
+      "sourceRecordIds": ["SRC-CAT-B22D"],
+      "reviewState": "APPROVED",
+      "enabledForAssessment": true
+    },
+    {
+      "canonicalCode": "GU10",
+      "commonNameEn": "GU10 twist-lock base",
+      "commonNameRu": "Поворотно-штырьковый цоколь GU10",
+      "aliasesEn": ["GU10", "GU 10", "GU-10"],
+      "aliasesRu": ["GU10", "ГУ10", "ГУ 10"],
+      "diagramId": "base_gu10",
+      "distinguishingHintEn": "Two short headed pins that lock by a push-and-turn motion; confirm the GU10 marking",
+      "distinguishingHintRu": "Два коротких штырька с утолщениями и поворотной фиксацией; проверьте маркировку GU10",
+      "sourceRecordIds": ["SRC-CAT-GU10"],
+      "reviewState": "APPROVED",
+      "enabledForAssessment": true
+    },
+    {
+      "canonicalCode": "G9",
+      "commonNameEn": "G9 loop-pin base",
+      "commonNameRu": "Петлевой штырьковый цоколь G9",
+      "aliasesEn": ["G9", "G 9", "G-9"],
+      "aliasesRu": ["G9", "Г9", "Г 9"],
+      "diagramId": "base_g9",
+      "distinguishingHintEn": "Two looped wire contacts; confirm the G9 marking",
+      "distinguishingHintRu": "Два петлевых проволочных контакта; проверьте маркировку G9",
+      "sourceRecordIds": ["SRC-CAT-G9"],
+      "reviewState": "APPROVED",
+      "enabledForAssessment": true
+    },
+    {
+      "canonicalCode": "R7s",
+      "commonNameEn": "R7s double-ended base",
+      "commonNameRu": "Двухцокольная линейная лампа R7s",
+      "aliasesEn": ["R7s", "R7S", "R 7 s"],
+      "aliasesRu": ["R7s", "R7S", "Р7с"],
+      "diagramId": "base_r7s",
+      "distinguishingHintEn": "A contact at each end of a linear lamp; confirm the R7s marking and check lamp length separately",
+      "distinguishingHintRu": "По одному контакту на каждом конце линейной лампы; проверьте маркировку R7s и отдельно длину лампы",
+      "sourceRecordIds": ["SRC-CAT-R7S"],
+      "reviewState": "APPROVED",
+      "enabledForAssessment": true
+    }
+  ]
+}

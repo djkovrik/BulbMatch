@@ -1,0 +1,23 @@
+---
+entryId: SRC-CAT-GU10
+canonicalBaseCode: GU10
+facts:
+  - IEC 60061 system designation GU10
+  - original BulbMatch identification wording for two short headed twist-lock pins
+primarySourceId: SRC-001
+primarySourceUrl: https://webstore.iec.ch/en/iec_catalog/product/preview/?id=L3B1Yi9wZGYvcHJldmlldy9pbmZvX2llYzYwMDYxe2VkMS4wfWIucGRm
+primarySourceLocator: IEC 60061 preview index; GU10 entry 7006-121-1
+sourceAuthority: IEC
+sourcePublicationOrVersion: IEC 60061:2025 DB; preview includes IEC 60061-3 AMD60:2024 index
+secondaryVerificationUrl: https://www.ledvance.com/en-int/home-lighting/products/lamps/led-lamps/consumer-led-reflector-lamps/led-reflector-lamps-par16-with-retrofit-pin-base-c6847?productId=55529
+secondaryVerificationFact: Specific LEDVANCE GU10 model is documented as 220–240 V mains
+accessedAt: 2026-07-31
+transformation: Canonical identifier retained; EN/RU consumer wording and Compose diagram are original; no IEC dimensions, sheets, gauges, or manufacturer copy are shipped.
+redistributionDecision: IDENTIFIER_AND_ORIGINAL_PROSE_ONLY
+reviewer: Sergey V.
+reviewedAt: 2026-07-31T07:21:40Z
+reviewDecision: APPROVED
+aiAssistanceSummary: Advisory cross-check of the official IEC index and one current product-level market example; no approval delegated to AI.
+catalogVersion: 2026.08.01
+contentHash: 881d91ec1c8a3ebd494bac0dfa615e109c25e573548d325ec90d5ba98f32ce7b
+---
