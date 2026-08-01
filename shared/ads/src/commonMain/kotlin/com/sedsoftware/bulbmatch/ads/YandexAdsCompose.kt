@@ -30,7 +30,6 @@ import com.yandex.mobile.ads.kmp.common.AdRequest
  * configurations do not touch the network SDK.
  */
 @Composable
-@Suppress("CyclomaticComplexMethod")
 fun BulbMatchAdsInitializer(
     configuration: AdConfiguration,
 ) {
@@ -49,6 +48,7 @@ fun BulbMatchAdsInitializer(
  * from layout and is never retried while this composition remains alive.
  */
 @Composable
+@Suppress("CyclomaticComplexMethod")
 fun BulbMatchBanner(
     configuration: AdConfiguration,
     placement: AdPlacement,
