@@ -30,6 +30,7 @@ import com.yandex.mobile.ads.kmp.common.AdRequest
  * configurations do not touch the network SDK.
  */
 @Composable
+@Suppress("CyclomaticComplexMethod")
 fun BulbMatchAdsInitializer(
     configuration: AdConfiguration,
 ) {
