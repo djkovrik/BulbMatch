@@ -1,7 +1,7 @@
 [![GitHub Actions](https://github.com/djkovrik/BulbMatch/workflows/AnalysisAndTest/badge.svg)](https://github.com/djkovrik/BulbMatch/actions/workflows/AnalysisAndTest.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/djkovrik/ee9bfb6d698aba0842a299dc0b55238c/raw/bulbmatch-coverage-badge.json)](https://github.com/djkovrik/BulbMatch/actions/workflows/CodeCoverageBadge.yml)
 [![Last Commit](https://img.shields.io/github/last-commit/djkovrik/BulbMatch/master.svg)](https://github.com/djkovrik/BulbMatch/commits/master)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/license-GPLv3-green.svg?style=flat)
 
 # BulbMatch
 
