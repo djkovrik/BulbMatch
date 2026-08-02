@@ -138,7 +138,6 @@ class DefaultMatchComponentTest {
         )
         assertFalse(form.model.value.canAssess)
 
-        form.onKnownBaseSelected(testBaseCode())
         form.onObservationConfirmed(FieldKey.Base)
         form.onObservationConfirmed(FieldKey.Voltage)
         form.onObservationRejected(FieldKey.LuminousFlux)
@@ -176,6 +175,19 @@ class DefaultMatchComponentTest {
         val failed = assertIs<RecognitionState.Failed>(review.model.value.recognitionState)
         assertEquals(RecognitionFailure.UnsupportedImage, failed.reason)
         assertEquals(1, recognition.invocationCount)
+    }
+
+    @Test
+    fun manualBaseTextUsesTheCatalogSelectionPath() = runTest(fixture.dispatcher) {
+        val component = createComponent()
+        activeHome(component).onManualEntryRequested()
+        val form = assertIs<MatchComponent.Child.Form>(component.stack.value.active.instance).component
+
+        form.onFieldTextChanged(FieldKey.Base, "E27")
+        fixture.dispatcher.scheduler.runCurrent()
+
+        assertEquals(testBaseCode(), form.model.value.confirmedInput.knownBaseOrNull())
+        assertNull(form.model.value.fields.getValue(FieldKey.Base).validationErrorCode)
     }
 
     @Test

@@ -8,6 +8,8 @@ data class RawTextObservation(
 data class BaseAliasIndex(
     val aliases: Map<String, BaseCode>,
 ) {
+    fun findExact(text: String): BaseCode? = aliases[normalizeCatalogToken(text)]
+
     fun findIn(text: String): BaseCode? {
         val tokens = text.uppercase()
             .split(Regex("[^A-ZА-ЯЁ0-9.]+"))

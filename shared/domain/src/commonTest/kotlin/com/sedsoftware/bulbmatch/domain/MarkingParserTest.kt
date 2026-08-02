@@ -12,6 +12,20 @@ class MarkingParserTest {
     private val aliases = BaseAliasIndex(mapOf("E27" to e27))
 
     @Test
+    fun exactAliasLookupAcceptsCataloguedCyrillicSpellingOnly() {
+        val exactAliases = BaseAliasIndex(
+            mapOf(
+                "E27" to e27,
+                "Е27" to e27,
+            ),
+        )
+
+        assertEquals(e27, exactAliases.findExact(" Е27 "))
+        assertEquals(e27, exactAliases.findExact("E27"))
+        assertNull(exactAliases.findExact("Е27 extra"))
+    }
+
+    @Test
     fun parsesLocaleIndependentElectricalMarking() {
         val result = parser.parse(
             lines = listOf(RawTextObservation("E27 220–240 V 50 Hz 8,5 W 806 lm 2700 K")),

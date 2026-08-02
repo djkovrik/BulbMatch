@@ -7,6 +7,7 @@ import com.sedsoftware.bulbmatch.domain.CatalogBundle
 import com.sedsoftware.bulbmatch.domain.CatalogEntry
 import com.sedsoftware.bulbmatch.domain.CatalogSnapshot
 import com.sedsoftware.bulbmatch.domain.CompatibilityEngine
+import com.sedsoftware.bulbmatch.domain.ConfirmedBase
 import com.sedsoftware.bulbmatch.domain.FieldKey
 import com.sedsoftware.bulbmatch.domain.FrequencyMarking
 import com.sedsoftware.bulbmatch.domain.ObservedField
@@ -65,6 +66,41 @@ class MatchStoreTest {
     }
 
     @Test
+    fun confirmingCyrillicOcrBaseResolvesTheExactCatalogAlias() = runTest(dispatcher) {
+        val store = createStore()
+        store.accept(
+            MatchStore.Intent.StartOcrReview(
+                listOf(observation(FieldKey.Base, "Е14")),
+            ),
+        )
+
+        store.accept(MatchStore.Intent.ObservationConfirmed(FieldKey.Base))
+
+        assertEquals(
+            ConfirmedBase.Known(requireNotNull(BaseCode.from("E14"))),
+            store.state.input.base,
+        )
+        assertTrue(FieldKey.Base in store.state.input.reviewedFields)
+        assertFalse(FieldKey.Base in store.state.validationErrors)
+        store.dispose()
+    }
+
+    @Test
+    fun manualCyrillicBaseTextResolvesWithoutLocalOperationError() = runTest(dispatcher) {
+        val store = createStore()
+        store.accept(MatchStore.Intent.StartManual)
+
+        store.accept(MatchStore.Intent.FieldTextChanged(FieldKey.Base, "Е14"))
+
+        assertEquals(
+            ConfirmedBase.Known(requireNotNull(BaseCode.from("E14"))),
+            store.state.input.base,
+        )
+        assertFalse(FieldKey.Base in store.state.validationErrors)
+        store.dispose()
+    }
+
+    @Test
     fun ocrCanNeverConfirmFixtureMaximum() = runTest(dispatcher) {
         val store = createStore()
         store.accept(
@@ -110,11 +146,12 @@ class MatchStoreTest {
 
     private fun catalogProvider(): InMemoryCatalogProvider {
         val e27 = requireNotNull(BaseCode.from("E27"))
+        val e14 = requireNotNull(BaseCode.from("E14"))
         val catalog = CatalogBundle(
             snapshot = CatalogSnapshot(
                 catalogVersion = "test-catalog",
                 rulesetVersion = "test-rules",
-                enabledBaseCodes = setOf(e27),
+                enabledBaseCodes = setOf(e27, e14),
                 voltageRules = listOf(
                     VoltageFamilyRule(200.0, 250.0, VoltageDisposition.InScope, "target"),
                     VoltageFamilyRule(100.0, 127.0, VoltageDisposition.OutsideScope, "other"),
@@ -128,10 +165,21 @@ class MatchStoreTest {
                     commonNameEn = "Edison screw",
                     commonNameRu = "Резьбовой цоколь",
                     aliasesEn = emptyList(),
-                    aliasesRu = emptyList(),
+                    aliasesRu = listOf("Е27"),
                     diagramId = "base_e27",
                     distinguishingHintEn = "27 mm screw",
                     distinguishingHintRu = "резьба 27 мм",
+                    enabledForAssessment = true,
+                ),
+                CatalogEntry(
+                    code = e14,
+                    commonNameEn = "Small Edison screw",
+                    commonNameRu = "Малый резьбовой цоколь",
+                    aliasesEn = emptyList(),
+                    aliasesRu = listOf("Е14"),
+                    diagramId = "base_e14",
+                    distinguishingHintEn = "14 mm screw",
+                    distinguishingHintRu = "резьба 14 мм",
                     enabledForAssessment = true,
                 ),
             ),
