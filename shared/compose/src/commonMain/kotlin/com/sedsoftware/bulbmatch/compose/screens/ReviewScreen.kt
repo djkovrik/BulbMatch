@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -88,7 +89,13 @@ fun DataReviewScreen(
         modifier = modifier,
         onBack = onBack,
     ) { insets ->
-        Column(Modifier.fillMaxSize().padding(insets)) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(insets)
+                .consumeWindowInsets(insets)
+                .imePadding(),
+        ) {
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(LocalAppSpacing.current.md),
@@ -170,7 +177,7 @@ fun DataReviewScreen(
                     text = tr("Assess replacement profile", "Оценить профиль замены"),
                     onClick = onAssess,
                     enabled = model.canAssess,
-                    modifier = Modifier.padding(LocalAppSpacing.current.md).imePadding(),
+                    modifier = Modifier.padding(LocalAppSpacing.current.md),
                     leadingIcon = { AppIcon(AppIcons.CheckCircle, contentDescription = null) },
                 )
             }
