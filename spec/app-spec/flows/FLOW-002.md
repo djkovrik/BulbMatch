@@ -1,6 +1,6 @@
 # FLOW-002 — Capture or import and recognize markings
 
-Linked requirements: REQ-002, REQ-003, REQ-005, REQ-015, REQ-018, REQ-024  
+Linked requirements: REQ-002, REQ-003, REQ-005, REQ-015, REQ-018, REQ-024, REQ-027
 Linked screens: SCREEN-001, SCREEN-002, SCREEN-003, SCREEN-004
 
 ## Goal
@@ -66,3 +66,9 @@ Then none of those ephemeral artifacts is persisted or restored, while explicitl
 Given permission denial, unavailable camera, unreadable blur, no text, or OCR failure  
 When the failure is presented  
 Then the user receives a specific explanation and at least one valid recovery path, with manual entry always available.
+
+## AC-027
+
+Given a legible supported lamp label contains Latin, Cyrillic, or mixed electrical markings
+When bundled on-device recognition processes it without network access
+Then BulbMatch produces only editable untrusted field candidates, preserves the original recognized text for review, and requires the same confirm, edit, or reject decision as every other OCR candidate.

@@ -84,13 +84,17 @@ Within the same live process, navigation back from review to image preview may r
 
 ## OCR
 
-Use a common `TextRecognitionService` contract with platform implementations based on ML Kit Text Recognition v2.
+Use the common `TextRecognitionService` contract with platform implementations based on PaddleOCR detection and recognition models executed locally by ONNX Runtime. Android requires API 26 or newer; iOS keeps its 16.2 deployment target.
 
-- Android bundles the current supported on-device model artifact so recognition does not require a first-run download.
-- iOS statically links the selected script SDK.
-- The implementation must verify current ML Kit target requirements and versions at build time rather than pinning this AppSpec's research snapshot.
-- The supported recognition target is electrical/numeric and Latin-script label content commonly printed on lamps. Russian UI support does not imply reliable Cyrillic OCR. Unsupported or missed Cyrillic text must remain editable through manual input.
-- Parsing recognizes units and separators conservatively, keeps competing candidates visible, and never invents a field from layout alone.
+- Bundle the exact detector, recognizer, recognition dictionary/configuration, and runtime support required for first-run offline recognition. The app must not download or update OCR models.
+- Qualify `PP-OCRv5_mobile_det` with `eslav_PP-OCRv5_mobile_rec` and `cyrillic_PP-OCRv5_mobile_rec` against the versioned BulbMatch OCR corpus. Select the smaller model only when it passes the same safety, recall, latency, memory, and packaging gates.
+- Record model IDs, source URLs, formats, versions, SHA-256 values, licenses, supported scripts, runtime versions, conversion provenance, and platform bundle paths in `ocr-model-manifest.json`.
+- Use the same selected detector, recognizer weights, and dictionary/configuration on Android and iOS. A derived ORT-format asset is allowed only when it is traced to the canonical ONNX hash and passes the same corpus.
+- Load Android models from packaged assets in memory and iOS models directly from the read-only application bundle. Do not copy models, image crops, recognized text, or inference output into cache, temporary, Documents, logs, saved state, or crash metadata.
+- The supported recognition target is electrical/numeric and lamp-base label content in Latin, Cyrillic, or mixed script. Arbitrary Russian prose remains outside the product promise.
+- Preserve every recognizer string as immutable in-memory raw text. Apply conservative normalization only to the parse view of exact numeric-unit tokens such as `В`, `Вт`, `Гц`, `лм`, and `К`.
+- Match Cyrillic base markings directly through reviewed `aliasesRu`. Do not globally transliterate confusable letters, auto-repair damaged mixed tokens such as `GУ1О`, or add OCR mistakes to the production catalog.
+- Parsing keeps competing candidates visible and never invents a field from layout alone.
 - OCR yields observations only; confirmation and assessment happen in common domain logic.
 
 ## Yandex Mobile Ads

@@ -152,7 +152,7 @@ internal class AndroidPlatformBridge(
         recognizer?.close()
         this.activity = activity
         imageSource = AndroidImageSourceService(activity)
-        recognizer = AndroidTextRecognitionService()
+        recognizer = AndroidTextRecognitionService(activity.applicationContext)
     }
 
     fun detach(activity: ComponentActivity) {

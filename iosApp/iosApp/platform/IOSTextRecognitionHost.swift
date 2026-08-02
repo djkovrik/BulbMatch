@@ -3,10 +3,39 @@
 #else
 import Foundation
 import ImageIO
-import MLKitTextRecognition
-import MLKitVision
 import UIKit
 import compose
+
+private actor IOSPaddleOCRController {
+    private var sessionManager: ORTSessionManager?
+    private var engine: OCREngine?
+    private var closed = false
+
+    func recognize(_ image: CGImage) async throws -> OCRRunResult {
+        guard !closed else {
+            throw CancellationError()
+        }
+        if let engine {
+            return try await engine.run(image)
+        }
+
+        let manager = ORTSessionManager()
+        try await manager.loadModels(executionProvider: .cpu)
+        guard !closed else {
+            throw CancellationError()
+        }
+        let loadedEngine = try OCREngine(sessionManager: manager)
+        sessionManager = manager
+        engine = loadedEngine
+        return try await loadedEngine.run(image)
+    }
+
+    func close() {
+        closed = true
+        engine = nil
+        sessionManager = nil
+    }
+}
 
 final class IOSTextRecognitionHost: PlatformIosTextRecognitionHost {
     private let bridgeFactory: IosBridgeFactory
@@ -15,15 +44,13 @@ final class IOSTextRecognitionHost: PlatformIosTextRecognitionHost {
         qos: .userInitiated
     )
     private let lock = NSLock()
-    private var recognizer: TextRecognizer?
+    private var controller: IOSPaddleOCRController?
     private var generation: UInt64 = 0
     private var closed = false
 
     init(bridgeFactory: IosBridgeFactory) {
         self.bridgeFactory = bridgeFactory
-        self.recognizer = TextRecognizer.textRecognizer(
-            options: TextRecognizerOptions()
-        )
+        self.controller = IOSPaddleOCRController()
     }
 
     func recognize(
@@ -33,10 +60,10 @@ final class IOSTextRecognitionHost: PlatformIosTextRecognitionHost {
         let data = Self.data(from: encodedImage)
         lock.lock()
         let currentGeneration = generation
-        let activeRecognizer = closed ? nil : recognizer
+        let activeController = closed ? nil : controller
         lock.unlock()
 
-        guard !data.isEmpty, let activeRecognizer else {
+        guard !data.isEmpty, let activeController else {
             completion(
                 bridgeFactory.recognitionFailure(code: .unsupportedImage)
             )
@@ -46,8 +73,7 @@ final class IOSTextRecognitionHost: PlatformIosTextRecognitionHost {
         recognitionQueue.async { [weak self] in
             autoreleasepool {
                 guard let self else { return }
-                guard let image = Self.downsampledImage(from: data),
-                      let cgImage = image.cgImage
+                guard let cgImage = Self.downsampledImage(from: data)
                 else {
                     self.completeIfActive(generation: currentGeneration) {
                         completion(
@@ -59,37 +85,32 @@ final class IOSTextRecognitionHost: PlatformIosTextRecognitionHost {
                     return
                 }
 
-                let visionImage = VisionImage(image: image)
-                visionImage.orientation = image.imageOrientation
-                do {
-                    let recognized = try activeRecognizer.results(
-                        in: visionImage
-                    )
-                    let width = CGFloat(cgImage.width)
-                    let height = CGFloat(cgImage.height)
-                    let observations = recognized.blocks.flatMap(\.lines)
-                        .compactMap { line in
+                Task {
+                    do {
+                        let recognized = try await activeController.recognize(cgImage)
+                        let observations = recognized.results.compactMap { result in
                             Self.observation(
-                                line: line,
-                                width: width,
-                                height: height,
+                                result: result,
+                                width: CGFloat(cgImage.width),
+                                height: CGFloat(cgImage.height),
                                 factory: self.bridgeFactory
                             )
                         }
-                    self.completeIfActive(generation: currentGeneration) {
-                        completion(
-                            self.bridgeFactory.recognitionSuccess(
-                                observations: observations
+                        self.completeIfActive(generation: currentGeneration) {
+                            completion(
+                                self.bridgeFactory.recognitionSuccess(
+                                    observations: observations
+                                )
                             )
-                        )
-                    }
-                } catch {
-                    self.completeIfActive(generation: currentGeneration) {
-                        completion(
-                            self.bridgeFactory.recognitionFailure(
-                                code: .recognitionFailed
+                        }
+                    } catch {
+                        self.completeIfActive(generation: currentGeneration) {
+                            completion(
+                                self.bridgeFactory.recognitionFailure(
+                                    code: .recognitionFailed
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }
@@ -104,8 +125,12 @@ final class IOSTextRecognitionHost: PlatformIosTextRecognitionHost {
         }
         closed = true
         generation &+= 1
-        recognizer = nil
+        let activeController = controller
+        controller = nil
         lock.unlock()
+        if let activeController {
+            Task { await activeController.close() }
+        }
     }
 
     private func completeIfActive(
@@ -132,7 +157,7 @@ final class IOSTextRecognitionHost: PlatformIosTextRecognitionHost {
         return data
     }
 
-    private static func downsampledImage(from data: Data) -> UIImage? {
+    private static func downsampledImage(from data: Data) -> CGImage? {
         guard let source = CGImageSourceCreateWithData(
             data as CFData,
             nil
@@ -145,31 +170,33 @@ final class IOSTextRecognitionHost: PlatformIosTextRecognitionHost {
             kCGImageSourceThumbnailMaxPixelSize: 2048,
             kCGImageSourceShouldCacheImmediately: true,
         ]
-        guard let image = CGImageSourceCreateThumbnailAtIndex(
+        return CGImageSourceCreateThumbnailAtIndex(
             source,
             0,
             options as CFDictionary
-        ) else {
-            return nil
-        }
-        return UIImage(cgImage: image, scale: 1, orientation: .up)
+        )
     }
 
     private static func observation(
-        line: TextLine,
+        result: OCRResult,
         width: CGFloat,
         height: CGFloat,
         factory: IosBridgeFactory
     ) -> PlatformTextObservation? {
-        let text = line.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let text = result.text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, width > 0, height > 0 else {
             return nil
         }
-        let frame = line.frame
-        let left = normalized(frame.minX / width)
-        let top = normalized(frame.minY / height)
-        let right = normalized(frame.maxX / width)
-        let bottom = normalized(frame.maxY / height)
+        let xs = result.polygon.compactMap { $0.count >= 2 ? CGFloat($0[0]) : nil }
+        let ys = result.polygon.compactMap { $0.count >= 2 ? CGFloat($0[1]) : nil }
+        guard let minX = xs.min(), let maxX = xs.max(),
+              let minY = ys.min(), let maxY = ys.max() else {
+            return nil
+        }
+        let left = normalized(minX / width)
+        let top = normalized(minY / height)
+        let right = normalized(maxX / width)
+        let bottom = normalized(maxY / height)
         guard left <= right, top <= bottom else {
             return nil
         }

@@ -116,8 +116,8 @@ internal class IosEphemeralImageHandle(
 }
 
 /**
- * Swift host implementation owns GoogleMLKit/TextRecognition 8.0.0 and invokes
- * completion after bundled, on-device recognition. It must not log or retain the
+ * Swift host implementation owns the bundled PaddleOCR/ONNX Runtime pipeline and invokes
+ * completion after on-device recognition. It must not log or retain the
  * supplied bytes or recognized text.
  */
 interface IosTextRecognitionHost {

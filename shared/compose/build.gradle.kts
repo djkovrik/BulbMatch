@@ -14,7 +14,7 @@ kotlin {
     android {
         namespace = "com.sedsoftware.bulbmatch.compose"
         compileSdk = 36
-        minSdk = 24
+        minSdk = libs.versions.android.minSdk.get().toInt()
         androidResources.enable = true
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
     }

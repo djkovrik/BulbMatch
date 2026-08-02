@@ -5,6 +5,7 @@
 - **Source lamp** — the old lamp whose printed markings the user is recording.
 - **Fixture fact** — a value read from the fixture itself; in MVP only optional maximum wattage is modeled.
 - **Observed field** — an OCR candidate plus origin and confidence. It is never trusted domain data.
+- **OCR parse view** — a transient normalization of exact numeric-unit tokens used only to derive an untrusted candidate; it never replaces the original recognized text.
 - **Confirmed field** — a user-confirmed, edited, manually entered, or explicitly absent value.
 - **Base code** — a canonical catalog identifier such as `E27` or `GU10`.
 - **Raw base text** — user-confirmed text that cannot be mapped to a supported base.
@@ -57,6 +58,7 @@ Value objects reject non-finite, zero, negative, reversed, or physically nonsens
 8. Ads, network state, locale, theme, and crash reporting never change an assessment. (`REQ-025`, `AC-025`)
 9. Saved assessments are immutable historical snapshots. Catalog updates shipped in later app versions do not silently recalculate them.
 10. Cancellation is never mapped to an OCR, database, or unknown domain error.
+11. OCR normalization preserves the original recognized text, does not transliterate lamp-base tokens, and cannot create a base or voltage candidate without a complete supported token. (`REQ-027`, `AC-027`)
 
 ## Assessment algorithm
 

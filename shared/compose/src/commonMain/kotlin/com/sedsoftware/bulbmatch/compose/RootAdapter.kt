@@ -131,13 +131,13 @@ fun BulbMatchRoot(
                             "Catalog candidates and rules remain disabled until the exact " +
                                 "version is approved by Sergey V. Source review covers IEC " +
                                 "lamp-cap identifiers, EU light-source terminology, platform " +
-                                "privacy documentation, bundled ML Kit OCR, Yandex Mobile Ads, " +
+                                "privacy documentation, bundled PaddleOCR models, Yandex Mobile Ads, " +
                                 "and Firebase Crashlytics. No standards text or third-party " +
                                 "diagrams are packaged.",
                             "Кандидаты каталога и правила отключены, пока точную версию не " +
                                 "утвердит Sergey V. Проверяемые источники охватывают обозначения " +
                                 "цоколей IEC, терминологию ЕС для источников света, документацию " +
-                                "платформ о конфиденциальности, встроенное OCR ML Kit, Yandex " +
+                                "платформ о конфиденциальности, встроенные модели PaddleOCR, Yandex " +
                                 "Mobile Ads и Firebase Crashlytics. Тексты стандартов и сторонние " +
                                 "схемы в приложение не включены.",
                         ),

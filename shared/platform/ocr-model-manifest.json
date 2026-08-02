@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "pipeline": "PaddleOCR",
+  "upstream": {
+    "repository": "https://github.com/PaddlePaddle/PaddleOCR",
+    "commit": "2661c7c0ef5c613e8f93c6e93b2e052399f0f854",
+    "license": "Apache-2.0"
+  },
+  "runtime": {
+    "android": "com.microsoft.onnxruntime:onnxruntime-android:1.21.1",
+    "ios": "onnxruntime-objc:1.24.3"
+  },
+  "models": [
+    {
+      "role": "detection",
+      "name": "PP-OCRv5_mobile_det",
+      "bundledPath": "src/androidMain/assets/Models/det/inference.onnx",
+      "sourceUrl": "https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/PP-OCRv5_mobile_det_onnx_infer.tar",
+      "sourceArchiveSha256": "781056046c9ed77a15c94681605db6a0f62317c2e9cce6931c71da2478d4bc30",
+      "sha256": "a431985659dc921974177a95adcfbb90fd9e51989a5e04d70d0b75f597b6e61d",
+      "bytes": 4826518,
+      "license": "Apache-2.0"
+    },
+    {
+      "role": "recognition",
+      "name": "eslav_PP-OCRv5_mobile_rec",
+      "bundledPath": "src/androidMain/assets/Models/rec/inference.onnx",
+      "sourceUrl": "https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/eslav_PP-OCRv5_mobile_rec_onnx_infer.tar",
+      "sourceArchiveSha256": "49e3d48598e6aed05eaa7c9b0a759ab4261d9021dff2d71849d4f1c95b79d30b",
+      "sha256": "b3018ef2b09a0250b6e0c8e871c927098363e5fd4df890cc68e8358eb0aaf1bd",
+      "bytes": 7887627,
+      "license": "Apache-2.0",
+      "scripts": ["Latin", "Cyrillic"],
+      "languages": ["ru", "be", "uk", "en"],
+      "digits": true
+    }
+  ],
+  "configs": [
+    {
+      "bundledPath": "src/androidMain/assets/Models/det/inference.yml",
+      "sha256": "98069072e1b6b37d727fd9d9f11725faa46d6ea0de012f2ed26caea011c37699",
+      "bytes": 903
+    },
+    {
+      "bundledPath": "src/androidMain/assets/Models/rec/inference.yml",
+      "sha256": "025039bac23eb4a308efcefa4d58eab3af440767815c6ba6938468bf6353ee5a",
+      "bytes": 4538
+    }
+  ]
+}

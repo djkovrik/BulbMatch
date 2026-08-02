@@ -17,7 +17,9 @@
 - Xcode: `26.1.1` (`17B100`), iOS SDK: `26.1`.
 - CocoaPods: `1.16.2`.
 - Yandex Mobile Ads CMP/native: `8.1.0`.
-- Google ML Kit pod: `GoogleMLKit/TextRecognition 8.0.0`.
+- PaddleOCR: `PP-OCRv5_mobile_det` + `eslav_PP-OCRv5_mobile_rec` through
+  `onnxruntime-objc 1.24.3`; model hashes are pinned in
+  `shared/platform/ocr-model-manifest.json`.
 - Firebase Crashlytics: `12.11.0`, зафиксирован как совместимый с Xcode
   `26.1.1`.
 - Generic iOS Device Debug build проходит без signing.
@@ -35,8 +37,8 @@
 2. Production catalog не имеет human approval от `Sergey V.`.
 3. Отсутствует локальный `iosApp/iosApp/GoogleService-Info.plist`.
 4. Не настроены Apple Team, provisioning и device signing.
-5. Не пройдены physical-device acceptance, Yandex integration check и
-   controlled Crashlytics verification.
+5. Не пройдены physical-device OCR performance/accuracy acceptance, Yandex
+   integration check и controlled Crashlytics verification.
 6. Не создан Archive, поэтому не записан размер IPA.
 
 ## 1. Подключить Firebase Apple app
@@ -124,12 +126,16 @@ iPhone без signing/provisioning ошибок.
 - [ ] После любой camera/OCR ошибки остаётся доступен ручной ввод.
 - [ ] OCR-кандидаты нельзя использовать для assessment без явного
   confirm/edit/reject.
+- [ ] Прогнать `spec/ocr-fixtures/v1` для Latin/Cyrillic/mixed, rotated,
+  low-contrast, small, curved, blurred и no-text случаев.
+- [ ] Зафиксировать field recall, false base/voltage count, p95 и peak memory;
+  пороги берутся из `spec/app-spec/quality.md`.
 
 ### Offline и ephemeral data
 
 - [ ] После clean install включить Airplane Mode.
 - [ ] В Airplane Mode проверить camera и picker.
-- [ ] В Airplane Mode проверить bundled Latin OCR без загрузки модели.
+- [ ] В Airplane Mode проверить bundled Latin и Cyrillic OCR без загрузки модели.
 - [ ] В Airplane Mode проверить catalog/reference и assessment.
 - [ ] В Airplane Mode проверить save/history.
 - [ ] После finish изображение и OCR-данные больше не доступны.
@@ -333,7 +339,8 @@ Xcode:
 iOS SDK:
 CocoaPods:
 Yandex CMP/native:
-Google ML Kit:
+PaddleOCR models / SHA-256:
+ONNX Runtime:
 Firebase Crashlytics:
 
 Устройство:

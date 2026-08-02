@@ -142,7 +142,7 @@ a hard check to make a test or release gate pass.
 - `shared/compose/` — shared Compose UI, localization, theme, previews, root
   adapter, and Android/iOS composition code.
 - `androidApp/` — Android application host and composition root. The app ID is
-  `com.sedsoftware.bulbmatch`; min SDK 24, target/compile SDK 36.
+  `com.sedsoftware.bulbmatch`; min SDK 26, target/compile SDK 36.
 - `iosApp/` — Swift host, native camera/picker/OCR/Crashlytics implementations,
   Xcode project/workspace, and CocoaPods integration. The bundle ID is
   `com.sedsoftware.bulbmatch.iosApp`; deployment target is iOS 16.2. Open and

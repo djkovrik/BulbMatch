@@ -4,10 +4,12 @@ kotlin = "2.4.0"
 compose-multiplatform = "1.11.1"
 material3 = "1.11.0-alpha07"
 agp = "9.1.0"
+android-minSdk = "26"
 androidx-activityCompose = "1.13.0"
 androidx-core = "1.17.0"
 androidx-camera = "1.6.1"
-mlkit-text-recognition = "16.0.1"
+onnxruntime = "1.21.1"
+opencv-android = "4.5.3"
 firebase-crashlytics = "20.1.0"
 google-services-plugin = "4.5.0"
 firebase-crashlytics-plugin = "3.0.7"
@@ -26,6 +28,7 @@ kover = "0.9.9"
 paparazzi = "2.0.0-alpha02"
 composable-preview-scanner = "0.9.1"
 junit4 = "4.13.2"
+androidx-test-runner = "1.7.0"
 
 [libraries]
 
@@ -44,7 +47,8 @@ androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "androidx-camera" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "androidx-camera" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "androidx-camera" }
-mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkit-text-recognition" }
+onnxruntime-android = { module = "com.microsoft.onnxruntime:onnxruntime-android", version.ref = "onnxruntime" }
+opencv-android = { module = "com.quickbirdstudios:opencv", version.ref = "opencv-android" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebase-crashlytics" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -69,6 +73,7 @@ sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", versi
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 yandex-mobile-ads-compose = { module = "com.yandex.ads.multiplatform:mobileads-compose", version.ref = "yandex-mobile-ads-kmp" }
 test-junit4 = { module = "junit:junit", version.ref = "junit4" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 test-composable-preview-scanner-android = { module = "io.github.sergio-sastre.ComposablePreviewScanner:android", version.ref = "composable-preview-scanner" }
 
 [plugins]

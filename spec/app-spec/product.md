@@ -27,7 +27,7 @@ When a lamp fails, help me capture or enter what is actually printed on it, make
 ### Included
 
 - Match home with camera, system photo picker, and manual entry.
-- On-device OCR used as a drafting aid.
+- On-device OCR for supported Latin and Cyrillic electrical, numeric, and lamp-base markings, used only as a drafting aid. Arbitrary Russian prose is outside the supported recognition promise.
 - Per-field review of base, voltage, frequency, source-lamp power, explicitly printed equivalent power, luminous flux, color temperature, shape, and dimmability.
 - Optional manually entered fixture maximum wattage.
 - Deterministic three-way assessment and a safety-first result card.

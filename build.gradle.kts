@@ -30,6 +30,7 @@ detekt {
 tasks.withType<Detekt>().configureEach {
     jvmTarget.set("17")
     exclude("**/build/**")
+    exclude("**/com/paddle/ocr/**")
     reports {
         html.required.set(true)
         sarif.required.set(true)
@@ -39,6 +40,7 @@ tasks.withType<Detekt>().configureEach {
 tasks.withType<DetektCreateBaselineTask>().configureEach {
     jvmTarget.set("17")
     exclude("**/build/**")
+    exclude("**/com/paddle/ocr/**")
 }
 
 kover {

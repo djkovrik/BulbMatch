@@ -16,7 +16,37 @@
 		B1B210022E20000100000001 /* IOSTextRecognitionHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B200022E20000100000001 /* IOSTextRecognitionHost.swift */; };
 		B1B210032E20000100000001 /* IOSCrashReportingHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B200032E20000100000001 /* IOSCrashReportingHost.swift */; };
 		B1B210042E20000100000001 /* IOSPlatformComposition.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B200042E20000100000001 /* IOSPlatformComposition.swift */; };
+		C0DE10010000000000000001 /* BoxSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00010000000000000001 /* BoxSorter.swift */; };
+		C0DE10020000000000000002 /* CTCDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00020000000000000002 /* CTCDecoder.swift */; };
+		C0DE10030000000000000003 /* DBPostProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00030000000000000003 /* DBPostProcess.swift */; };
+		C0DE10040000000000000004 /* DetectionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00040000000000000004 /* DetectionEngine.swift */; };
+		C0DE10050000000000000005 /* InferenceConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00050000000000000005 /* InferenceConfig.swift */; };
+		C0DE10060000000000000006 /* ModelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00060000000000000006 /* ModelConfig.swift */; };
+		C0DE10070000000000000007 /* OCREngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00070000000000000007 /* OCREngine.swift */; };
+		C0DE10080000000000000008 /* OCRParameterResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00080000000000000008 /* OCRParameterResolver.swift */; };
+		C0DE10090000000000000009 /* ORTSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00090000000000000009 /* ORTSessionManager.swift */; };
+		C0DE10100000000000000010 /* Preprocessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00100000000000000010 /* Preprocessing.swift */; };
+		C0DE10110000000000000011 /* QuadTextCrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00110000000000000011 /* QuadTextCrop.swift */; };
+		C0DE10120000000000000012 /* RecognitionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00120000000000000012 /* RecognitionEngine.swift */; };
+		C0DE10130000000000000013 /* RecPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00130000000000000013 /* RecPreprocessor.swift */; };
+		C0DE10140000000000000014 /* OpenCVDBBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00140000000000000014 /* OpenCVDBBridge.mm */; };
+		C0DE10150000000000000015 /* OpenCVImageBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00150000000000000015 /* OpenCVImageBridge.mm */; };
+		C0DE10160000000000000016 /* PDBPolygonOffsetBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00160000000000000016 /* PDBPolygonOffsetBridge.mm */; };
+		C0DE10170000000000000017 /* clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00170000000000000017 /* clipper.cpp */; };
+		C0DE10180000000000000018 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = C0DE00180000000000000018 /* Models */; };
+		C0DF10010000000000000001 /* PaddleOCRQualificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DF00010000000000000001 /* PaddleOCRQualificationTests.swift */; };
+		C0DF10020000000000000002 /* cyrillic_e27_clean.png in Resources */ = {isa = PBXBuildFile; fileRef = C0DF00020000000000000002 /* cyrillic_e27_clean.png */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C0DF30010000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A93A952F29CC810C00F8E227 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A93A953629CC810C00F8E227;
+			remoteInfo = iosApp;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		10E4B4A3A0594F1BDA4EA763 /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -30,6 +60,33 @@
 		B1B200022E20000100000001 /* IOSTextRecognitionHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSTextRecognitionHost.swift; sourceTree = "<group>"; };
 		B1B200032E20000100000001 /* IOSCrashReportingHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSCrashReportingHost.swift; sourceTree = "<group>"; };
 		B1B200042E20000100000001 /* IOSPlatformComposition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSPlatformComposition.swift; sourceTree = "<group>"; };
+		C0DE00010000000000000001 /* BoxSorter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxSorter.swift; sourceTree = "<group>"; };
+		C0DE00020000000000000002 /* CTCDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTCDecoder.swift; sourceTree = "<group>"; };
+		C0DE00030000000000000003 /* DBPostProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBPostProcess.swift; sourceTree = "<group>"; };
+		C0DE00040000000000000004 /* DetectionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionEngine.swift; sourceTree = "<group>"; };
+		C0DE00050000000000000005 /* InferenceConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InferenceConfig.swift; sourceTree = "<group>"; };
+		C0DE00060000000000000006 /* ModelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelConfig.swift; sourceTree = "<group>"; };
+		C0DE00070000000000000007 /* OCREngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCREngine.swift; sourceTree = "<group>"; };
+		C0DE00080000000000000008 /* OCRParameterResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRParameterResolver.swift; sourceTree = "<group>"; };
+		C0DE00090000000000000009 /* ORTSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ORTSessionManager.swift; sourceTree = "<group>"; };
+		C0DE00100000000000000010 /* Preprocessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preprocessing.swift; sourceTree = "<group>"; };
+		C0DE00110000000000000011 /* QuadTextCrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuadTextCrop.swift; sourceTree = "<group>"; };
+		C0DE00120000000000000012 /* RecognitionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognitionEngine.swift; sourceTree = "<group>"; };
+		C0DE00130000000000000013 /* RecPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecPreprocessor.swift; sourceTree = "<group>"; };
+		C0DE00140000000000000014 /* OpenCVDBBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVDBBridge.mm; sourceTree = "<group>"; };
+		C0DE00150000000000000015 /* OpenCVImageBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVImageBridge.mm; sourceTree = "<group>"; };
+		C0DE00160000000000000016 /* PDBPolygonOffsetBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDBPolygonOffsetBridge.mm; sourceTree = "<group>"; };
+		C0DE00170000000000000017 /* clipper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Clipper1/clipper.cpp; sourceTree = "<group>"; };
+		C0DE00180000000000000018 /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Models; path = ../shared/platform/src/androidMain/assets/Models; sourceTree = SOURCE_ROOT; };
+		C0DE00190000000000000019 /* BulbMatch-PaddleOCR-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BulbMatch-PaddleOCR-Bridging-Header.h"; sourceTree = "<group>"; };
+		C0DE00200000000000000020 /* OpenCVDBBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVDBBridge.h; sourceTree = "<group>"; };
+		C0DE00210000000000000021 /* OpenCVImageBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVImageBridge.h; sourceTree = "<group>"; };
+		C0DE00220000000000000022 /* PDBPolygonOffsetBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDBPolygonOffsetBridge.h; sourceTree = "<group>"; };
+		C0DE00230000000000000023 /* clipper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Clipper1/clipper.hpp; sourceTree = "<group>"; };
+		C0DE00240000000000000024 /* Clipper LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = Clipper1/LICENSE; sourceTree = "<group>"; };
+		C0DF00010000000000000001 /* PaddleOCRQualificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddleOCRQualificationTests.swift; sourceTree = "<group>"; };
+		C0DF00020000000000000002 /* cyrillic_e27_clean.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Fixtures/cyrillic_e27_clean.png; sourceTree = "<group>"; };
+		C0DF00030000000000000003 /* iosAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iosAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E88F3598A2FFB5A59560A11B /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
 		EE96BD75839DDF64CF3419E0 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -40,6 +97,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				66CF5F37C49A4254E17604C9 /* Pods_iosApp.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0DF50020000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				A93A953929CC810C00F8E227 /* iosApp */,
+				C0DF20010000000000000001 /* iosAppTests */,
 				A93A953829CC810C00F8E227 /* Products */,
 				C4127409AE3703430489E7BC /* Frameworks */,
 				9310B6E6AAA47BAD66C2C5FC /* Pods */,
@@ -70,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				A93A953729CC810C00F8E227 /* BulbMatch.app */,
+				C0DF00030000000000000003 /* iosAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -79,6 +145,7 @@
 			children = (
 				A93A953A29CC810C00F8E227 /* iosApp.swift */,
 				B1B220012E20000100000001 /* platform */,
+				C0DE00180000000000000018 /* Models */,
 				A93A953E29CC810D00F8E227 /* Assets.xcassets */,
 				B1B100042E10000100000001 /* InfoPlist.strings */,
 				A93A954029CC810D00F8E227 /* Preview Content */,
@@ -93,8 +160,48 @@
 				B1B200022E20000100000001 /* IOSTextRecognitionHost.swift */,
 				B1B200032E20000100000001 /* IOSCrashReportingHost.swift */,
 				B1B200042E20000100000001 /* IOSPlatformComposition.swift */,
+				C0DE20010000000000000001 /* PaddleOCR */,
 			);
 			path = platform;
+			sourceTree = "<group>";
+		};
+		C0DE20010000000000000001 /* PaddleOCR */ = {
+			isa = PBXGroup;
+			children = (
+				C0DE00010000000000000001 /* BoxSorter.swift */,
+				C0DE00020000000000000002 /* CTCDecoder.swift */,
+				C0DE00030000000000000003 /* DBPostProcess.swift */,
+				C0DE00040000000000000004 /* DetectionEngine.swift */,
+				C0DE00050000000000000005 /* InferenceConfig.swift */,
+				C0DE00060000000000000006 /* ModelConfig.swift */,
+				C0DE00070000000000000007 /* OCREngine.swift */,
+				C0DE00080000000000000008 /* OCRParameterResolver.swift */,
+				C0DE00090000000000000009 /* ORTSessionManager.swift */,
+				C0DE00100000000000000010 /* Preprocessing.swift */,
+				C0DE00110000000000000011 /* QuadTextCrop.swift */,
+				C0DE00120000000000000012 /* RecognitionEngine.swift */,
+				C0DE00130000000000000013 /* RecPreprocessor.swift */,
+				C0DE00140000000000000014 /* OpenCVDBBridge.mm */,
+				C0DE00150000000000000015 /* OpenCVImageBridge.mm */,
+				C0DE00160000000000000016 /* PDBPolygonOffsetBridge.mm */,
+				C0DE00170000000000000017 /* clipper.cpp */,
+				C0DE00190000000000000019 /* BulbMatch-PaddleOCR-Bridging-Header.h */,
+				C0DE00200000000000000020 /* OpenCVDBBridge.h */,
+				C0DE00210000000000000021 /* OpenCVImageBridge.h */,
+				C0DE00220000000000000022 /* PDBPolygonOffsetBridge.h */,
+				C0DE00230000000000000023 /* clipper.hpp */,
+				C0DE00240000000000000024 /* Clipper LICENSE */,
+			);
+			path = PaddleOCR;
+			sourceTree = "<group>";
+		};
+		C0DF20010000000000000001 /* iosAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				C0DF00010000000000000001 /* PaddleOCRQualificationTests.swift */,
+				C0DF00020000000000000002 /* cyrillic_e27_clean.png */,
+			);
+			path = iosAppTests;
 			sourceTree = "<group>";
 		};
 		A93A954029CC810D00F8E227 /* Preview Content */ = {
@@ -137,6 +244,24 @@
 			productReference = A93A953729CC810C00F8E227 /* BulbMatch.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C0DF40010000000000000001 /* iosAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0DF70010000000000000001 /* Build configuration list for PBXNativeTarget "iosAppTests" */;
+			buildPhases = (
+				C0DF50010000000000000001 /* Sources */,
+				C0DF50020000000000000002 /* Frameworks */,
+				C0DF50030000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C0DF30020000000000000002 /* PBXTargetDependency */,
+			);
+			name = iosAppTests;
+			productName = iosAppTests;
+			productReference = C0DF00030000000000000003 /* iosAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -148,6 +273,10 @@
 				TargetAttributes = {
 					A93A953629CC810C00F8E227 = {
 						CreatedOnToolsVersion = 14.2;
+					};
+					C0DF40010000000000000001 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = A93A953629CC810C00F8E227;
 					};
 				};
 			};
@@ -166,6 +295,7 @@
 			projectRoot = "";
 			targets = (
 				A93A953629CC810C00F8E227 /* iosApp */,
+				C0DF40010000000000000001 /* iosAppTests */,
 			);
 		};
 /* End PBXProject section */
@@ -175,9 +305,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0DE10180000000000000018 /* Models in Resources */,
 				A93A954229CC810D00F8E227 /* Preview Assets.xcassets in Resources */,
 				A93A953F29CC810D00F8E227 /* Assets.xcassets in Resources */,
 				B1B100012E10000100000001 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0DF50030000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0DF10020000000000000002 /* cyrillic_e27_clean.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +411,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0DE10010000000000000001 /* BoxSorter.swift in Sources */,
+				C0DE10020000000000000002 /* CTCDecoder.swift in Sources */,
+				C0DE10030000000000000003 /* DBPostProcess.swift in Sources */,
+				C0DE10040000000000000004 /* DetectionEngine.swift in Sources */,
+				C0DE10050000000000000005 /* InferenceConfig.swift in Sources */,
+				C0DE10060000000000000006 /* ModelConfig.swift in Sources */,
+				C0DE10070000000000000007 /* OCREngine.swift in Sources */,
+				C0DE10080000000000000008 /* OCRParameterResolver.swift in Sources */,
+				C0DE10090000000000000009 /* ORTSessionManager.swift in Sources */,
+				C0DE10100000000000000010 /* Preprocessing.swift in Sources */,
+				C0DE10110000000000000011 /* QuadTextCrop.swift in Sources */,
+				C0DE10120000000000000012 /* RecognitionEngine.swift in Sources */,
+				C0DE10130000000000000013 /* RecPreprocessor.swift in Sources */,
+				C0DE10140000000000000014 /* OpenCVDBBridge.mm in Sources */,
+				C0DE10150000000000000015 /* OpenCVImageBridge.mm in Sources */,
+				C0DE10160000000000000016 /* PDBPolygonOffsetBridge.mm in Sources */,
+				C0DE10170000000000000017 /* clipper.cpp in Sources */,
 				B1B210012E20000100000001 /* IOSImageSourceHost.swift in Sources */,
 				B1B210022E20000100000001 /* IOSTextRecognitionHost.swift in Sources */,
 				B1B210032E20000100000001 /* IOSCrashReportingHost.swift in Sources */,
@@ -280,7 +436,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0DF50010000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0DF10010000000000000001 /* PaddleOCRQualificationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C0DF30020000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A93A953629CC810C00F8E227 /* iosApp */;
+			targetProxy = C0DF30010000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		B1B100042E10000100000001 /* InfoPlist.strings */ = {
@@ -430,6 +602,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.sedsoftware.bulbmatch.iosApp;
 				PRODUCT_NAME = BulbMatch;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "iosApp/platform/PaddleOCR/BulbMatch-PaddleOCR-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -456,8 +629,43 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.sedsoftware.bulbmatch.iosApp;
 				PRODUCT_NAME = BulbMatch;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "iosApp/platform/PaddleOCR/BulbMatch-PaddleOCR-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C0DF60010000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sedsoftware.bulbmatch.iosAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BulbMatch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BulbMatch";
+			};
+			name = Debug;
+		};
+		C0DF60020000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sedsoftware.bulbmatch.iosAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BulbMatch.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BulbMatch";
 			};
 			name = Release;
 		};
@@ -478,6 +686,15 @@
 			buildConfigurations = (
 				A93A954629CC810D00F8E227 /* Debug */,
 				A93A954729CC810D00F8E227 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0DF70010000000000000001 /* Build configuration list for PBXNativeTarget "iosAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0DF60010000000000000001 /* Debug */,
+				C0DF60020000000000000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -11,7 +11,7 @@ gates.
 
 - common KMP-код, Compose UI, Decompose/MVIKotlin, SQLDelight и ads graph созданы;
 - `iosSimulatorArm64` Kotlin target компилируется;
-- `iosApp/Podfile` содержит Yandex Mobile Ads, bundled Latin ML Kit OCR и
+- `iosApp/Podfile` содержит Yandex Mobile Ads, PaddleOCR/ONNX Runtime OCR и
   Firebase Crashlytics;
 - нативные Swift-реализации камеры, PHPicker, OCR и Crashlytics ещё не подключены;
 - до их подключения iOS camera flow намеренно возвращает `Unavailable`, не
@@ -40,7 +40,7 @@ gates.
 
 - Swift hosts реально подключены к Kotlin composition root;
 - камера и PHPicker работают на физическом iPhone;
-- bundled ML Kit OCR работает в airplane mode;
+- bundled PaddleOCR работает для Latin/Cyrillic маркировок в airplane mode;
 - iOS Gradle tests и framework link проходят;
 - Xcode Simulator build проходит;
 - device permission/cancellation/settings-return сценарии пройдены;
@@ -143,20 +143,22 @@ chmod +x gradlew
 не разрешает `8.2.0`, оставить gate красным и зафиксировать фактический resolver
 output. Не подменять SDK локальным артефактом и не удалять gate.
 
-### 1.2. ML Kit
+### 1.2. PaddleOCR / ONNX Runtime
 
-Оставить только bundled Latin script:
+Разрешить зафиксированные offline-зависимости:
 
 ```ruby
-pod 'GoogleMLKit/TextRecognition', '8.0.0'
+pod 'onnxruntime-objc', '1.24.3'
+pod 'Yams', '~> 5.0'
+pod 'OpenCV', '~> 4.3.0'
 ```
 
-Официальное руководство:
+Модели, словарь и SHA-256 уже зафиксированы в
+`shared/platform/ocr-model-manifest.json`; не скачивать модели при запуске.
+Актуальный migration/qualification record: `docs/OCR-MIGRATION-REPORT.md`.
+Официальное руководство по iOS deployment:
 
-<https://developers.google.com/ml-kit/vision/text-recognition/v2/ios>
-
-Не добавлять downloadable model flow или дополнительные script packages без
-изменения AppSpec.
+<https://www.paddleocr.ai/main/version3.x/inference_deployment/cross_platform/ios_deployment.html>
 
 ### 1.3. Firebase
 
@@ -273,21 +275,21 @@ Simulator без камеры должен возвращать `CameraUnavailab
 
 ## Этап 4. Реализовать bundled OCR host
 
-Использовать `GoogleMLKit/TextRecognition` Latin:
+Использовать bundled PaddleOCR detection + East-Slavic recognition через ONNX Runtime:
 
 1. Получить encoded bytes только на время операции.
 2. Декодировать `UIImage`.
 3. Сохранить ориентацию изображения.
 4. Уменьшить слишком большое изображение перед OCR; не обрабатывать
    full-resolution 12+ MP на main thread.
-5. Создать один Latin `TextRecognizer`.
+5. Лениво создать один сериализованный PaddleOCR pipeline.
 6. Выполнить recognition вне UI-critical path.
 7. Вернуть line-level observations:
    - text;
    - normalized или документированно преобразованные bounds.
 8. Не возвращать и не логировать полный transcript отдельно от observations.
 9. На cancel/finish освободить decoded image, input bytes и callbacks.
-10. `close()` должен прекратить дальнейшие операции и освободить recognizer.
+10. `close()` должен прекратить дальнейшие операции и освободить ORT sessions.
 
 Результаты:
 
@@ -485,7 +487,7 @@ xcrun simctl list devices available
 
 - изменённые файлы;
 - реализованные Swift hosts;
-- версии Xcode, iOS SDK, CocoaPods, Yandex, ML Kit и Firebase;
+- версии Xcode, iOS SDK, CocoaPods, Yandex, PaddleOCR, ONNX Runtime и Firebase;
 - команды с exit code;
 - Simulator и device matrix;
 - permission/OCR/picker результаты;

@@ -39,6 +39,11 @@ jobs:
       - name: Static analysis
         run: ./gradlew detekt --stacktrace
 
+      - name: Validate OCR models and fixture corpus
+        run: |
+          ./gradlew :shared:platform:validateOcrModelRelease --stacktrace
+          python3 spec/ocr-fixtures/v1/tools/validate_ocr_fixtures.py
+
       - name: Test and enforce coverage
         run: ./gradlew koverVerify --stacktrace
 
@@ -89,6 +94,8 @@ jobs:
     steps:
       - name: Check out sources
         uses: actions/checkout@v6
+        with:
+          lfs: true
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5
@@ -134,6 +141,16 @@ jobs:
           -destination "generic/platform=iOS Simulator"
           CODE_SIGNING_ALLOWED=NO
           build
+
+      - name: Compile iOS OCR XCTest target
+        run: >
+          xcodebuild
+          -workspace iosApp/iosApp.xcworkspace
+          -scheme iosApp
+          -configuration Debug
+          -destination "generic/platform=iOS Simulator"
+          CODE_SIGNING_ALLOWED=NO
+          build-for-testing
 
       - name: Upload iOS test reports
         if: always()

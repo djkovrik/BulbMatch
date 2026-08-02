@@ -1,31 +1,32 @@
 package com.sedsoftware.bulbmatch.platform
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import com.google.android.gms.tasks.Task
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.TextRecognizer
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import kotlinx.coroutines.CancellableContinuation
+import com.paddle.ocr.EngineConfig
+import com.paddle.ocr.PaddleOCR
+import com.paddle.ocr.PaddleOCRConfig
+import com.paddle.ocr.model.OCRRunResult
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.math.max
 
 /**
- * Bundled Latin-script Text Recognition v2. The `com.google.mlkit` artifact
- * includes its model in the application and does not perform a first-run model
- * download.
+ * Offline PaddleOCR pipeline backed by bundled ONNX models. Model initialization and
+ * recognition are serialized because ONNX Runtime sessions are shared across calls.
  */
 class AndroidTextRecognitionService(
-    private val recognizer: TextRecognizer =
-        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS),
+    context: Context,
     private val maxImageDimension: Int = 2048,
 ) : TextRecognitionService {
+    private val applicationContext = context.applicationContext
+    private val mutex = Mutex()
+    @Volatile
     private var closed = false
+    private var recognizer: PaddleOCR? = null
 
     override suspend fun recognize(image: EphemeralImageHandle): TextRecognitionResult {
         if (closed || image.isReleased) {
@@ -42,57 +43,85 @@ class AndroidTextRecognitionService(
                 TextRecognitionFailureCode.UNSUPPORTED_IMAGE,
             )
 
-        val task = recognizer.process(InputImage.fromBitmap(bitmap, 0))
-        var recycleAfterTask = false
         return try {
-            val recognized = task.await()
-            recognized.toPlatformResult(bitmap.width, bitmap.height)
+            mutex.withLock {
+                if (closed) {
+                    TextRecognitionResult.Failure(TextRecognitionFailureCode.UNSUPPORTED_IMAGE)
+                } else {
+                    val paddle = recognizer ?: createRecognizer().also { recognizer = it }
+                    paddle.recognize(bitmap).toPlatformResult(bitmap.width, bitmap.height)
+                }
+            }
         } catch (cancelled: CancellationException) {
-            recycleAfterTask = true
-            task.addOnCompleteListener { bitmap.recycle() }
             throw cancelled
         } catch (_: Throwable) {
             TextRecognitionResult.Failure(
                 TextRecognitionFailureCode.RECOGNITION_FAILED,
             )
         } finally {
-            if (!recycleAfterTask) bitmap.recycle()
+            bitmap.recycle()
         }
     }
 
     override fun close() {
-        if (!closed) {
-            closed = true
-            recognizer.close()
+        if (closed) return
+        closed = true
+        runBlocking {
+            mutex.withLock {
+                recognizer?.release()
+                recognizer = null
+            }
         }
     }
 
-    private fun Text.toPlatformResult(width: Int, height: Int): TextRecognitionResult {
-        val observations = textBlocks
-            .asSequence()
-            .flatMap { block -> block.lines.asSequence() }
-            .mapNotNull { line ->
-                val value = line.text.trim()
-                if (value.isEmpty()) null else {
-                    TextObservation(
-                        text = value,
-                        bounds = line.boundingBox?.let { rect ->
-                            NormalizedRect(
-                                left = (rect.left.toFloat() / width).coerceIn(0f, 1f),
-                                top = (rect.top.toFloat() / height).coerceIn(0f, 1f),
-                                right = (rect.right.toFloat() / width).coerceIn(0f, 1f),
-                                bottom = (rect.bottom.toFloat() / height).coerceIn(0f, 1f),
-                            )
-                        },
-                    )
-                }
+    private suspend fun createRecognizer(): PaddleOCR = PaddleOCR.create(
+        context = applicationContext,
+        config = PaddleOCRConfig(
+            detLimitSideLen = DETECTION_LIMIT_PX,
+            detLimitType = "max",
+            detMaxCandidates = 1000,
+            recScoreThresh = MIN_RECOGNITION_CONFIDENCE,
+        ),
+        engineConfig = EngineConfig(),
+        detModelAssetPath = DETECTION_MODEL_ASSET,
+        recModelAssetPath = RECOGNITION_MODEL_ASSET,
+        recConfigAssetPath = RECOGNITION_CONFIG_ASSET,
+    )
+
+    private fun OCRRunResult.toPlatformResult(width: Int, height: Int): TextRecognitionResult {
+        val observations = results.mapNotNull { result ->
+            val value = result.text.trim()
+            if (value.isEmpty()) {
+                null
+            } else {
+                val xs = result.box.points.map { it.x }
+                val ys = result.box.points.map { it.y }
+                TextObservation(
+                    text = value,
+                    bounds = NormalizedRect(
+                        left = (xs.minOrNull().orZero() / width).coerceIn(0f, 1f),
+                        top = (ys.minOrNull().orZero() / height).coerceIn(0f, 1f),
+                        right = (xs.maxOrNull().orZero() / width).coerceIn(0f, 1f),
+                        bottom = (ys.maxOrNull().orZero() / height).coerceIn(0f, 1f),
+                    ),
+                )
             }
-            .toList()
+        }
         return if (observations.isEmpty()) {
             TextRecognitionResult.Failure(TextRecognitionFailureCode.NO_TEXT_FOUND)
         } else {
             TextRecognitionResult.Success(observations)
         }
+    }
+
+    private fun Float?.orZero(): Float = this ?: 0f
+
+    private companion object {
+        const val DETECTION_MODEL_ASSET = "Models/det/inference.onnx"
+        const val RECOGNITION_MODEL_ASSET = "Models/rec/inference.onnx"
+        const val RECOGNITION_CONFIG_ASSET = "Models/rec/inference.yml"
+        const val DETECTION_LIMIT_PX = 960
+        const val MIN_RECOGNITION_CONFIDENCE = 0.35f
     }
 }
 
@@ -170,20 +199,3 @@ private fun calculateSampleSize(width: Int, height: Int, maxDimension: Int): Int
     }
     return sample
 }
-
-private suspend fun <T> Task<T>.await(): T =
-    suspendCancellableCoroutine { continuation: CancellableContinuation<T> ->
-        addOnSuccessListener { value ->
-            if (continuation.isActive) continuation.resume(value)
-        }
-        addOnFailureListener {
-            if (continuation.isActive) {
-                continuation.resumeWith(
-                    Result.failure(it),
-                )
-            }
-        }
-        addOnCanceledListener {
-            continuation.cancel()
-        }
-    }
