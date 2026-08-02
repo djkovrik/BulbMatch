@@ -113,17 +113,17 @@ PODS:
   - GoogleUtilities/UserDefaults (8.1.2):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
+  - nanopb (3.30910.0):
+    - nanopb/decode (= 3.30910.0)
+    - nanopb/encode (= 3.30910.0)
+  - nanopb/decode (3.30910.0)
+  - nanopb/encode (3.30910.0)
   - onnxruntime-c (1.24.3)
   - onnxruntime-objc (1.24.3):
     - onnxruntime-objc/Core (= 1.24.3)
   - onnxruntime-objc/Core (1.24.3):
     - onnxruntime-c (= 1.24.3)
   - OpenCV (4.3.0)
-  - nanopb (3.30910.0):
-    - nanopb/decode (= 3.30910.0)
-    - nanopb/encode (= 3.30910.0)
-  - nanopb/decode (3.30910.0)
-  - nanopb/encode (3.30910.0)
   - PromisesObjC (2.4.1)
   - PromisesSwift (2.4.1):
     - PromisesObjC (= 2.4.1)
@@ -218,6 +218,6 @@ SPEC CHECKSUMS:
   Yams: e10dae147f517ed57ecae37c5e8681bdf8fcab65
   YandexMobileAds: 47d9d0ce6705e79e3801138e8c1d9898e4c79a51
 
-PODFILE CHECKSUM: ff0d34509927425e789fcc09b78bb0656b600d2f
+PODFILE CHECKSUM: fbeb529f4ea40c5a29d22e9b69e94785ba027868
 
 COCOAPODS: 1.16.2
