@@ -907,9 +907,12 @@ cd ..
   :shared:data:iosSimulatorArm64Test \
   :shared:platform:iosSimulatorArm64Test \
   :shared:app:iosSimulatorArm64Test \
-  :shared:compose:iosSimulatorArm64Test \
   :shared:compose:linkDebugFrameworkIosSimulatorArm64 \
   --stacktrace
+
+# Compose common state tests are covered by the Android CI task
+# :shared:compose:testAndroidHostTest. Do not link their standalone iOS test
+# binary against the transitive native Yandex framework.
 
 xcodebuild \
   -workspace iosApp/iosApp.xcworkspace \

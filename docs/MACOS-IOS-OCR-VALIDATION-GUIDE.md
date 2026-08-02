@@ -287,12 +287,17 @@ The current job performs:
    :shared:data:iosSimulatorArm64Test
    :shared:platform:iosSimulatorArm64Test
    :shared:app:iosSimulatorArm64Test
-   :shared:compose:iosSimulatorArm64Test
    :shared:compose:linkDebugFrameworkIosSimulatorArm64
    ```
 
 5. generic iOS Simulator workspace build;
 6. `build-for-testing` for the OCR XCTest target.
+
+Compose common state tests are intentionally not linked as a standalone iOS
+test binary because `shared:compose` transitively depends on the native Yandex
+framework. The Android CI job preserves their behavioral coverage through
+`:shared:compose:testAndroidHostTest`; the production iOS Compose graph remains
+covered by the ARM64 framework link and CocoaPods workspace build.
 
 A green job is required before merging this migration. Record the workflow run
 URL, commit SHA, job conclusion, Xcode version, and simulator SDK version.
@@ -317,7 +322,6 @@ CocoaPods preflight, then run the CI-equivalent KMP matrix locally:
   :shared:data:iosSimulatorArm64Test \
   :shared:platform:iosSimulatorArm64Test \
   :shared:app:iosSimulatorArm64Test \
-  :shared:compose:iosSimulatorArm64Test \
   :shared:compose:linkDebugFrameworkIosSimulatorArm64 \
   --no-parallel \
   --stacktrace

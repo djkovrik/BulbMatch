@@ -372,11 +372,14 @@ Category = Integration
   :shared:data:iosSimulatorArm64Test \
   :shared:platform:iosSimulatorArm64Test \
   :shared:app:iosSimulatorArm64Test \
-  :shared:ads:iosSimulatorArm64Test \
-  :shared:compose:iosSimulatorArm64Test \
   :shared:compose:linkDebugFrameworkIosSimulatorArm64 \
   --stacktrace
 ```
+
+Compose common state tests запускаются через
+`:shared:compose:testAndroidHostTest` в Android CI. Не линковать standalone iOS
+test binaries для `shared:ads` или `shared:compose`: native Yandex graph
+проверяется следующей сборкой CocoaPods workspace.
 
 Затем список Xcode schemes:
 

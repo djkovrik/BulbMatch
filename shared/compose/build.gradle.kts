@@ -16,6 +16,7 @@ kotlin {
         compileSdk = 36
         minSdk = libs.versions.android.minSdk.get().toInt()
         androidResources.enable = true
+        withHostTestBuilder {}.configure {}
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
     }
 

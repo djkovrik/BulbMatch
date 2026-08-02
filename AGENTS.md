@@ -179,6 +179,7 @@ The current Android CI-equivalent task set is:
 :shared:platform:testAndroidHostTest
 :shared:app:testAndroidHostTest
 :shared:ads:testAndroidHostTest
+:shared:compose:testAndroidHostTest
 :shared:compose:compileAndroidMain
 :androidApp:assembleDebug
 ```
@@ -190,12 +191,12 @@ The macOS iOS CI-equivalent task set, after `pod install` in `iosApp`, is:
 :shared:data:iosSimulatorArm64Test
 :shared:platform:iosSimulatorArm64Test
 :shared:app:iosSimulatorArm64Test
-:shared:compose:iosSimulatorArm64Test
 :shared:compose:linkDebugFrameworkIosSimulatorArm64
 xcodebuild -workspace iosApp/iosApp.xcworkspace -scheme iosApp -configuration Debug -destination "generic/platform=iOS Simulator" CODE_SIGNING_ALLOWED=NO build
 ```
 
-The ads module's pure common tests run on the Android host through Kover.
+The ads module's pure common tests run on the Android host through Kover, and
+Compose common state tests run through `:shared:compose:testAndroidHostTest`.
 Validate the native iOS Yandex SDK graph by building the CocoaPods workspace;
 do not link its transitive frameworks into a standalone Kotlin/Native test
 binary.

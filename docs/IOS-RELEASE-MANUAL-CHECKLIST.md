@@ -271,12 +271,15 @@ Firebase Console.
   :shared:data:iosSimulatorArm64Test \
   :shared:platform:iosSimulatorArm64Test \
   :shared:app:iosSimulatorArm64Test \
-  :shared:ads:iosSimulatorArm64Test \
-  :shared:compose:iosSimulatorArm64Test \
   :shared:compose:linkDebugFrameworkIosSimulatorArm64 \
   --no-parallel \
   --stacktrace
 ```
+
+Compose common state tests выполняются отдельно через
+`:shared:compose:testAndroidHostTest` в Android CI. Не добавлять
+`shared:ads` или `shared:compose` iOS test binary в эту матрицу: native Yandex
+graph проверяется сборкой CocoaPods workspace ниже.
 
 - [ ] Все test binaries не только слинкованы, но и выполнены.
 - [ ] Все тесты завершились с `exit 0`, без `SKIPPED` из-за host architecture.
