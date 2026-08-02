@@ -106,7 +106,11 @@ interface CameraComponent {
         val torchEnabled: Boolean,
         val captureInProgress: Boolean,
         val error: ImageFailure?,
-    )
+    ) {
+        /** Keep the native preview/session alive until an in-flight capture completes. */
+        val requiresActiveCameraSession: Boolean
+            get() = status == CameraStatus.Granted && error == null
+    }
 }
 
 interface ImageReviewComponent {
@@ -141,6 +145,7 @@ enum class RecognitionFailure {
 enum class ImageFailure {
     PermissionDenied,
     CameraUnavailable,
+    CaptureFailed,
     UnreadableImage,
     Unknown,
 }

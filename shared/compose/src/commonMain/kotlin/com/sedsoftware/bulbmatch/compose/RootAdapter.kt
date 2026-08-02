@@ -223,19 +223,11 @@ private fun MatchContent(
 @Composable
 private fun CameraContent(component: CameraComponent, cameraPreview: (@Composable () -> Unit)?) {
     val model by component.model.subscribeAsState()
-    val state = when {
-        model.error != null -> CameraState.Error
-        model.captureInProgress -> CameraState.Opening
-        else -> when (model.status) {
-            CameraStatus.Unknown, CameraStatus.Checking -> CameraState.Opening
-            CameraStatus.Granted -> CameraState.Content
-            CameraStatus.DeniedCanAsk -> CameraState.DeniedCanAsk
-            CameraStatus.DeniedOpenSettings -> CameraState.DeniedOpenSettings
-            CameraStatus.Unavailable -> CameraState.Unavailable
-        }
-    }
+    val state = cameraScreenState(model)
     CameraCaptureScreen(
         state = state,
+        captureInProgress = model.captureInProgress,
+        failure = model.error,
         torchSupported = model.torchAvailable,
         torchEnabled = model.torchEnabled,
         onClose = component::onCloseRequested,
@@ -247,6 +239,18 @@ private fun CameraContent(component: CameraComponent, cameraPreview: (@Composabl
         onManual = component::onManualEntryRequested,
         cameraPreview = cameraPreview,
     )
+}
+
+internal fun cameraScreenState(model: CameraComponent.Model): CameraState = when {
+    model.requiresActiveCameraSession -> CameraState.Content
+    model.error != null -> CameraState.Error
+    else -> when (model.status) {
+        CameraStatus.Unknown, CameraStatus.Checking -> CameraState.Opening
+        CameraStatus.Granted -> CameraState.Content
+        CameraStatus.DeniedCanAsk -> CameraState.DeniedCanAsk
+        CameraStatus.DeniedOpenSettings -> CameraState.DeniedOpenSettings
+        CameraStatus.Unavailable -> CameraState.Unavailable
+    }
 }
 
 @Composable

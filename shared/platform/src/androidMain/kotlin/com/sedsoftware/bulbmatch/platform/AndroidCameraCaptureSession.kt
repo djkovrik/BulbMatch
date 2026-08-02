@@ -63,6 +63,8 @@ class AndroidCameraCaptureSession private constructor(
                             continuation.resume(
                                 ImageAcquisitionResult.Failure(
                                     ImageFailureCode.CAPTURE_FAILED,
+                                    technicalCode = exception.imageCaptureError.toTechnicalCode(),
+                                    cause = exception,
                                 ),
                             )
                         }
@@ -150,6 +152,15 @@ sealed interface AndroidCameraSessionOpenResult {
     data class Failure(
         val code: ImageFailureCode,
     ) : AndroidCameraSessionOpenResult
+}
+
+internal fun Int.toTechnicalCode(): ImageFailureTechnicalCode = when (this) {
+    ImageCapture.ERROR_UNKNOWN -> ImageFailureTechnicalCode.CAMERAX_UNKNOWN
+    ImageCapture.ERROR_FILE_IO -> ImageFailureTechnicalCode.CAMERAX_FILE_IO
+    ImageCapture.ERROR_CAPTURE_FAILED -> ImageFailureTechnicalCode.CAMERAX_CAPTURE_FAILED
+    ImageCapture.ERROR_CAMERA_CLOSED -> ImageFailureTechnicalCode.CAMERAX_CAMERA_CLOSED
+    ImageCapture.ERROR_INVALID_CAMERA -> ImageFailureTechnicalCode.CAMERAX_INVALID_CAMERA
+    else -> ImageFailureTechnicalCode.CAMERAX_UNRECOGNIZED
 }
 
 private suspend fun <T> com.google.common.util.concurrent.ListenableFuture<T>.await(

@@ -36,6 +36,7 @@ enum class OperationCode {
 data class CrashContext(
     val screen: ScreenCode?,
     val operation: OperationCode,
+    val imageFailureTechnicalCode: ImageFailureTechnicalCode? = null,
 )
 
 interface CrashReporter {

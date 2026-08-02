@@ -438,20 +438,32 @@ class DefaultMatchComponent(
         override fun onCloseRequested() = navigation.pop()
         override fun onPermissionRequested() = imageActions.requestCameraPermission()
         override fun onOpenSystemSettingsRequested() = imageActions.openSystemCameraSettings()
-        override fun onChoosePhotoRequested() = imageActions.openPhotoPicker()
+        override fun onChoosePhotoRequested() {
+            if (mutableModel.value.captureInProgress) return
+            imageActions.openPhotoPicker()
+        }
 
         override fun onManualEntryRequested() {
+            if (mutableModel.value.captureInProgress) return
             store.accept(MatchStore.Intent.StartManual)
             navigation.replaceAll(Config.Home, Config.Form)
         }
 
         override fun onShutterRequested() {
+            val current = mutableModel.value
+            if (
+                current.captureInProgress ||
+                current.status != CameraStatus.Granted ||
+                current.error != null
+            ) {
+                return
+            }
             mutableModel.update { it.copy(captureInProgress = true, error = null) }
             imageActions.capturePhoto()
         }
 
         override fun onTorchChanged(enabled: Boolean) {
-            if (!mutableModel.value.torchAvailable) return
+            if (!mutableModel.value.torchAvailable || mutableModel.value.captureInProgress) return
             mutableModel.update { it.copy(torchEnabled = enabled) }
             imageActions.setTorch(enabled)
         }
