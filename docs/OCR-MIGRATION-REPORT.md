@@ -12,6 +12,9 @@
 - ML Kit has been removed from Gradle, CocoaPods, Kotlin, and Swift production
   code. Apple Vision remains a qualification control only and is not a runtime
   fallback.
+- Android uses the official `org.opencv:opencv:4.13.0` AAR, initializes its
+  process-global JNI runtime before the first `Mat`, and validates every packaged
+  64-bit native library against the 16 KB ELF page-alignment contract.
 - OCR transcripts, image bytes, and geometry remain memory-only; neither
   platform enables model downloads, profiling files, transcript logging, or
   recognition caches.
@@ -32,16 +35,19 @@ recognizer. Device-corpus accuracy and latency are still release gates below.
 - Android device-test APK includes a real-model offline smoke test:
   `:shared:platform:assembleAndroidDeviceTest`; execution requires an API 26+
   emulator or physical device.
+- Android packaging gate: `:androidApp:validateDebugPageSizeCompatibility`
+  checks APK/AAB ELF alignment and `PAGE_ALIGNMENT_16K`, followed by
+  `zipalign -c -P 16 -v 4` in CI.
 - Corpus: 96 project-owned synthetic PNGs in `spec/ocr-fixtures/v1`, with six
   transformations and SHA-256 manifest validation.
 - Production catalog and signed catalog safety fixtures are unchanged.
 
-## Package-size comparison (Windows debug artifacts)
+## Package-size comparison (Windows debug artifacts, OpenCV 4.13.0)
 
-| Artifact | Before | PaddleOCR | Delta |
+| Artifact | Before | PaddleOCR / 16 KB fix | Delta |
 |---|---:|---:|---:|
-| Universal debug APK | 69,378,467 B (66.16 MiB) | 251,385,062 B (239.74 MiB) | +182,006,595 B (+173.58 MiB) |
-| Debug AAB | not recorded | 117,007,736 B (111.59 MiB) | n/a |
+| Universal debug APK | 69,378,467 B (66.16 MiB) | 260,195,220 B (248.14 MiB) | +190,816,753 B (+181.98 MiB) |
+| Debug AAB | not recorded | 124,025,181 B (118.28 MiB) | n/a |
 
 The universal APK contains ORT and OpenCV native libraries for four ABIs and is
 not representative of a Play-delivered split. Record release AAB download size

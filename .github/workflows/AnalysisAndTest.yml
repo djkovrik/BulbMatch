@@ -62,6 +62,13 @@ jobs:
           :androidApp:assembleDebug
           --stacktrace
 
+      - name: Validate Android 16 KB page-size compatibility
+        run: |
+          ./gradlew :androidApp:validateDebugPageSizeCompatibility --stacktrace
+          ZIPALIGN="$(find "$ANDROID_HOME/build-tools" -type f -name zipalign | sort -V | tail -n 1)"
+          test -n "$ZIPALIGN"
+          "$ZIPALIGN" -c -P 16 -v 4 androidApp/build/outputs/apk/debug/androidApp-debug.apk
+
       - name: Upload analysis and test reports
         if: always()
         uses: actions/upload-artifact@v7

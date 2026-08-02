@@ -182,6 +182,7 @@ The current Android CI-equivalent task set is:
 :shared:compose:testAndroidHostTest
 :shared:compose:compileAndroidMain
 :androidApp:assembleDebug
+:androidApp:validateDebugPageSizeCompatibility
 ```
 
 The macOS iOS CI-equivalent task set, after `pod install` in `iosApp`, is:

@@ -10,6 +10,11 @@
     "android": "com.microsoft.onnxruntime:onnxruntime-android:1.21.1",
     "ios": "onnxruntime-objc:1.24.3"
   },
+  "imageProcessing": {
+    "android": "org.opencv:opencv:4.13.0",
+    "license": "Apache-2.0",
+    "minimumElfPageAlignmentBytes": 16384
+  },
   "models": [
     {
       "role": "detection",

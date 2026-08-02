@@ -70,6 +70,18 @@ val validateOcrModelRelease by tasks.registering {
         check(!versionCatalog.contains("com.google.mlkit:text-recognition")) {
             "ML Kit Android dependency must be removed after PaddleOCR migration"
         }
+        check(versionCatalog.contains("org.opencv:opencv")) {
+            "Android OCR must use the official OpenCV Android artifact"
+        }
+        check(!versionCatalog.contains("com.quickbirdstudios:opencv")) {
+            "The legacy QuickBird OpenCV artifact is not 16 KB page-size compatible"
+        }
+        check(manifestText.contains("\"android\": \"org.opencv:opencv:4.13.0\"")) {
+            "OCR manifest must pin the qualified Android OpenCV artifact"
+        }
+        check(manifestText.contains("\"minimumElfPageAlignmentBytes\": 16384")) {
+            "OCR manifest must record the Android 16 KB ELF alignment contract"
+        }
         check(!rootProject.file("iosApp/Podfile").readText().contains("GoogleMLKit/TextRecognition")) {
             "ML Kit iOS pod must be removed after PaddleOCR migration"
         }

@@ -12,6 +12,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.opencv.android.OpenCVLoader
 import kotlin.math.max
 
 /**
@@ -48,6 +49,7 @@ class AndroidTextRecognitionService(
                 if (closed) {
                     TextRecognitionResult.Failure(TextRecognitionFailureCode.UNSUPPORTED_IMAGE)
                 } else {
+                    OpenCvRuntime.ensureLoaded()
                     val paddle = recognizer ?: createRecognizer().also { recognizer = it }
                     paddle.recognize(bitmap).toPlatformResult(bitmap.width, bitmap.height)
                 }
@@ -122,6 +124,23 @@ class AndroidTextRecognitionService(
         const val RECOGNITION_CONFIG_ASSET = "Models/rec/inference.yml"
         const val DETECTION_LIMIT_PX = 960
         const val MIN_RECOGNITION_CONFIDENCE = 0.35f
+    }
+}
+
+/** OpenCV JNI is process-global and must be loaded before the first native Mat call. */
+private object OpenCvRuntime {
+    @Volatile
+    private var loaded = false
+
+    fun ensureLoaded() {
+        if (loaded) return
+        synchronized(this) {
+            if (loaded) return
+            check(OpenCVLoader.initLocal()) {
+                "Bundled OpenCV native runtime initialization failed"
+            }
+            loaded = true
+        }
     }
 }
 

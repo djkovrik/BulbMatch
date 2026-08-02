@@ -1,9 +1,18 @@
 import com.android.build.api.artifact.SingleArtifact
+import com.android.bundle.Config.BundleConfig
+import com.android.bundle.Config.UncompressNativeLibraries.PageAlignment
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.zip.ZipFile
 import javax.xml.parsers.DocumentBuilderFactory
 
 abstract class ValidateReleaseManifestTask : DefaultTask() {
@@ -56,6 +65,202 @@ abstract class ValidateReleaseManifestTask : DefaultTask() {
             "Release manifest contains forbidden providers: " +
                 providers.intersect(forbiddenProviders).sorted()
         }
+    }
+}
+
+abstract class ValidateNativeLibraryPageSizeTask : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val archiveFile: RegularFileProperty
+
+    @get:Input
+    abstract val minimumPageSizeBytes: Property<Long>
+
+    @TaskAction
+    fun validate() {
+        val minimumAlignment = minimumPageSizeBytes.get()
+        val failures = mutableListOf<String>()
+        var nativeLibraryCount = 0
+
+        ZipFile(archiveFile.get().asFile).use { archive ->
+            val entries = archive.entries().asSequence()
+                .filter {
+                    !it.isDirectory &&
+                        it.name.endsWith(".so") &&
+                        abiFromNativeLibraryPath(it.name) in SUPPORTED_16_KB_ABIS
+                }
+                .toList()
+            val packagedAbis = entries.mapNotNull { abiFromNativeLibraryPath(it.name) }.toSet()
+            check(packagedAbis == SUPPORTED_16_KB_ABIS) {
+                "Archive must contain native libraries for all 16 KB-capable ABIs: " +
+                    "expected=$SUPPORTED_16_KB_ABIS, actual=$packagedAbis"
+            }
+
+            entries.forEach { entry ->
+                nativeLibraryCount += 1
+                val alignments = archive.getInputStream(entry).use { stream ->
+                    elfLoadAlignments(stream.readBytes(), entry.name)
+                }
+                val invalid = alignments.filter { it < minimumAlignment }
+                if (invalid.isNotEmpty()) {
+                    failures += "${entry.name}: LOAD alignments=${alignments.joinToString()}"
+                }
+            }
+        }
+
+        check(failures.isEmpty()) {
+            "Native libraries are not compatible with ${minimumAlignment / 1024} KB pages:\n" +
+                failures.joinToString("\n")
+        }
+        logger.lifecycle(
+            "Validated $nativeLibraryCount native libraries for ${minimumAlignment / 1024} KB ELF alignment",
+        )
+    }
+
+    private fun abiFromNativeLibraryPath(path: String): String? {
+        val segments = path.split('/')
+        val libIndex = segments.indexOf("lib")
+        if (libIndex < 0) return null
+        return segments.getOrNull(libIndex + 1)
+    }
+
+    private fun elfLoadAlignments(bytes: ByteArray, entryName: String): List<Long> {
+        val format = readElfFormat(bytes, entryName)
+        val buffer = ByteBuffer.wrap(bytes).order(format.byteOrder)
+        val programHeaderOffset = readProgramHeaderOffset(buffer, format.is64Bit)
+        val programHeaderEntrySize = readUnsignedShort(
+            buffer,
+            if (format.is64Bit) ELF_64_PROGRAM_HEADER_ENTRY_SIZE else ELF_32_PROGRAM_HEADER_ENTRY_SIZE,
+        )
+        val programHeaderCount = readUnsignedShort(
+            buffer,
+            if (format.is64Bit) ELF_64_PROGRAM_HEADER_COUNT else ELF_32_PROGRAM_HEADER_COUNT,
+        )
+        check(programHeaderOffset >= 0 && programHeaderEntrySize > 0 && programHeaderCount > 0) {
+            "$entryName has an invalid ELF program-header table"
+        }
+
+        val alignments = (0 until programHeaderCount).mapNotNull { index ->
+            readLoadAlignment(
+                buffer = buffer,
+                bytesSize = bytes.size,
+                entryName = entryName,
+                is64Bit = format.is64Bit,
+                headerOffsetLong = programHeaderOffset + index.toLong() * programHeaderEntrySize,
+            )
+        }
+        check(alignments.isNotEmpty()) { "$entryName has no ELF LOAD segments" }
+        return alignments
+    }
+
+    private fun readElfFormat(bytes: ByteArray, entryName: String): ElfFormat {
+        check(bytes.size >= ELF_64_HEADER_SIZE) { "$entryName has a truncated ELF header" }
+        check(
+            bytes[0] == 0x7f.toByte() &&
+                bytes[1] == 'E'.code.toByte() &&
+                bytes[2] == 'L'.code.toByte() &&
+                bytes[3] == 'F'.code.toByte(),
+        ) { "$entryName is not an ELF binary" }
+
+        val is64Bit = when (bytes[ELF_CLASS_INDEX].toInt()) {
+            ELF_CLASS_32 -> false
+            ELF_CLASS_64 -> true
+            else -> error("$entryName has an unsupported ELF class")
+        }
+        val byteOrder = when (bytes[ELF_DATA_INDEX].toInt()) {
+            ELF_DATA_LITTLE_ENDIAN -> ByteOrder.LITTLE_ENDIAN
+            ELF_DATA_BIG_ENDIAN -> ByteOrder.BIG_ENDIAN
+            else -> error("$entryName has an unsupported ELF byte order")
+        }
+        return ElfFormat(is64Bit, byteOrder)
+    }
+
+    private fun readProgramHeaderOffset(buffer: ByteBuffer, is64Bit: Boolean): Long =
+        if (is64Bit) {
+            buffer.getLong(ELF_64_PROGRAM_HEADER_OFFSET)
+        } else {
+            buffer.getInt(ELF_32_PROGRAM_HEADER_OFFSET).toLong() and UINT_MASK
+        }
+
+    private fun readUnsignedShort(buffer: ByteBuffer, offset: Int): Int =
+        buffer.getShort(offset).toInt() and USHORT_MASK
+
+    private fun readLoadAlignment(
+        buffer: ByteBuffer,
+        bytesSize: Int,
+        entryName: String,
+        is64Bit: Boolean,
+        headerOffsetLong: Long,
+    ): Long? {
+        val alignmentOffset = if (is64Bit) ELF_64_LOAD_ALIGNMENT else ELF_32_LOAD_ALIGNMENT
+        val alignmentSize = if (is64Bit) Long.SIZE_BYTES else Int.SIZE_BYTES
+        val requiredEnd = headerOffsetLong + alignmentOffset + alignmentSize
+        check(requiredEnd <= bytesSize.toLong()) {
+            "$entryName has a truncated ELF program-header table"
+        }
+        val headerOffset = headerOffsetLong.toInt()
+        val type = buffer.getInt(headerOffset).toLong() and UINT_MASK
+        if (type != ELF_PROGRAM_HEADER_LOAD) return null
+
+        val alignment = if (is64Bit) {
+            buffer.getLong(headerOffset + alignmentOffset)
+        } else {
+            buffer.getInt(headerOffset + alignmentOffset).toLong() and UINT_MASK
+        }
+        check(alignment >= 0) { "$entryName has an invalid LOAD alignment" }
+        return alignment
+    }
+
+    private data class ElfFormat(
+        val is64Bit: Boolean,
+        val byteOrder: ByteOrder,
+    )
+
+    private companion object {
+        const val ELF_64_HEADER_SIZE = 64
+        const val ELF_CLASS_INDEX = 4
+        const val ELF_DATA_INDEX = 5
+        const val ELF_CLASS_32 = 1
+        const val ELF_CLASS_64 = 2
+        const val ELF_DATA_LITTLE_ENDIAN = 1
+        const val ELF_DATA_BIG_ENDIAN = 2
+        const val ELF_32_PROGRAM_HEADER_OFFSET = 28
+        const val ELF_64_PROGRAM_HEADER_OFFSET = 32
+        const val ELF_32_PROGRAM_HEADER_ENTRY_SIZE = 42
+        const val ELF_64_PROGRAM_HEADER_ENTRY_SIZE = 54
+        const val ELF_32_PROGRAM_HEADER_COUNT = 44
+        const val ELF_64_PROGRAM_HEADER_COUNT = 56
+        const val ELF_32_LOAD_ALIGNMENT = 28
+        const val ELF_64_LOAD_ALIGNMENT = 48
+        const val ELF_PROGRAM_HEADER_LOAD = 1L
+        const val UINT_MASK = 0xffffffffL
+        const val USHORT_MASK = 0xffff
+        val SUPPORTED_16_KB_ABIS = setOf("arm64-v8a", "x86_64")
+    }
+}
+
+abstract class ValidateAppBundlePageAlignmentTask : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val bundleFile: RegularFileProperty
+
+    @TaskAction
+    fun validate() {
+        val bundleConfig = ZipFile(bundleFile.get().asFile).use { bundle ->
+            val entry = checkNotNull(bundle.getEntry(BUNDLE_CONFIG_PATH)) {
+                "App Bundle has no $BUNDLE_CONFIG_PATH: ${bundleFile.get().asFile}"
+            }
+            bundle.getInputStream(entry).use(BundleConfig::parseFrom)
+        }
+        val alignment = bundleConfig.optimizations.uncompressNativeLibraries.alignment
+        check(alignment == PageAlignment.PAGE_ALIGNMENT_16K) {
+            "App Bundle requests $alignment instead of ${PageAlignment.PAGE_ALIGNMENT_16K}"
+        }
+        logger.lifecycle("Validated App Bundle page alignment: $alignment")
+    }
+
+    private companion object {
+        const val BUNDLE_CONFIG_PATH = "BundleConfig.pb"
     }
 }
 
@@ -205,6 +410,47 @@ val validateReleaseMergedManifest = tasks.register<ValidateReleaseManifestTask>(
 ) {
     group = "verification"
     description = "Rejects advertising ID, location, and broad media permissions in release."
+}
+
+val validateDebugNativeLibrariesFor16Kb = tasks.register<ValidateNativeLibraryPageSizeTask>(
+    "validateDebugNativeLibrariesFor16Kb",
+) {
+    group = "verification"
+    description = "Validates 16 KB ELF LOAD alignment for every 64-bit native library in the debug APK."
+    dependsOn("assembleDebug")
+    archiveFile.set(layout.buildDirectory.file("outputs/apk/debug/androidApp-debug.apk"))
+    minimumPageSizeBytes.set(16L * 1024L)
+}
+
+val validateDebugAppBundleNativeLibrariesFor16Kb =
+    tasks.register<ValidateNativeLibraryPageSizeTask>(
+        "validateDebugAppBundleNativeLibrariesFor16Kb",
+    ) {
+        group = "verification"
+        description = "Validates 16 KB ELF LOAD alignment for every 64-bit native library in the debug AAB."
+        dependsOn("bundleDebug")
+        archiveFile.set(layout.buildDirectory.file("outputs/bundle/debug/androidApp-debug.aab"))
+        minimumPageSizeBytes.set(16L * 1024L)
+    }
+
+val validateDebugAppBundlePageAlignmentFor16Kb =
+    tasks.register<ValidateAppBundlePageAlignmentTask>(
+        "validateDebugAppBundlePageAlignmentFor16Kb",
+    ) {
+        group = "verification"
+        description = "Validates that the debug AAB requests 16 KB ZIP alignment from bundletool."
+        dependsOn("bundleDebug")
+        bundleFile.set(layout.buildDirectory.file("outputs/bundle/debug/androidApp-debug.aab"))
+    }
+
+tasks.register("validateDebugPageSizeCompatibility") {
+    group = "verification"
+    description = "Validates APK/AAB native ELF alignment and the App Bundle 16 KB delivery contract."
+    dependsOn(
+        validateDebugNativeLibrariesFor16Kb,
+        validateDebugAppBundleNativeLibrariesFor16Kb,
+        validateDebugAppBundlePageAlignmentFor16Kb,
+    )
 }
 
 androidComponents {

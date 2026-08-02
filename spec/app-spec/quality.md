@@ -54,6 +54,7 @@ Every `REQ-NNN` owns exactly one `AC-NNN` in the flow files. Implementation test
 - bundled/offline OCR after a clean install with airplane mode;
 - legible, blurred, rotated, low-contrast, numeric-only, Latin, Cyrillic, and no-text fixture images;
 - Android API 26 and a current Android API; iOS 16.2 or newer;
+- every packaged Android 64-bit native library has 16 KB-compatible ELF LOAD alignment, the APK passes 16 KB ZIP alignment validation, and OCR runs on a 16 KB Android environment;
 - controlled Crashlytics test report with forbidden-data inspection;
 - Yandex test banners/interstitials, SDK privacy setup before initialization, ad failure collapse, and release-ID guard.
 
@@ -121,6 +122,7 @@ The release OCR gate requires:
 - Sergey V. records approval of the exact catalog, ruleset, and safety-fixture-suite versions after reviewing automated and AI-assisted evidence.
 - App operates from clean install in airplane mode for the full core flow.
 - The packaged OCR model set matches `ocr-model-manifest.json`, appears exactly once per platform bundle, and no ML Kit dependency remains after migration.
+- Android APK/AAB native libraries pass automated 16 KB ELF and ZIP alignment gates.
 - Accessibility audit finds no critical/blocking issue.
 - The final APK/AAB/IPA size is recorded and accepted; bundled OCR size is intentional.
 
