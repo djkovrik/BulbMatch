@@ -267,6 +267,8 @@
   },
   "monetization": {
     "provider": "Yandex Mobile Ads Compose Multiplatform",
+    "sdkVersion": "8.1.0",
+    "sdkVersionPolicy": "The closed-testing baseline uses the published and aligned Compose Multiplatform and native iOS SDK version 8.1.0. Any later SDK upgrade requires an explicit AppSpec decision and Android/iOS release verification.",
     "strategy": "Advertising is subordinate to task completion and safety comprehension.",
     "placements": [
       "RESULT_INLINE",

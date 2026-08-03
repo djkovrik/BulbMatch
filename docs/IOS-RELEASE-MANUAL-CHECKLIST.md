@@ -32,14 +32,12 @@
 
 Текущие release-блокеры:
 
-1. Yandex release gate ожидает CMP `8.2.0`, но Maven Central разрешает только
-   `8.1.0`.
-2. Production catalog не имеет human approval от `Sergey V.`.
-3. Отсутствует локальный `iosApp/iosApp/GoogleService-Info.plist`.
-4. Не настроены Apple Team, provisioning и device signing.
-5. Не пройдены physical-device OCR performance/accuracy acceptance, Yandex
+1. Production catalog не имеет human approval от `Sergey V.`.
+2. Отсутствует локальный `iosApp/iosApp/GoogleService-Info.plist`.
+3. Не настроены Apple Team, provisioning и device signing.
+4. Не пройдены physical-device OCR performance/accuracy acceptance, Yandex
    integration check и controlled Crashlytics verification.
-6. Не создан Archive, поэтому не записан размер IPA.
+5. Не создан Archive, поэтому не записан размер IPA.
 
 ## 1. Подключить Firebase Apple app
 
@@ -183,28 +181,20 @@ iPhone без signing/provisioning ошибок.
 
 ### Yandex SDK release gate
 
-Перед релизом повторно проверить доступность одной версии одновременно в Maven
-Central и CocoaPods.
+Перед релизом проверить утверждённую AppSpec пару `8.1.0` одновременно в Gradle
+version catalog, Podfile и Podfile.lock.
 
 ```bash
 ./gradlew :shared:ads:validateAdSdkReleaseVersion --stacktrace
 ```
 
-Пока задача завершается сообщением:
+Не удалять и не ослаблять gate. Более новая версия требует отдельного
+AppSpec-решения и атомарного обновления Gradle/CocoaPods пары.
 
-```text
-Release blocked: Yandex documents CMP 8.2.0, but Maven Central currently
-resolves only 8.1.0.
-```
-
-Не удалять и не ослаблять gate. Когда совместимая версия станет доступна:
-
-- [ ] Одной правкой обновить `gradle/libs.versions.toml`.
-- [ ] Обновить `iosApp/Podfile` на ту же native-версию.
-- [ ] Выполнить `pod install --repo-update`.
-- [ ] Зафиксировать обновлённый `Podfile.lock`.
-- [ ] Повторить iOS Gradle matrix, generic device build и physical Ads QA.
+- [ ] Убедиться, что AppSpec, `gradle/libs.versions.toml`, `iosApp/Podfile` и
+  `iosApp/Podfile.lock` фиксируют `8.1.0`.
 - [ ] Убедиться, что `validateAdSdkReleaseVersion` завершается с `exit 0`.
+- [ ] Выполнить iOS Gradle matrix, generic device build и physical Ads QA.
 
 ## 5. Подписать production catalog
 

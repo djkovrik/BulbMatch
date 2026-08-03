@@ -22,6 +22,7 @@ kotlinx-datetime = "0.8.0"
 decompose = "3.5.0"
 mvikotlin = "4.4.0"
 sqldelight = "2.3.2"
+# Approved closed-testing baseline; keep aligned with AppSpec and iosApp/Podfile.
 yandex-mobile-ads-kmp = "8.1.0"
 detekt = "2.0.0-alpha.5"
 kover = "0.9.9"

@@ -119,20 +119,26 @@ chmod +x gradlew
 
 - Gradle/CMP dependency зафиксирована на `8.1.0`;
 - `iosApp/Podfile` зафиксирован на `YandexMobileAds 8.1.0`;
-- release-задача намеренно ожидает документированную CMP-версию `8.2.0`.
+- AppSpec утверждает выровненную CMP/native пару `8.1.0` для закрытого
+  тестирования;
+- release-задача проверяет это решение в AppSpec, Gradle, Podfile и
+  Podfile.lock.
 
 Официальный quick start:
 
 <https://ads.yandex.com/helpcenter/en/dev/compose-multiplatform/quick-start>
 
-Перед изменением проверить одновременно:
+Перед будущим изменением версии проверить одновременно:
 
-1. доступность `com.yandex.ads.multiplatform:mobileads-compose:8.2.0` в Gradle;
-2. доступность `YandexMobileAds 8.2.0` в CocoaPods;
+1. доступность выбранного `com.yandex.ads.multiplatform:mobileads-compose` в
+   Gradle;
+2. доступность совместимого `YandexMobileAds` в CocoaPods;
 3. совместимость их iOS native API;
-4. требования к `use_frameworks`/static linkage.
+4. требования к `use_frameworks`/static linkage;
+5. влияние новых транзитивных AppMetrica/Crash SDK зависимостей на privacy
+   contract.
 
-Если обе стороны доступны, обновить одной атомарной правкой:
+После явного AppSpec-решения обновить одной атомарной правкой:
 
 - `gradle/libs.versions.toml`;
 - `iosApp/Podfile`;
@@ -140,8 +146,9 @@ chmod +x gradlew
 - при необходимости lockfiles.
 
 После обновления запустить targeted build и tests. Если хотя бы одна сторона
-не разрешает `8.2.0`, оставить gate красным и зафиксировать фактический resolver
-output. Не подменять SDK локальным артефактом и не удалять gate.
+не разрешает утверждённую пару, оставить gate красным и зафиксировать
+фактический resolver output. Не подменять SDK локальным артефактом и не удалять
+gate.
 
 ### 1.2. PaddleOCR / ONNX Runtime
 

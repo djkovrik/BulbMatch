@@ -219,10 +219,11 @@ Known intentional release boundaries include:
 - The bundled catalog is still the development candidate and requires the
   versioned human approval by Sergey V. described in the production catalog
   guide. AI findings are advisory and cannot create that sign-off.
-- Yandex Compose/native SDKs are pinned to the currently aligned resolvable
-  version, while `validateAdSdkReleaseVersion` intentionally blocks release
-  until the documented required version is available and aligned. Do not remove
-  or relax this gate.
+- Yandex Compose/native SDKs are pinned to the explicitly approved aligned
+  `8.1.0` closed-testing baseline. `validateAdSdkReleaseVersion` blocks release
+  if AppSpec, Gradle, Podfile, or Podfile.lock drift from that decision. Do not
+  remove or relax this gate; a later SDK upgrade requires an explicit AppSpec
+  decision and Android/iOS verification.
 - Android `androidApp/google-services.json` is committed release configuration;
   CI validates its package client directly from the checkout. The iOS
   `GoogleService-Info.plist`, signing keys, certificates, provisioning profiles,

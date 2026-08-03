@@ -50,20 +50,17 @@
 - Production-каталог одобрен Sergey V.; canonical hash:
   `881d91ec1c8a3ebd494bac0dfa615e109c25e573548d325ec90d5ba98f32ce7b`.
 
-### Текущий release blocker
+### Утверждённая SDK-пара для закрытого тестирования
 
-Yandex документирует Compose Multiplatform `8.2.0`, однако артефакт
-`com.yandex.ads.multiplatform:mobileads-compose:8.2.0` пока отсутствует в Maven
-Central. Репозиторий сохраняет резолвимую `8.1.0`, а
-`:shared:ads:validateAdSdkReleaseVersion` намеренно блокирует production build.
+AppSpec утверждает Yandex Compose Multiplatform и native iOS SDK `8.1.0` как
+опубликованную и выровненную baseline-пару для закрытого тестирования.
+`:shared:ads:validateAdSdkReleaseVersion` проверяет это решение одновременно в
+AppSpec, Gradle version catalog, Podfile и Podfile.lock.
 
-Нельзя выключать этот gate в publish workflow. Когда 8.2.0 станет доступен:
-
-1. обновить `yandex-mobile-ads-kmp` в `gradle/libs.versions.toml` до `8.2.0`;
-2. выполнить Android dependency resolution и полный release build;
-3. для будущего iOS-релиза отдельно выровнять Podfile/lock и выполнить все
-   отложенные CocoaPods/Xcode проверки;
-4. проверить Yandex integration log на физическом Android-устройстве.
+Нельзя выключать этот gate в publish workflow. Для перехода на более новую
+версию сначала принять явное AppSpec-решение, затем одной атомарной правкой
+обновить CMP/native зависимости и повторить Android dependency resolution,
+CocoaPods/Xcode linkage, privacy checks и physical-device Ads QA.
 
 ## GitHub release automation
 
@@ -219,8 +216,8 @@ release сборку:
 
 ## 8. Порядок выпуска
 
-1. Дождаться доступного и проверенного Yandex CMP 8.2.0; сделать зелёным release
-   gate без `-x` и без ослабления проверки.
+1. Убедиться, что release gate подтверждает утверждённую Yandex CMP/native пару
+   `8.1.0` без `-x` и без ослабления проверки.
 2. Слить release-prep изменения в `master`; убедиться, что Android CI зелёный.
 3. Завершить Console/Firebase/Yandex/manual prerequisites выше.
 4. Запустить `Create Android release`, выбрать bump и заполнить EN/RU notes.

@@ -6,8 +6,7 @@ target 'iosApp' do
   use_frameworks! :linkage => :static
 
   # YandexMobileAds is static. Build and archive the generated .xcworkspace.
-  # CMP 8.2.0 is documented but is not currently published to Maven Central.
-  # Keep native and KMP SDKs aligned on the latest pair the resolvers can obtain.
+  # Approved closed-testing baseline. Keep native and KMP SDKs aligned with AppSpec.
   pod 'YandexMobileAds', '8.1.0'
   # PaddleOCR uses the same bundled ONNX models and YAML dictionary as Android.
   pod 'onnxruntime-objc', '1.24.3'

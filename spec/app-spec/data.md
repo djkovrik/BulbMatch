@@ -99,7 +99,7 @@ Use the common `TextRecognitionService` contract with platform implementations b
 
 ## Yandex Mobile Ads
 
-Use the current Yandex Mobile Ads Compose Multiplatform library and native iOS SDK with compatible versions. As of AppSpec research on 2026-07-28, Yandex documented Compose Multiplatform plugin `8.2.0`, Android/iOS integration, iOS 13+, and privacy setup before initialization. Re-verify official documentation during implementation.
+Use Yandex Mobile Ads Compose Multiplatform and native iOS SDK `8.1.0` as the approved, published, and aligned closed-testing baseline. This explicit product decision was recorded on 2026-08-03 after re-verification showed that Yandex documentation referenced CMP `8.2.0` while Maven Central and the official multiplatform release repository still published `8.1.0` as the latest CMP artifact. Any later SDK upgrade requires an explicit AppSpec decision plus Android dependency resolution, CocoaPods/Xcode linkage, privacy, integration, and physical-device ad verification. Keep privacy setup before initialization.
 
 Network advertising behavior:
 
