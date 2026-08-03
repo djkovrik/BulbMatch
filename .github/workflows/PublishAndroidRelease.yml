@@ -213,6 +213,10 @@ jobs:
       - name: Locate and verify release artifacts
         id: artifacts
         shell: bash
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ steps.keystore.outputs.path }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
           set -euo pipefail
 
@@ -234,7 +238,11 @@ jobs:
           apksigner_path="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n 1)"
           [[ -n "$apksigner_path" ]] || { echo "apksigner not found" >&2; exit 1; }
           "$apksigner_path" verify --verbose --print-certs "$apk_path"
-          jarsigner -verify -strict "$bundle_path"
+          jarsigner -verify -strict \
+            -keystore "$ANDROID_KEYSTORE_PATH" \
+            -storepass:env ANDROID_KEYSTORE_PASSWORD \
+            "$bundle_path" \
+            "$ANDROID_KEY_ALIAS"
 
           echo "apk=$apk_path" >> "$GITHUB_OUTPUT"
           echo "bundle=$bundle_path" >> "$GITHUB_OUTPUT"
