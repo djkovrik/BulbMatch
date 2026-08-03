@@ -4,6 +4,14 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>BulbMatchYandexHistoryStickyAdUnitId</key>
+	<string>$(BULBMATCH_YANDEX_HISTORY_STICKY_AD_UNIT_ID)</string>
+	<key>BulbMatchYandexMatchExitInterstitialAdUnitId</key>
+	<string>$(BULBMATCH_YANDEX_MATCH_EXIT_INTERSTITIAL_AD_UNIT_ID)</string>
+	<key>BulbMatchYandexReferenceStickyAdUnitId</key>
+	<string>$(BULBMATCH_YANDEX_REFERENCE_STICKY_AD_UNIT_ID)</string>
+	<key>BulbMatchYandexResultInlineAdUnitId</key>
+	<string>$(BULBMATCH_YANDEX_RESULT_INLINE_AD_UNIT_ID)</string>
 	<key>NSCameraUsageDescription</key>
 	<string>BulbMatch uses the camera only when you choose Camera to read lamp markings on device.</string>
 	<key>UISupportedInterfaceOrientations</key>

@@ -27,6 +27,7 @@ import com.sedsoftware.bulbmatch.ads.AdBuildMode
 import com.sedsoftware.bulbmatch.ads.AdOutcome
 import com.sedsoftware.bulbmatch.ads.AdPlacement
 import com.sedsoftware.bulbmatch.ads.AdPlatform
+import com.sedsoftware.bulbmatch.ads.AdUnitSet
 import com.sedsoftware.bulbmatch.ads.BulbMatchAdConfiguration
 import com.sedsoftware.bulbmatch.ads.BulbMatchAdsInitializer
 import com.sedsoftware.bulbmatch.ads.BulbMatchBanner
@@ -160,13 +161,15 @@ class IosAppController(
 @OptIn(ExperimentalNativeApi::class)
 private fun IosBulbMatchApp(holder: IosRootHolder) {
     val configuration = remember {
+        val isDebugBinary = Platform.isDebugBinary
         BulbMatchAdConfiguration.forBuild(
             platform = AdPlatform.Ios,
-            mode = if (Platform.isDebugBinary) {
+            mode = if (isDebugBinary) {
                 AdBuildMode.DebugDevice
             } else {
                 AdBuildMode.Release
             },
+            debugUnits = if (isDebugBinary) iosDebugAdUnits() else null,
         )
     }
     val interstitial = rememberBulbMatchInterstitialController(configuration)
@@ -209,6 +212,17 @@ private fun IosBulbMatchApp(holder: IosRootHolder) {
         ),
     )
 }
+
+private fun iosDebugAdUnits(): AdUnitSet = AdUnitSet(
+    resultInline = requiredInfoPlistString("BulbMatchYandexResultInlineAdUnitId"),
+    historySticky = requiredInfoPlistString("BulbMatchYandexHistoryStickyAdUnitId"),
+    referenceSticky = requiredInfoPlistString("BulbMatchYandexReferenceStickyAdUnitId"),
+    matchExitInterstitial = requiredInfoPlistString("BulbMatchYandexMatchExitInterstitialAdUnitId"),
+)
+
+private fun requiredInfoPlistString(key: String): String =
+    requireNotNull(NSBundle.mainBundle.objectForInfoDictionaryKey(key) as? String)
+        .also { require(it.isNotBlank()) { "Missing iOS debug configuration value: $key" } }
 
 /**
  * Kotlin owns application state while the retained Swift composition owns native presenters and
