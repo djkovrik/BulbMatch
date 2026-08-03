@@ -343,13 +343,25 @@ private class IosPlatformBridge(
 
     override fun capturePhoto() {
         launch(OperationCode.CAMERA_CAPTURE) {
+            val requestingCamera = currentCamera() ?: return@launch
             when (val result = imageSource.captureCameraImage()) {
-                is ImageAcquisitionResult.Success ->
-                    root.match.onCameraImageAvailable(IosEphemeralImage(result.image))
-                is ImageAcquisitionResult.Cancelled ->
-                    root.match.onImageSelectionCancelled()
-                is ImageAcquisitionResult.Failure ->
-                    root.match.onImageSelectionFailed(result.code.toAppFailure())
+                is ImageAcquisitionResult.Success -> {
+                    if (currentCamera() === requestingCamera) {
+                        root.match.onCameraImageAvailable(IosEphemeralImage(result.image))
+                    } else {
+                        result.image.release()
+                    }
+                }
+                is ImageAcquisitionResult.Cancelled -> {
+                    if (currentCamera() === requestingCamera) {
+                        root.match.onImageSelectionCancelled()
+                    }
+                }
+                is ImageAcquisitionResult.Failure -> {
+                    if (currentCamera() === requestingCamera) {
+                        root.match.onImageSelectionFailed(result.code.toAppFailure())
+                    }
+                }
             }
         }
     }
@@ -454,8 +466,9 @@ private fun ImageFailureCode.toAppFailure():
         com.sedsoftware.bulbmatch.app.ImageFailure.PermissionDenied
     ImageFailureCode.CAMERA_UNAVAILABLE,
     ImageFailureCode.CAMERA_NOT_READY,
-    ImageFailureCode.CAPTURE_FAILED,
     -> com.sedsoftware.bulbmatch.app.ImageFailure.CameraUnavailable
+    ImageFailureCode.CAPTURE_FAILED ->
+        com.sedsoftware.bulbmatch.app.ImageFailure.CaptureFailed
     ImageFailureCode.UNREADABLE_IMAGE ->
         com.sedsoftware.bulbmatch.app.ImageFailure.UnreadableImage
 }

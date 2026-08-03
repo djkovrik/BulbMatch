@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.sedsoftware.bulbmatch.app.ImageFailure
 import com.sedsoftware.bulbmatch.compose.components.AppScreenScaffold
 import com.sedsoftware.bulbmatch.compose.components.AppIcon
 import com.sedsoftware.bulbmatch.compose.components.AppIcons
@@ -148,6 +149,8 @@ fun MatchHomeScreen(
 fun CameraCaptureScreen(
     state: CameraState,
     modifier: Modifier = Modifier,
+    captureInProgress: Boolean = false,
+    failure: ImageFailure? = null,
     torchSupported: Boolean = true,
     torchEnabled: Boolean = false,
     onClose: () -> Unit,
@@ -171,6 +174,7 @@ fun CameraCaptureScreen(
             when (state) {
                 CameraState.Content -> CameraContent(
                     modifier = Modifier.weight(1f),
+                    captureInProgress = captureInProgress,
                     torchSupported = torchSupported,
                     torchEnabled = torchEnabled,
                     onShutter = onShutter,
@@ -212,10 +216,7 @@ fun CameraCaptureScreen(
                     null,
                 )
                 CameraState.Error -> CameraRecovery(
-                    tr(
-                        "The camera could not be opened. Try again or use a photo or manual entry.",
-                        "Не удалось открыть камеру. Повторите попытку, выберите фото или введите данные вручную.",
-                    ),
+                    cameraFailureMessage(failure),
                     tr("Retry", "Повторить"),
                     onTryAgain,
                     onChoosePhoto,
@@ -229,6 +230,7 @@ fun CameraCaptureScreen(
 
 @Composable
 private fun CameraContent(
+    captureInProgress: Boolean,
     torchSupported: Boolean,
     torchEnabled: Boolean,
     onShutter: () -> Unit,
@@ -243,6 +245,7 @@ private fun CameraContent(
         "Предпросмотр камеры для маркировки лампы",
     )
     val shutterDescription = tr("Take photo", "Сделать снимок")
+    val capturingDescription = tr("Capturing photo", "Делаем снимок")
     Column(modifier = modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier.weight(1f).fillMaxWidth().semantics { contentDescription = previewDescription },
@@ -264,6 +267,21 @@ private fun CameraContent(
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
             )
+            if (captureInProgress) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color.Black.copy(alpha = .36f),
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.semantics {
+                                contentDescription = capturingDescription
+                            },
+                            color = Color.White,
+                        )
+                    }
+                }
+            }
         }
         Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh) {
             Column(
@@ -272,12 +290,17 @@ private fun CameraContent(
                 verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
             ) {
                 if (torchSupported) {
-                    TextButton(onClick = onToggleTorch, modifier = Modifier.sizeIn(minHeight = 48.dp)) {
+                    TextButton(
+                        onClick = onToggleTorch,
+                        modifier = Modifier.sizeIn(minHeight = 48.dp),
+                        enabled = !captureInProgress,
+                    ) {
                         Text(if (torchEnabled) tr("Torch on", "Фонарик включён") else tr("Torch off", "Фонарик выключен"))
                     }
                 }
                 Button(
                     onClick = onShutter,
+                    enabled = !captureInProgress,
                     modifier = Modifier.size(72.dp).semantics { contentDescription = shutterDescription },
                     shape = CircleShape,
                     contentPadding = PaddingValues(0.dp),
@@ -288,16 +311,40 @@ private fun CameraContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm),
                 ) {
-                    TextButton(onClick = onChoosePhoto, modifier = Modifier.weight(1f).sizeIn(minHeight = 48.dp)) {
+                    TextButton(
+                        onClick = onChoosePhoto,
+                        modifier = Modifier.weight(1f).sizeIn(minHeight = 48.dp),
+                        enabled = !captureInProgress,
+                    ) {
                         Text(tr("Choose photo", "Выбрать фото"), textAlign = TextAlign.Center)
                     }
-                    TextButton(onClick = onManual, modifier = Modifier.weight(1f).sizeIn(minHeight = 48.dp)) {
+                    TextButton(
+                        onClick = onManual,
+                        modifier = Modifier.weight(1f).sizeIn(minHeight = 48.dp),
+                        enabled = !captureInProgress,
+                    ) {
                         Text(tr("Enter manually", "Ввести вручную"), textAlign = TextAlign.Center)
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun cameraFailureMessage(failure: ImageFailure?): String = when (failure) {
+    ImageFailure.CaptureFailed -> tr(
+        "The photo could not be captured. Try again or use a photo or manual entry.",
+        "Не удалось сделать снимок. Повторите попытку, выберите фото или введите данные вручную.",
+    )
+    ImageFailure.UnreadableImage -> tr(
+        "The captured photo could not be read. Try again or use another method.",
+        "Не удалось прочитать снимок. Повторите попытку или выберите другой способ.",
+    )
+    else -> tr(
+        "The camera could not be opened. Try again or use a photo or manual entry.",
+        "Не удалось открыть камеру. Повторите попытку, выберите фото или введите данные вручную.",
+    )
 }
 
 @Composable

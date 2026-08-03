@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "999219134908",
+    "project_id": "bulbmatch-49a3b",
+    "storage_bucket": "bulbmatch-49a3b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999219134908:android:b039eb5d7a4c8671132bb9",
+        "android_client_info": {
+          "package_name": "com.sedsoftware.bulbmatch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvNVInPmczXCSFCs7v9A3pdNUeeTiGJmE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

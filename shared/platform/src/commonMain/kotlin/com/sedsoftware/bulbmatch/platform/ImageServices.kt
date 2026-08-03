@@ -44,10 +44,24 @@ enum class ImageFailureCode {
     UNREADABLE_IMAGE,
 }
 
+/** Fixed, non-user-authored diagnostics safe to attach to crash reports. */
+enum class ImageFailureTechnicalCode {
+    CAMERAX_UNKNOWN,
+    CAMERAX_FILE_IO,
+    CAMERAX_CAPTURE_FAILED,
+    CAMERAX_CAMERA_CLOSED,
+    CAMERAX_INVALID_CAMERA,
+    CAMERAX_UNRECOGNIZED,
+}
+
 sealed interface ImageAcquisitionResult {
     data class Success(val image: EphemeralImageHandle) : ImageAcquisitionResult
     data class Cancelled(val reason: ImageCancellation) : ImageAcquisitionResult
-    data class Failure(val code: ImageFailureCode) : ImageAcquisitionResult
+    data class Failure(
+        val code: ImageFailureCode,
+        val technicalCode: ImageFailureTechnicalCode? = null,
+        val cause: Throwable? = null,
+    ) : ImageAcquisitionResult
 }
 
 /**

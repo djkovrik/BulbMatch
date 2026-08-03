@@ -275,13 +275,11 @@ private fun String.toAssessmentOutcome(): AssessmentOutcome = when (this) {
 }
 
 private fun StoredLocaleOverride.toDomain(): LocaleOverride = when (this) {
-    StoredLocaleOverride.SYSTEM -> LocaleOverride.System
     StoredLocaleOverride.EN -> LocaleOverride.English
     StoredLocaleOverride.RU -> LocaleOverride.Russian
 }
 
 private fun LocaleOverride.toStored(): StoredLocaleOverride = when (this) {
-    LocaleOverride.System -> StoredLocaleOverride.SYSTEM
     LocaleOverride.English -> StoredLocaleOverride.EN
     LocaleOverride.Russian -> StoredLocaleOverride.RU
 }

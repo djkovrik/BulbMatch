@@ -12,7 +12,7 @@ kotlin {
     android {
         namespace = "com.sedsoftware.bulbmatch.ads"
         compileSdk = 36
-        minSdk = 24
+        minSdk = libs.versions.android.minSdk.get().toInt()
         withHostTestBuilder {}.configure {}
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
     }
@@ -23,6 +23,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared:domain"))
+            implementation(compose.animation)
             implementation(libs.compose.runtime)
             implementation(libs.compose.ui)
             implementation(libs.compose.foundation)
@@ -66,20 +67,56 @@ tasks.register("validateProductionAdUnits") {
     }
 }
 
+val approvedAdSdkVersion = "8.1.0"
+val appSpecVersion = providers.fileContents(
+    rootProject.layout.projectDirectory.file("spec/app-spec/app-spec.json"),
+).asText.map { contents ->
+    Regex("\"sdkVersion\"\\s*:\\s*\"([^\"]+)\"")
+        .find(contents)
+        ?.groupValues
+        ?.get(1)
+        ?: "no version"
+}
+val iosPodfileVersion = providers.fileContents(
+    rootProject.layout.projectDirectory.file("iosApp/Podfile"),
+).asText.map { contents ->
+    Regex("pod 'YandexMobileAds', '([^']+)'")
+        .find(contents)
+        ?.groupValues
+        ?.get(1)
+        ?: "no version"
+}
+val iosPodfileLockVersion = providers.fileContents(
+    rootProject.layout.projectDirectory.file("iosApp/Podfile.lock"),
+).asText.map { contents ->
+    Regex("- YandexMobileAds \\(([^)]+)\\):")
+        .find(contents)
+        ?.groupValues
+        ?.get(1)
+        ?: "no version"
+}
+
 tasks.register("validateAdSdkReleaseVersion") {
     group = "verification"
-    description = "Blocks release while the documented Yandex CMP 8.2.0 artifact is unavailable."
-    inputs.properties(
-        mapOf(
-            "documentedVersion" to "8.2.0",
-            "resolvedVersion" to libs.versions.yandex.mobile.ads.kmp.get(),
-        ),
-    )
+    description = "Validates the approved Yandex CMP/native SDK version across AppSpec, Gradle, and CocoaPods."
+    inputs.property("approvedVersion", approvedAdSdkVersion)
+    inputs.property("gradleVersion", libs.versions.yandex.mobile.ads.kmp.get())
+    inputs.property("appSpecVersion", appSpecVersion)
+    inputs.property("iosPodfileVersion", iosPodfileVersion)
+    inputs.property("iosPodfileLockVersion", iosPodfileLockVersion)
     doLast {
-        val documented = inputs.properties.getValue("documentedVersion").toString()
-        val resolved = inputs.properties.getValue("resolvedVersion").toString()
-        check(resolved == documented) {
-            "Release blocked: Yandex documents CMP $documented, but Maven Central currently resolves only $resolved."
+        val approved = inputs.properties.getValue("approvedVersion").toString()
+
+        val configuredVersions = mapOf(
+            "AppSpec" to inputs.properties.getValue("appSpecVersion").toString(),
+            "Gradle" to inputs.properties.getValue("gradleVersion").toString(),
+            "Podfile" to inputs.properties.getValue("iosPodfileVersion").toString(),
+            "Podfile.lock" to inputs.properties.getValue("iosPodfileLockVersion").toString(),
+        )
+        configuredVersions.forEach { (source, version) ->
+            check(version == approved) {
+                "Release blocked: approved Yandex Ads SDK is $approved, but $source configures $version."
+            }
         }
     }
 }

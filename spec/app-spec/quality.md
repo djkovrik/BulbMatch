@@ -24,6 +24,8 @@ Every `REQ-NNN` owns exactly one `AC-NNN` in the flow files. Implementation test
 - brightness and printed-equivalent separation;
 - deterministic explanations and shopping-profile output for the same input/catalog version;
 - locale-independent parsing fixtures for comma/dot decimals and OCR punctuation.
+- exact Cyrillic numeric-unit parsing with immutable raw text and negative confusable-token coverage;
+- property-style checks proving OCR normalization cannot invent a base or voltage candidate. (`REQ-027`, `AC-027`)
 
 ### Store/component tests
 
@@ -51,6 +53,8 @@ Every `REQ-NNN` owns exactly one `AC-NNN` in the flow files. Implementation test
 - iOS picker without library-wide authorization;
 - bundled/offline OCR after a clean install with airplane mode;
 - legible, blurred, rotated, low-contrast, numeric-only, Latin, Cyrillic, and no-text fixture images;
+- Android API 26 and a current Android API; iOS 16.2 or newer;
+- every packaged Android 64-bit native library has 16 KB-compatible ELF LOAD alignment, the APK passes 16 KB ZIP alignment validation, and OCR runs on a 16 KB Android environment;
 - controlled Crashlytics test report with forbidden-data inspection;
 - Yandex test banners/interstitials, SDK privacy setup before initialization, ad failure collapse, and release-ID guard.
 
@@ -92,6 +96,19 @@ Minimum cases:
 
 Sergey V. is the named final catalog/ruleset reviewer and approves expected outcomes and rule provenance. Automated checks and multiple AI models should expand coverage and challenge assumptions, but AI output is advisory and cannot replace the recorded human release decision.
 
+## OCR fixture suite
+
+Maintain OCR images separately from the signed catalog safety fixtures under `spec/ocr-fixtures/v1/`. The set contains 60–100 synthetic or explicitly licensed images and a manifest with provenance, visible source text, expected raw observations, expected parsed candidates, script, difficulty, and negative/ambiguous tags. It contains no user photographs.
+
+The release OCR gate requires:
+
+- zero false base or voltage candidates on the complete negative/ambiguous corpus;
+- at least 95% exact field recall on controlled legible Cyrillic fixtures;
+- at least 95% exact field recall across the complete controlled legible supported-script corpus;
+- Latin field recall no more than two percentage points below the recorded ML Kit baseline;
+- stable output and no retained-image or unbounded-memory growth across twenty repeated recognitions;
+- a recorded package-size and peak-memory comparison before removing the previous OCR engine.
+
 ## Release guardrails
 
 - `validate-app-spec.py` returns zero errors before implementation begins.
@@ -104,6 +121,8 @@ Sergey V. is the named final catalog/ruleset reviewer and approves expected outc
 - The packaged catalog hash matches its manifest, and catalog/ruleset versions are visible in Settings.
 - Sergey V. records approval of the exact catalog, ruleset, and safety-fixture-suite versions after reviewing automated and AI-assisted evidence.
 - App operates from clean install in airplane mode for the full core flow.
+- The packaged OCR model set matches `ocr-model-manifest.json`, appears exactly once per platform bundle, and no ML Kit dependency remains after migration.
+- Android APK/AAB native libraries pass automated 16 KB ELF and ZIP alignment gates.
 - Accessibility audit finds no critical/blocking issue.
 - The final APK/AAB/IPA size is recorded and accepted; bundled OCR size is intentional.
 

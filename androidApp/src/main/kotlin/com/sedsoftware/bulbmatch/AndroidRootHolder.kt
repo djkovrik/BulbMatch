@@ -49,6 +49,7 @@ import com.sedsoftware.bulbmatch.platform.ImageFailureCode
 import com.sedsoftware.bulbmatch.platform.TextRecognitionFailureCode
 import com.sedsoftware.bulbmatch.platform.TextRecognitionResult
 import com.sedsoftware.bulbmatch.platform.OperationCode
+import com.sedsoftware.bulbmatch.platform.ScreenCode
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -151,7 +152,7 @@ internal class AndroidPlatformBridge(
         recognizer?.close()
         this.activity = activity
         imageSource = AndroidImageSourceService(activity)
-        recognizer = AndroidTextRecognitionService()
+        recognizer = AndroidTextRecognitionService(activity.applicationContext)
     }
 
     fun detach(activity: ComponentActivity) {
@@ -222,13 +223,35 @@ internal class AndroidPlatformBridge(
 
     override fun capturePhoto() {
         launch(OperationCode.CAMERA_CAPTURE) {
+            val requestingCamera = currentCamera() ?: return@launch
             when (val result = imageSource?.captureCameraImage()) {
-                is ImageAcquisitionResult.Success ->
-                    root.match.onCameraImageAvailable(AndroidEphemeralImage(result.image))
-                is ImageAcquisitionResult.Cancelled, null ->
-                    root.match.onImageSelectionCancelled()
-                is ImageAcquisitionResult.Failure ->
-                    root.match.onImageSelectionFailed(result.code.toAppFailure())
+                is ImageAcquisitionResult.Success -> {
+                    if (currentCamera() === requestingCamera) {
+                        root.match.onCameraImageAvailable(AndroidEphemeralImage(result.image))
+                    } else {
+                        result.image.release()
+                    }
+                }
+                is ImageAcquisitionResult.Cancelled, null -> {
+                    if (currentCamera() === requestingCamera) {
+                        root.match.onImageSelectionCancelled()
+                    }
+                }
+                is ImageAcquisitionResult.Failure -> {
+                    if (currentCamera() === requestingCamera) {
+                        result.cause?.let { cause ->
+                            crashReporter.recordNonFatal(
+                                cause,
+                                CrashContext(
+                                    screen = ScreenCode.CAMERA_CAPTURE,
+                                    operation = OperationCode.CAMERA_CAPTURE,
+                                    imageFailureTechnicalCode = result.technicalCode,
+                                ),
+                            )
+                        }
+                        root.match.onImageSelectionFailed(result.code.toAppFailure())
+                    }
+                }
             }
         }
     }
@@ -329,8 +352,8 @@ private fun ImageFailureCode.toAppFailure(): ImageFailure = when (this) {
     ImageFailureCode.PERMISSION_DENIED -> ImageFailure.PermissionDenied
     ImageFailureCode.CAMERA_UNAVAILABLE,
     ImageFailureCode.CAMERA_NOT_READY,
-    ImageFailureCode.CAPTURE_FAILED,
     -> ImageFailure.CameraUnavailable
+    ImageFailureCode.CAPTURE_FAILED -> ImageFailure.CaptureFailed
     ImageFailureCode.UNREADABLE_IMAGE -> ImageFailure.UnreadableImage
 }
 

@@ -11,7 +11,7 @@ kotlin {
     android {
         namespace = "com.sedsoftware.bulbmatch.app"
         compileSdk = 36
-        minSdk = 24
+        minSdk = libs.versions.android.minSdk.get().toInt()
         withHostTestBuilder {}.configure {}
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
     }

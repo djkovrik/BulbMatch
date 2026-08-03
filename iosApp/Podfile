@@ -6,13 +6,28 @@ target 'iosApp' do
   use_frameworks! :linkage => :static
 
   # YandexMobileAds is static. Build and archive the generated .xcworkspace.
-  # CMP 8.2.0 is documented but is not currently published to Maven Central.
-  # Keep native and KMP SDKs aligned on the latest pair the resolvers can obtain.
+  # Approved closed-testing baseline. Keep native and KMP SDKs aligned with AppSpec.
   pod 'YandexMobileAds', '8.1.0'
-  # Bundled Latin OCR; no first-run model download.
-  pod 'GoogleMLKit/TextRecognition', '8.0.0'
+  # PaddleOCR uses the same bundled ONNX models and YAML dictionary as Android.
+  pod 'onnxruntime-objc', '1.24.3'
+  pod 'Yams', '~> 5.0'
+  pod 'OpenCV', '~> 4.3.0'
   # Analytics is intentionally not included.
   # 12.12.0+ requires Xcode 26.2. Keep the latest release compatible with
   # this project's currently available Xcode 26.1.1 toolchain.
   pod 'FirebaseCrashlytics', '12.11.0'
+
+  target 'iosAppTests' do
+    inherit! :search_paths
+  end
+end
+
+# ONNX Runtime framework headers contain quoted includes that newer Xcode versions
+# otherwise promote to build errors.
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+    end
+  end
 end

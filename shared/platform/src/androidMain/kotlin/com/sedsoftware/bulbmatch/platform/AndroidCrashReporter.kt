@@ -15,6 +15,10 @@ class AndroidCrashReporter private constructor(
     override fun recordNonFatal(throwable: Throwable, context: CrashContext) {
         crashlytics.setCustomKey("screen_code", context.screen?.name ?: "NONE")
         crashlytics.setCustomKey("operation_code", context.operation.name)
+        crashlytics.setCustomKey(
+            "image_failure_technical_code",
+            context.imageFailureTechnicalCode?.name ?: "NONE",
+        )
         crashlytics.recordException(SanitizedNonFatal(throwable))
     }
 

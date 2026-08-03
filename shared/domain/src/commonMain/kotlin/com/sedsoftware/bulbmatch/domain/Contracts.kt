@@ -122,7 +122,6 @@ interface CatalogProvider {
 }
 
 enum class LocaleOverride {
-    System,
     English,
     Russian,
 }

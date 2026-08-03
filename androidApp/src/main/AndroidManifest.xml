@@ -6,6 +6,9 @@
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" />
+    <uses-permission
+        android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+        tools:node="remove" />
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -20,6 +23,14 @@
         <meta-data
             android:name="com.yandex.mobile.ads.AUTOMATIC_SDK_INITIALIZATION"
             android:value="false" />
+        <!-- Provider-only debug/preinstall attribution surfaces are not part of
+             BulbMatch's approved Yandex reporting contract. -->
+        <provider
+            android:name="com.yandex.mobile.ads.features.debugpanel.data.local.DebugPanelFileProvider"
+            tools:node="remove" />
+        <provider
+            android:name="io.appmetrica.analytics.internal.PreloadInfoContentProvider"
+            tools:node="remove" />
         <activity
             android:name="com.sedsoftware.bulbmatch.AppActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"

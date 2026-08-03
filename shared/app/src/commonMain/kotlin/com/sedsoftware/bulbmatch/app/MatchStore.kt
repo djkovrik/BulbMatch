@@ -5,6 +5,7 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.core.utils.ExperimentalMviKotlinApi
 import com.arkivanov.mvikotlin.extensions.coroutines.coroutineExecutorFactory
 import com.sedsoftware.bulbmatch.domain.Assessment
+import com.sedsoftware.bulbmatch.domain.BaseAliasIndex
 import com.sedsoftware.bulbmatch.domain.BaseCode
 import com.sedsoftware.bulbmatch.domain.CatalogAvailability
 import com.sedsoftware.bulbmatch.domain.CatalogProvider
@@ -120,7 +121,16 @@ internal class MatchStoreProvider(
                         )
                     }
                     onIntent<MatchStore.Intent.FieldTextChanged> { intent ->
-                        dispatch(Msg.FieldChanged(updateField(state(), intent.field, intent.value)))
+                        dispatch(
+                            Msg.FieldChanged(
+                                updateField(
+                                    state = state(),
+                                    field = intent.field,
+                                    raw = intent.value,
+                                    catalogAvailability = catalogProvider.availability.value,
+                                ),
+                            ),
+                        )
                     }
                     onIntent<MatchStore.Intent.KnownBaseSelected> { intent ->
                         val state = state()
@@ -177,18 +187,14 @@ internal class MatchStoreProvider(
                                 ),
                             )
                         } else {
-                            val parsedState =
-                                if (intent.field == FieldKey.Base) {
-                                    state
-                                } else {
-                                    updateField(
-                                        state = state,
-                                        field = intent.field,
-                                        raw = state.rawValues[intent.field].orEmpty(),
-                                    ).copy(
-                                        origins = state.origins,
-                                    )
-                                }
+                            val parsedState = updateField(
+                                state = state,
+                                field = intent.field,
+                                raw = state.rawValues[intent.field].orEmpty(),
+                                catalogAvailability = catalogProvider.availability.value,
+                            ).copy(
+                                origins = state.origins,
+                            )
                             val requiredValuePresent = when (intent.field) {
                                 FieldKey.Base -> parsedState.input.base != ConfirmedBase.Missing
                                 FieldKey.Voltage -> parsedState.input.voltage != VoltageEvidence.Missing
@@ -301,6 +307,7 @@ private fun updateField(
     state: MatchStore.State,
     field: FieldKey,
     raw: String,
+    catalogAvailability: CatalogAvailability,
 ): MatchStore.State {
     val values = state.rawValues + (field to raw)
     val origin = updatedOrigin(state, field)
@@ -308,8 +315,15 @@ private fun updateField(
     var error: String? = null
     when (field) {
         FieldKey.Base -> {
-            input = input.copy(base = ConfirmedBase.Missing)
-            error = if (raw.isBlank()) null else "select_known_or_unknown_base"
+            val knownCode = (catalogAvailability as? CatalogAvailability.Available)
+                ?.catalog
+                ?.entries
+                ?.let(BaseAliasIndex::from)
+                ?.findExact(raw)
+            input = input.copy(
+                base = knownCode?.let(ConfirmedBase::Known) ?: ConfirmedBase.Missing,
+            )
+            error = if (raw.isBlank() || knownCode != null) null else "select_known_or_unknown_base"
         }
         FieldKey.Voltage -> {
             val parsed = raw.parseVoltage()

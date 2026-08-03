@@ -8,6 +8,8 @@ data class RawTextObservation(
 data class BaseAliasIndex(
     val aliases: Map<String, BaseCode>,
 ) {
+    fun findExact(text: String): BaseCode? = aliases[normalizeCatalogToken(text)]
+
     fun findIn(text: String): BaseCode? {
         val tokens = text.uppercase()
             .split(Regex("[^A-ZА-ЯЁ0-9.]+"))
@@ -32,34 +34,39 @@ data class BaseAliasIndex(
     }
 }
 
-class MarkingParser {
+class MarkingParser(
+    private val ocrNormalizer: OcrMarkingNormalizer = OcrMarkingNormalizer(),
+) {
     fun parse(
         lines: List<RawTextObservation>,
         baseAliases: BaseAliasIndex,
     ): List<ObservedField> = buildList {
         lines.forEach { line ->
-            val normalized = line.text.trim()
-            if (normalized.isEmpty()) return@forEach
+            val rawText = line.text.trim()
+            if (rawText.isEmpty()) return@forEach
+            val parseView = ocrNormalizer.normalizeForParsing(rawText)
 
-            baseAliases.findIn(normalized)?.let {
+            // Base aliases are matched only against the original OCR transcript. The parser-only
+            // unit normalization must never repair mixed-script or damaged base tokens.
+            baseAliases.findIn(rawText)?.let {
                 add(line.field(FieldKey.Base, it.value))
             }
-            parseVoltage(normalized).forEach {
+            parseVoltage(parseView).forEach {
                 add(line.field(FieldKey.Voltage, it))
             }
-            parseSingleUnit(normalized, HERTZ)?.let {
+            parseSingleUnit(parseView, HERTZ)?.let {
                 add(line.field(FieldKey.Frequency, it))
             }
-            parseSingleUnit(normalized, LUMENS)?.let {
+            parseSingleUnit(parseView, LUMENS)?.let {
                 add(line.field(FieldKey.LuminousFlux, it))
             }
-            parseSingleUnit(normalized, KELVIN)?.let {
+            parseSingleUnit(parseView, KELVIN)?.let {
                 add(line.field(FieldKey.ColorTemperature, it))
             }
-            parsePower(normalized)?.let { (field, value) ->
+            parsePower(parseView)?.let { (field, value) ->
                 add(line.field(field, value))
             }
-            parseDimmability(normalized)?.let {
+            parseDimmability(parseView)?.let {
                 add(line.field(FieldKey.Dimmability, it))
             }
         }

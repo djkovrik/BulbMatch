@@ -17,7 +17,9 @@
 - Xcode: `26.1.1` (`17B100`), iOS SDK: `26.1`.
 - CocoaPods: `1.16.2`.
 - Yandex Mobile Ads CMP/native: `8.1.0`.
-- Google ML Kit pod: `GoogleMLKit/TextRecognition 8.0.0`.
+- PaddleOCR: `PP-OCRv5_mobile_det` + `eslav_PP-OCRv5_mobile_rec` through
+  `onnxruntime-objc 1.24.3`; model hashes are pinned in
+  `shared/platform/ocr-model-manifest.json`.
 - Firebase Crashlytics: `12.11.0`, зафиксирован как совместимый с Xcode
   `26.1.1`.
 - Generic iOS Device Debug build проходит без signing.
@@ -30,14 +32,12 @@
 
 Текущие release-блокеры:
 
-1. Yandex release gate ожидает CMP `8.2.0`, но Maven Central разрешает только
-   `8.1.0`.
-2. Production catalog не имеет human approval от `Sergey V.`.
-3. Отсутствует локальный `iosApp/iosApp/GoogleService-Info.plist`.
-4. Не настроены Apple Team, provisioning и device signing.
-5. Не пройдены physical-device acceptance, Yandex integration check и
-   controlled Crashlytics verification.
-6. Не создан Archive, поэтому не записан размер IPA.
+1. Production catalog не имеет human approval от `Sergey V.`.
+2. Отсутствует локальный `iosApp/iosApp/GoogleService-Info.plist`.
+3. Не настроены Apple Team, provisioning и device signing.
+4. Не пройдены physical-device OCR performance/accuracy acceptance, Yandex
+   integration check и controlled Crashlytics verification.
+5. Не создан Archive, поэтому не записан размер IPA.
 
 ## 1. Подключить Firebase Apple app
 
@@ -124,12 +124,16 @@ iPhone без signing/provisioning ошибок.
 - [ ] После любой camera/OCR ошибки остаётся доступен ручной ввод.
 - [ ] OCR-кандидаты нельзя использовать для assessment без явного
   confirm/edit/reject.
+- [ ] Прогнать `spec/ocr-fixtures/v1` для Latin/Cyrillic/mixed, rotated,
+  low-contrast, small, curved, blurred и no-text случаев.
+- [ ] Зафиксировать field recall, false base/voltage count, p95 и peak memory;
+  пороги берутся из `spec/app-spec/quality.md`.
 
 ### Offline и ephemeral data
 
 - [ ] После clean install включить Airplane Mode.
 - [ ] В Airplane Mode проверить camera и picker.
-- [ ] В Airplane Mode проверить bundled Latin OCR без загрузки модели.
+- [ ] В Airplane Mode проверить bundled Latin и Cyrillic OCR без загрузки модели.
 - [ ] В Airplane Mode проверить catalog/reference и assessment.
 - [ ] В Airplane Mode проверить save/history.
 - [ ] После finish изображение и OCR-данные больше не доступны.
@@ -177,28 +181,20 @@ iPhone без signing/provisioning ошибок.
 
 ### Yandex SDK release gate
 
-Перед релизом повторно проверить доступность одной версии одновременно в Maven
-Central и CocoaPods.
+Перед релизом проверить утверждённую AppSpec пару `8.1.0` одновременно в Gradle
+version catalog, Podfile и Podfile.lock.
 
 ```bash
 ./gradlew :shared:ads:validateAdSdkReleaseVersion --stacktrace
 ```
 
-Пока задача завершается сообщением:
+Не удалять и не ослаблять gate. Более новая версия требует отдельного
+AppSpec-решения и атомарного обновления Gradle/CocoaPods пары.
 
-```text
-Release blocked: Yandex documents CMP 8.2.0, but Maven Central currently
-resolves only 8.1.0.
-```
-
-Не удалять и не ослаблять gate. Когда совместимая версия станет доступна:
-
-- [ ] Одной правкой обновить `gradle/libs.versions.toml`.
-- [ ] Обновить `iosApp/Podfile` на ту же native-версию.
-- [ ] Выполнить `pod install --repo-update`.
-- [ ] Зафиксировать обновлённый `Podfile.lock`.
-- [ ] Повторить iOS Gradle matrix, generic device build и physical Ads QA.
+- [ ] Убедиться, что AppSpec, `gradle/libs.versions.toml`, `iosApp/Podfile` и
+  `iosApp/Podfile.lock` фиксируют `8.1.0`.
 - [ ] Убедиться, что `validateAdSdkReleaseVersion` завершается с `exit 0`.
+- [ ] Выполнить iOS Gradle matrix, generic device build и physical Ads QA.
 
 ## 5. Подписать production catalog
 
@@ -265,12 +261,15 @@ Firebase Console.
   :shared:data:iosSimulatorArm64Test \
   :shared:platform:iosSimulatorArm64Test \
   :shared:app:iosSimulatorArm64Test \
-  :shared:ads:iosSimulatorArm64Test \
-  :shared:compose:iosSimulatorArm64Test \
   :shared:compose:linkDebugFrameworkIosSimulatorArm64 \
   --no-parallel \
   --stacktrace
 ```
+
+Compose common state tests выполняются отдельно через
+`:shared:compose:testAndroidHostTest` в Android CI. Не добавлять
+`shared:ads` или `shared:compose` iOS test binary в эту матрицу: native Yandex
+graph проверяется сборкой CocoaPods workspace ниже.
 
 - [ ] Все test binaries не только слинкованы, но и выполнены.
 - [ ] Все тесты завершились с `exit 0`, без `SKIPPED` из-за host architecture.
@@ -333,7 +332,8 @@ Xcode:
 iOS SDK:
 CocoaPods:
 Yandex CMP/native:
-Google ML Kit:
+PaddleOCR models / SHA-256:
+ONNX Runtime:
 Firebase Crashlytics:
 
 Устройство:

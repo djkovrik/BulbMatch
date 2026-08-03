@@ -2,7 +2,6 @@ package com.sedsoftware.bulbmatch
 
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -20,6 +19,7 @@ import com.sedsoftware.bulbmatch.ads.AdBuildMode
 import com.sedsoftware.bulbmatch.ads.AdOutcome
 import com.sedsoftware.bulbmatch.ads.AdPlacement
 import com.sedsoftware.bulbmatch.ads.AdPlatform
+import com.sedsoftware.bulbmatch.ads.AdUnitSet
 import com.sedsoftware.bulbmatch.ads.BulbMatchAdConfiguration
 import com.sedsoftware.bulbmatch.ads.BulbMatchAdsInitializer
 import com.sedsoftware.bulbmatch.ads.BulbMatchBanner
@@ -62,12 +62,20 @@ private fun AppActivity.AndroidBulbMatchApp(holder: AndroidRootHolder) {
     val configuration = remember {
         BulbMatchAdConfiguration.forBuild(
             platform = AdPlatform.Android,
-            mode = if (
-                applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
-            ) {
+            mode = if (BuildConfig.DEBUG) {
                 AdBuildMode.DebugDevice
             } else {
                 AdBuildMode.Release
+            },
+            debugUnits = if (BuildConfig.DEBUG) {
+                AdUnitSet(
+                    resultInline = BuildConfig.YANDEX_RESULT_INLINE_AD_UNIT_ID,
+                    historySticky = BuildConfig.YANDEX_HISTORY_STICKY_AD_UNIT_ID,
+                    referenceSticky = BuildConfig.YANDEX_REFERENCE_STICKY_AD_UNIT_ID,
+                    matchExitInterstitial = BuildConfig.YANDEX_MATCH_EXIT_INTERSTITIAL_AD_UNIT_ID,
+                )
+            } else {
+                null
             },
         )
     }
@@ -95,7 +103,6 @@ private fun AppActivity.AndroidBulbMatchApp(holder: AndroidRootHolder) {
 
     App(
         root = holder.root,
-        systemIsRussian = resources.configuration.locales[0].language == "ru",
         onThemeChanged = { ThemeChanged(it) },
         slots = BulbMatchSlots(
             cameraPreview = { AndroidCameraPreview(holder.bridge) },

@@ -39,14 +39,22 @@ class DefaultMatchComponentTest {
 
         assertEquals(listOf("requestCameraPermission"), actions.calls)
         val camera = assertIs<MatchComponent.Child.Camera>(component.stack.value.active.instance).component
+        camera.onCameraStatusChanged(CameraStatus.Granted)
         camera.onCameraCapabilitiesChanged(torchAvailable = true)
         camera.onTorchChanged(enabled = true)
         camera.onShutterRequested()
-        camera.onOpenSystemSettingsRequested()
+        camera.onShutterRequested()
         camera.onChoosePhotoRequested()
 
         assertTrue(camera.model.value.torchEnabled)
         assertTrue(camera.model.value.captureInProgress)
+        assertTrue(camera.model.value.requiresActiveCameraSession)
+        assertEquals(0, actions.calls.count { it == "openPhotoPicker" })
+
+        component.onImageSelectionFailed(ImageFailure.CaptureFailed)
+        camera.onOpenSystemSettingsRequested()
+        camera.onChoosePhotoRequested()
+
         assertEquals(
             listOf(
                 "requestCameraPermission",
@@ -58,9 +66,9 @@ class DefaultMatchComponentTest {
             actions.calls,
         )
 
-        component.onImageSelectionFailed(ImageFailure.UnreadableImage)
-        assertEquals(ImageFailure.UnreadableImage, camera.model.value.error)
+        assertEquals(ImageFailure.CaptureFailed, camera.model.value.error)
         assertFalse(camera.model.value.captureInProgress)
+        assertFalse(camera.model.value.requiresActiveCameraSession)
 
         camera.onCameraStatusChanged(CameraStatus.Unavailable)
         assertEquals(ImageFailure.CameraUnavailable, camera.model.value.error)
@@ -68,6 +76,34 @@ class DefaultMatchComponentTest {
         camera.onTorchChanged(enabled = true)
         assertFalse(camera.model.value.torchAvailable)
         assertFalse(camera.model.value.torchEnabled)
+    }
+
+    @Test
+    fun ac002CameraSessionRemainsRequiredUntilCaptureFinishes() = runTest(fixture.dispatcher) {
+        val actions = RecordingImageActions()
+        val component = createComponent(imageActions = actions)
+
+        activeHome(component).onCameraRequested()
+        val camera = assertIs<MatchComponent.Child.Camera>(
+            component.stack.value.active.instance,
+        ).component
+        camera.onCameraStatusChanged(CameraStatus.Granted)
+
+        camera.onShutterRequested()
+        camera.onShutterRequested()
+        camera.onChoosePhotoRequested()
+        camera.onManualEntryRequested()
+
+        assertTrue(camera.model.value.captureInProgress)
+        assertTrue(camera.model.value.requiresActiveCameraSession)
+        assertEquals(1, actions.calls.count { it == "capturePhoto" })
+        assertEquals(0, actions.calls.count { it == "openPhotoPicker" })
+        assertIs<MatchComponent.Child.Camera>(component.stack.value.active.instance)
+
+        component.onImageSelectionFailed(ImageFailure.CaptureFailed)
+
+        assertFalse(camera.model.value.captureInProgress)
+        assertFalse(camera.model.value.requiresActiveCameraSession)
     }
 
     @Test
@@ -102,7 +138,6 @@ class DefaultMatchComponentTest {
         )
         assertFalse(form.model.value.canAssess)
 
-        form.onKnownBaseSelected(testBaseCode())
         form.onObservationConfirmed(FieldKey.Base)
         form.onObservationConfirmed(FieldKey.Voltage)
         form.onObservationRejected(FieldKey.LuminousFlux)
@@ -140,6 +175,19 @@ class DefaultMatchComponentTest {
         val failed = assertIs<RecognitionState.Failed>(review.model.value.recognitionState)
         assertEquals(RecognitionFailure.UnsupportedImage, failed.reason)
         assertEquals(1, recognition.invocationCount)
+    }
+
+    @Test
+    fun manualBaseTextUsesTheCatalogSelectionPath() = runTest(fixture.dispatcher) {
+        val component = createComponent()
+        activeHome(component).onManualEntryRequested()
+        val form = assertIs<MatchComponent.Child.Form>(component.stack.value.active.instance).component
+
+        form.onFieldTextChanged(FieldKey.Base, "E27")
+        fixture.dispatcher.scheduler.runCurrent()
+
+        assertEquals(testBaseCode(), form.model.value.confirmedInput.knownBaseOrNull())
+        assertNull(form.model.value.fields.getValue(FieldKey.Base).validationErrorCode)
     }
 
     @Test

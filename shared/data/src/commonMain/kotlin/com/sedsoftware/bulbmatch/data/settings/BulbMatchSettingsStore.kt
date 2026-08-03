@@ -8,7 +8,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 enum class StoredLocaleOverride {
-    SYSTEM,
     EN,
     RU,
 }
@@ -87,7 +86,7 @@ class BulbMatchSettingsStore(
     private fun readLocaleOverride(): StoredLocaleOverride =
         settings.getStringOrNull(SettingKeys.LocaleOverride)
             ?.let { stored -> StoredLocaleOverride.entries.firstOrNull { it.name == stored } }
-            ?: StoredLocaleOverride.SYSTEM
+            ?: StoredLocaleOverride.EN
 
     private fun readThemeOverride(): StoredThemeOverride =
         settings.getStringOrNull(SettingKeys.ThemeOverride)

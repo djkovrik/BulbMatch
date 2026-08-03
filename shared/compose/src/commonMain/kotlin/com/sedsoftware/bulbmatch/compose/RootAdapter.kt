@@ -88,7 +88,6 @@ fun BulbMatchRoot(
     onOpenPrivacyPolicy: () -> Unit = {},
     onOpenSourceSummary: () -> Unit = {},
     onEmailSupport: () -> Unit = {},
-    systemIsRussian: Boolean = false,
     onThemeChanged: @Composable (isDark: Boolean) -> Unit = {},
 ) {
     val locale by root.localeOverride.subscribeAsState()
@@ -101,11 +100,9 @@ fun BulbMatchRoot(
             ThemeOverride.Dark -> AppThemeMode.Dark
         },
         language = when (locale) {
-            LocaleOverride.System -> AppLanguage.System
             LocaleOverride.English -> AppLanguage.English
             LocaleOverride.Russian -> AppLanguage.Russian
         },
-        systemIsRussian = systemIsRussian,
         onThemeChanged = onThemeChanged,
     ) {
         BulbMatchRootContent(
@@ -134,13 +131,13 @@ fun BulbMatchRoot(
                             "Catalog candidates and rules remain disabled until the exact " +
                                 "version is approved by Sergey V. Source review covers IEC " +
                                 "lamp-cap identifiers, EU light-source terminology, platform " +
-                                "privacy documentation, bundled ML Kit OCR, Yandex Mobile Ads, " +
+                                "privacy documentation, bundled PaddleOCR models, Yandex Mobile Ads, " +
                                 "and Firebase Crashlytics. No standards text or third-party " +
                                 "diagrams are packaged.",
                             "Кандидаты каталога и правила отключены, пока точную версию не " +
                                 "утвердит Sergey V. Проверяемые источники охватывают обозначения " +
                                 "цоколей IEC, терминологию ЕС для источников света, документацию " +
-                                "платформ о конфиденциальности, встроенное OCR ML Kit, Yandex " +
+                                "платформ о конфиденциальности, встроенные модели PaddleOCR, Yandex " +
                                 "Mobile Ads и Firebase Crashlytics. Тексты стандартов и сторонние " +
                                 "схемы в приложение не включены.",
                         ),
@@ -226,19 +223,11 @@ private fun MatchContent(
 @Composable
 private fun CameraContent(component: CameraComponent, cameraPreview: (@Composable () -> Unit)?) {
     val model by component.model.subscribeAsState()
-    val state = when {
-        model.error != null -> CameraState.Error
-        model.captureInProgress -> CameraState.Opening
-        else -> when (model.status) {
-            CameraStatus.Unknown, CameraStatus.Checking -> CameraState.Opening
-            CameraStatus.Granted -> CameraState.Content
-            CameraStatus.DeniedCanAsk -> CameraState.DeniedCanAsk
-            CameraStatus.DeniedOpenSettings -> CameraState.DeniedOpenSettings
-            CameraStatus.Unavailable -> CameraState.Unavailable
-        }
-    }
+    val state = cameraScreenState(model)
     CameraCaptureScreen(
         state = state,
+        captureInProgress = model.captureInProgress,
+        failure = model.error,
         torchSupported = model.torchAvailable,
         torchEnabled = model.torchEnabled,
         onClose = component::onCloseRequested,
@@ -250,6 +239,18 @@ private fun CameraContent(component: CameraComponent, cameraPreview: (@Composabl
         onManual = component::onManualEntryRequested,
         cameraPreview = cameraPreview,
     )
+}
+
+internal fun cameraScreenState(model: CameraComponent.Model): CameraState = when {
+    model.requiresActiveCameraSession -> CameraState.Content
+    model.error != null -> CameraState.Error
+    else -> when (model.status) {
+        CameraStatus.Unknown, CameraStatus.Checking -> CameraState.Opening
+        CameraStatus.Granted -> CameraState.Content
+        CameraStatus.DeniedCanAsk -> CameraState.DeniedCanAsk
+        CameraStatus.DeniedOpenSettings -> CameraState.DeniedOpenSettings
+        CameraStatus.Unavailable -> CameraState.Unavailable
+    }
 }
 
 @Composable
@@ -510,7 +511,6 @@ private fun SettingsContent(
     val settingsError = if (settingsErrorCode != null) validationError(settingsErrorCode) else null
     SettingsScreen(
         language = when (model.locale) {
-            LocaleOverride.System -> com.sedsoftware.bulbmatch.compose.model.AppLanguage.System
             LocaleOverride.English -> com.sedsoftware.bulbmatch.compose.model.AppLanguage.English
             LocaleOverride.Russian -> com.sedsoftware.bulbmatch.compose.model.AppLanguage.Russian
         },
@@ -532,7 +532,6 @@ private fun SettingsContent(
         onLanguageChange = {
             component.onLanguageSelected(
                 when (it) {
-                    com.sedsoftware.bulbmatch.compose.model.AppLanguage.System -> LocaleOverride.System
                     com.sedsoftware.bulbmatch.compose.model.AppLanguage.English -> LocaleOverride.English
                     com.sedsoftware.bulbmatch.compose.model.AppLanguage.Russian -> LocaleOverride.Russian
                 },

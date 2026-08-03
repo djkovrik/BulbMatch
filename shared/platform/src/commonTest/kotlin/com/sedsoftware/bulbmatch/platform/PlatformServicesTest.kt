@@ -67,6 +67,7 @@ class PlatformServicesTest {
             context = CrashContext(
                 screen = ScreenCode.IMAGE_REVIEW,
                 operation = OperationCode.TEXT_RECOGNITION,
+                imageFailureTechnicalCode = ImageFailureTechnicalCode.CAMERAX_CAMERA_CLOSED,
             ),
         )
 
@@ -77,6 +78,7 @@ class PlatformServicesTest {
                     context = CrashContext(
                         screen = ScreenCode.IMAGE_REVIEW,
                         operation = OperationCode.TEXT_RECOGNITION,
+                        imageFailureTechnicalCode = ImageFailureTechnicalCode.CAMERAX_CAMERA_CLOSED,
                     ),
                 ),
             ),

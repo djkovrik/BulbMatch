@@ -35,7 +35,6 @@ import com.sedsoftware.bulbmatch.compose.components.DestructiveAction
 import com.sedsoftware.bulbmatch.compose.components.MessageCard
 import com.sedsoftware.bulbmatch.compose.components.SectionCard
 import com.sedsoftware.bulbmatch.compose.components.SectionTone
-import com.sedsoftware.bulbmatch.compose.localization.LocalAppLanguage
 import com.sedsoftware.bulbmatch.compose.localization.displayName
 import com.sedsoftware.bulbmatch.compose.localization.tr
 import com.sedsoftware.bulbmatch.compose.model.AppLanguage
@@ -120,7 +119,7 @@ fun SettingsScreen(
                     ) {
                         AppLanguage.entries.forEach { candidate ->
                             SelectionRow(
-                                label = candidate.displayName(LocalAppLanguage.current == AppLanguage.Russian),
+                                label = candidate.displayName(),
                                 selected = language == candidate,
                                 onClick = { onLanguageChange(candidate) },
                             )

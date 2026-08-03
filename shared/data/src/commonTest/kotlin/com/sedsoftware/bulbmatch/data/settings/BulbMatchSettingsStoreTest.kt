@@ -11,7 +11,7 @@ class BulbMatchSettingsStoreTest {
     fun missingValuesUseContractDefaults() {
         val store = BulbMatchSettingsStore(MapSettings())
 
-        assertEquals(StoredLocaleOverride.SYSTEM, store.localeOverride.value)
+        assertEquals(StoredLocaleOverride.EN, store.localeOverride.value)
         assertEquals(StoredThemeOverride.SYSTEM, store.themeOverride.value)
         assertEquals(
             AdFrequencyState(
@@ -35,12 +35,21 @@ class BulbMatchSettingsStoreTest {
 
         val store = BulbMatchSettingsStore(settings)
 
-        assertEquals(StoredLocaleOverride.SYSTEM, store.localeOverride.value)
+        assertEquals(StoredLocaleOverride.EN, store.localeOverride.value)
         assertEquals(StoredThemeOverride.SYSTEM, store.themeOverride.value)
         assertEquals(
             AdFrequencyState(0, null, 0),
             store.adFrequencyState.value,
         )
+    }
+
+    @Test
+    fun legacySystemLocaleFallsBackToEnglish() {
+        val store = BulbMatchSettingsStore(
+            MapSettings(SettingKeys.LocaleOverride to "SYSTEM"),
+        )
+
+        assertEquals(StoredLocaleOverride.EN, store.localeOverride.value)
     }
 
     @Test

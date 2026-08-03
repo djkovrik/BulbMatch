@@ -62,10 +62,20 @@ All implementation changes must use the installed `vibe-*` skills.
   - non-visual tests and acceptance coverage: `$vibe-test-engineer`
   - previews, screenshot tests, and goldens: `$vibe-visual-testing`
 
-For UI design or critique, start with `$vibe-product-designer`, use Lazyweb
-evidence before making design decisions, and route Compose API implementation
-through Compose Expert as directed by the product-design skill. Do not update
-goldens until the visual change has been reviewed and approved.
+For UI design or critique, start with `$vibe-product-designer` and route Compose
+API implementation through Compose Expert as directed by the product-design
+skill. Use Lazyweb evidence for new product features and substantial UI changes,
+including changes to element placement, information hierarchy, navigation, or
+user flows. Do not run Lazyweb research or produce a Lazyweb report for small,
+localized visual fixes such as spacing, alignment, sizing, typography, color,
+or other cosmetic corrections that preserve the existing layout, hierarchy,
+and behavior. Do not update goldens until the visual change has been reviewed
+and approved.
+
+Every new dedicated `BaseDiagram` rendering branch must add, in the same
+change, a deterministic component preview for that base in both light and dark
+themes and the corresponding verified Paparazzi goldens. Keep the combined
+catalog diagram board in sync when the production catalog gains a base.
 
 Before editing:
 
@@ -132,7 +142,7 @@ a hard check to make a test or release gate pass.
 - `shared/compose/` — shared Compose UI, localization, theme, previews, root
   adapter, and Android/iOS composition code.
 - `androidApp/` — Android application host and composition root. The app ID is
-  `com.sedsoftware.bulbmatch`; min SDK 24, target/compile SDK 36.
+  `com.sedsoftware.bulbmatch`; min SDK 26, target/compile SDK 36.
 - `iosApp/` — Swift host, native camera/picker/OCR/Crashlytics implementations,
   Xcode project/workspace, and CocoaPods integration. The bundle ID is
   `com.sedsoftware.bulbmatch.iosApp`; deployment target is iOS 16.2. Open and
@@ -169,8 +179,10 @@ The current Android CI-equivalent task set is:
 :shared:platform:testAndroidHostTest
 :shared:app:testAndroidHostTest
 :shared:ads:testAndroidHostTest
+:shared:compose:testAndroidHostTest
 :shared:compose:compileAndroidMain
 :androidApp:assembleDebug
+:androidApp:validateDebugPageSizeCompatibility
 ```
 
 The macOS iOS CI-equivalent task set, after `pod install` in `iosApp`, is:
@@ -180,12 +192,12 @@ The macOS iOS CI-equivalent task set, after `pod install` in `iosApp`, is:
 :shared:data:iosSimulatorArm64Test
 :shared:platform:iosSimulatorArm64Test
 :shared:app:iosSimulatorArm64Test
-:shared:compose:iosSimulatorArm64Test
 :shared:compose:linkDebugFrameworkIosSimulatorArm64
 xcodebuild -workspace iosApp/iosApp.xcworkspace -scheme iosApp -configuration Debug -destination "generic/platform=iOS Simulator" CODE_SIGNING_ALLOWED=NO build
 ```
 
-The ads module's pure common tests run on the Android host through Kover.
+The ads module's pure common tests run on the Android host through Kover, and
+Compose common state tests run through `:shared:compose:testAndroidHostTest`.
 Validate the native iOS Yandex SDK graph by building the CocoaPods workspace;
 do not link its transitive frameworks into a standalone Kotlin/Native test
 binary.
@@ -207,13 +219,15 @@ Known intentional release boundaries include:
 - The bundled catalog is still the development candidate and requires the
   versioned human approval by Sergey V. described in the production catalog
   guide. AI findings are advisory and cannot create that sign-off.
-- Yandex Compose/native SDKs are pinned to the currently aligned resolvable
-  version, while `validateAdSdkReleaseVersion` intentionally blocks release
-  until the documented required version is available and aligned. Do not remove
-  or relax this gate.
-- Android `google-services.json` and iOS `GoogleService-Info.plist` are local
-  ignored release configuration. Signing keys, certificates, provisioning
-  profiles, and CI secrets must also remain out of Git.
+- Yandex Compose/native SDKs are pinned to the explicitly approved aligned
+  `8.1.0` closed-testing baseline. `validateAdSdkReleaseVersion` blocks release
+  if AppSpec, Gradle, Podfile, or Podfile.lock drift from that decision. Do not
+  remove or relax this gate; a later SDK upgrade requires an explicit AppSpec
+  decision and Android/iOS verification.
+- Android `androidApp/google-services.json` is committed release configuration;
+  CI validates its package client directly from the checkout. The iOS
+  `GoogleService-Info.plist`, signing keys, certificates, provisioning profiles,
+  service-account credentials, and CI secrets must remain out of Git.
 - Production validation tasks are expected to fail while required approval or
   configuration is absent. Do not replace a truthful red gate with a mock,
   demo data, a test ad ID, or weaker validation.

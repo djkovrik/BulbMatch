@@ -65,19 +65,18 @@ object BulbMatchAdConfiguration {
         referenceSticky = "R-M-19664982-3",
         matchExitInterstitial = "R-M-19664982-4",
     )
-    private val debug = AdUnitSet(
-        resultInline = "demo-banner-yandex",
-        historySticky = "demo-banner-yandex",
-        referenceSticky = "demo-banner-yandex",
-        matchExitInterstitial = "demo-interstitial-yandex",
-    )
-
     fun forBuild(
         platform: AdPlatform,
         mode: AdBuildMode,
+        debugUnits: AdUnitSet? = null,
     ): AdConfiguration = when (mode) {
         AdBuildMode.PreviewOrTest -> AdConfiguration(enabled = false, units = null)
-        AdBuildMode.DebugDevice -> AdConfiguration(enabled = true, units = debug)
+        AdBuildMode.DebugDevice -> AdConfiguration(
+            enabled = true,
+            units = requireNotNull(debugUnits) {
+                "Debug ad units must be supplied by the platform debug build."
+            },
+        )
         AdBuildMode.Release -> AdConfiguration(
             enabled = true,
             units = when (platform) {

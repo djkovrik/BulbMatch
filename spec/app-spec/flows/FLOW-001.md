@@ -13,7 +13,7 @@ Enter on cold or warm launch. Exit into Match, History, Reference, or Settings. 
 
 ## Ordered steps
 
-1. Resolve locale from override, then system locale, then English fallback.
+1. Resolve locale from the persisted EN/RU choice, using English when no supported choice exists.
 2. Resolve theme from override, then system appearance.
 3. Render SCREEN-001 before network SDK readiness.
 4. Let the user switch among the three root destinations.
@@ -30,13 +30,13 @@ Enter on cold or warm launch. Exit into Match, History, Reference, or Settings. 
 
 Given a clean install with no saved results  
 When the user launches BulbMatch  
-Then SCREEN-001 appears in the system-resolved locale with Camera, Choose photo, and Enter manually actions, and no onboarding blocks interaction.
+Then SCREEN-001 appears in English with Camera, Choose photo, and Enter manually actions, and no onboarding blocks interaction.
 
 ## AC-016
 
-Given the system locale is unsupported or the user has chosen a locale override  
-When the app starts or the override changes  
-Then every app-owned string uses English fallback or the selected EN/RU locale immediately, while unit and base identifiers remain canonical.
+Given no language choice is stored or the user has selected English or Russian
+When the app starts or the language choice changes
+Then every app-owned string uses English by default or the selected EN/RU locale immediately, while unit and base identifiers remain canonical.
 
 ## AC-017
 

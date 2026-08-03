@@ -1,1 +1,7 @@
 Paparazzi_*.png filter=lfs diff=lfs merge=lfs -text
+shared/platform/src/androidMain/assets/Models/**/*.onnx filter=lfs diff=lfs merge=lfs -text
+spec/ocr-fixtures/**/*.png filter=lfs diff=lfs merge=lfs -text
+iosApp/iosAppTests/Fixtures/*.png filter=lfs diff=lfs merge=lfs -text
+shared/data/src/commonMain/resources/catalog/bulbmatch-catalog-production.json text eol=lf
+shared/data/src/commonMain/kotlin/com/sedsoftware/bulbmatch/data/catalog/BundledCatalogRules.kt text eol=lf
+spec/catalog/releases/** text eol=lf

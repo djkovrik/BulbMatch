@@ -120,7 +120,7 @@
     },
     {
       "id": "REQ-016",
-      "title": "Support system-selected and manually selected English or Russian",
+      "title": "Support manually selected English or Russian with English as the default",
       "priority": "must",
       "status": "approved",
       "acceptanceScenarioIds": ["AC-016"]
@@ -194,6 +194,13 @@
       "priority": "must",
       "status": "approved",
       "acceptanceScenarioIds": ["AC-026"]
+    },
+    {
+      "id": "REQ-027",
+      "title": "Recognize supported Latin and Cyrillic electrical markings locally as untrusted editable candidates",
+      "priority": "must",
+      "status": "approved",
+      "acceptanceScenarioIds": ["AC-027"]
     }
   ],
   "flows": [
@@ -230,6 +237,10 @@
     "ads": true
   },
   "constraints": {
+    "minimumPlatforms": {
+      "androidApi": 26,
+      "iosVersion": "16.2"
+    },
     "offlineMode": "Core capture, bundled on-device OCR, manual entry, assessment, catalog browsing, save, and history work without connectivity. Advertising and crash delivery may wait or fail without affecting the core flow.",
     "privacy": [
       "Do not persist photos, thumbnails, full OCR transcripts, or unfinished scans.",
@@ -256,6 +267,8 @@
   },
   "monetization": {
     "provider": "Yandex Mobile Ads Compose Multiplatform",
+    "sdkVersion": "8.1.0",
+    "sdkVersionPolicy": "The closed-testing baseline uses the published and aligned Compose Multiplatform and native iOS SDK version 8.1.0. Any later SDK upgrade requires an explicit AppSpec decision and Android/iOS release verification.",
     "strategy": "Advertising is subordinate to task completion and safety comprehension.",
     "placements": [
       "RESULT_INLINE",

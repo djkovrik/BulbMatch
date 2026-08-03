@@ -111,7 +111,7 @@ class InMemorySavedMatchRepository(
 }
 
 class InMemorySettingsRepository(
-    locale: LocaleOverride = LocaleOverride.System,
+    locale: LocaleOverride = LocaleOverride.English,
     theme: ThemeOverride = ThemeOverride.System,
     frequency: AdFrequencyState = AdFrequencyState(0, null, 0),
 ) : SettingsRepository {
