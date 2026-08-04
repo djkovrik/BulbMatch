@@ -170,7 +170,7 @@ jobs:
             --notes-file "$notes_dir/release-body.md"
 
   publish:
-    name: Publish to Google Play internal testing
+    name: Publish to Google Play production
     needs: prepare
     permissions:
       contents: read

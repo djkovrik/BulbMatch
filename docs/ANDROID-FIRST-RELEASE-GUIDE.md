@@ -11,7 +11,8 @@
 
 - Android Gradle release build, подписанные APK и AAB;
 - production-каталог, manifest/privacy gates, Firebase Crashlytics и Yandex Ads;
-- публикация сначала в Google Play Internal testing;
+- публикация в Google Play production после завершения всех автоматических и
+  ручных release-проверок;
 - ручные Android device, offline OCR, accessibility, ads и Crashlytics проверки.
 
 Следующие проверки имеют статус `DEFERRED — future iOS release` и не считаются
@@ -73,7 +74,7 @@ prerelease. При отсутствии SemVer tags первая версия �
 - `PublishAndroidRelease.yml` — проверяет Firebase config из репозитория и восстанавливает upload key,
   строит signed/R8 APK+AAB, проверяет manifest, каталог, test IDs, Analytics,
   подписи и mapping, сохраняет artifacts и публикует AAB в Google Play
-  `internal` track.
+  `production` track со статусом `completed`.
 
 Повторная ручная публикация существующего tag запускается из `master` через
 `Publish Android release`. Обычный путь — запуск `Create Android release`.
@@ -147,7 +148,7 @@ versionCode.
 2. Создать отдельный service account для release automation и JSON key.
 3. В Play Console → Users and permissions пригласить service-account email.
 4. Выдать только app-scoped разрешения BulbMatch, достаточные для просмотра app
-   information и создания/управления releases в internal testing. Не давать
+   information и создания/управления releases в production. Не давать
    финансовые или account-wide admin permissions.
 5. Полный JSON сохранить в GitHub secret
    `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`.
@@ -170,7 +171,7 @@ versionCode.
 
 ## 6. Создать GitHub environment и secrets
 
-Создать Environment `google-play-internal`. Рекомендуется добавить required
+Создать Environment `google-play-production`. Обязательно добавить required
 reviewer, запретить неподходящие branches/tags и разрешить deployment только из
 `master`/SemVer tags.
 
@@ -189,15 +190,16 @@ Environment или repository secrets, необходимые workflow:
 ```
 
 Не вставлять значения secrets в issues, Actions logs, changelog или release
-notes. После настройки выполнить ручной workflow retry только на тестовом tag,
-пока internal track не подтвердит end-to-end доступ.
+notes. Первый production-запуск выполнять только после завершения всех
+автоматических и ручных release-проверок: workflow публикует release со статусом
+`completed`, без промежуточного тестового трека.
 
 ## 7. Android manual release acceptance
 
-На физическом поддерживаемом Android-устройстве проверить подписанную internal
-release сборку:
+До запуска production workflow на физическом поддерживаемом Android-устройстве
+проверить подписанную release-сборку:
 
-1. clean install и upgrade с предыдущего internal versionCode;
+1. clean install и upgrade с предыдущего production versionCode;
 2. камера: grant, deny, deny permanently, возврат из Settings;
 3. system photo picker без broad media permission;
 4. bundled OCR в airplane mode на EN/RU, rotated, blurred, numeric-only и
@@ -222,9 +224,10 @@ release сборку:
 3. Завершить Console/Firebase/Yandex/manual prerequisites выше.
 4. Запустить `Create Android release`, выбрать bump и заполнить EN/RU notes.
 5. Проверить signed APK/AAB, mapping и GitHub prerelease artifacts.
-6. Проверить версию в Google Play Internal testing и выполнить manual acceptance.
-7. Только после принятия internal build продвигать тот же AAB/versionCode в
-   closed/open/production track через контролируемый Console release.
+6. Выполнить manual acceptance подписанной release-сборки и зафиксировать
+   evidence до одобрения GitHub Environment.
+7. Одобрить deployment в `google-play-production`; workflow опубликует AAB
+   непосредственно в production track со статусом `completed`.
 
 Если publish упал после создания tag, не создавать новый tag без изменения
 версии. Исправить внешний blocker и запустить `Publish Android release` для того
