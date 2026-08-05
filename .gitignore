@@ -14,6 +14,5 @@ xcuserdata/
 Pods/
 *.jks
 *.gpg
-GoogleService-Info.plist
 *yarn.lock
 .lazyweb

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		66CF5F37C49A4254E17604C9 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10E4B4A3A0594F1BDA4EA763 /* Pods_iosApp.framework */; };
+		A51698AE30239F5A00890E3C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A51698AD30239F5A00890E3C /* GoogleService-Info.plist */; };
 		A807C44AECD45DAED4B60845 /* Pods_iosAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13E59B8EAC2094C64A120F7F /* Pods_iosAppTests.framework */; };
 		A93A953B29CC810C00F8E227 /* iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93A953A29CC810C00F8E227 /* iosApp.swift */; };
 		A93A953F29CC810D00F8E227 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93A953E29CC810D00F8E227 /* Assets.xcassets */; };
@@ -33,10 +34,10 @@
 		C0DE10140000000000000014 /* OpenCVDBBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00140000000000000014 /* OpenCVDBBridge.mm */; };
 		C0DE10150000000000000015 /* OpenCVImageBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00150000000000000015 /* OpenCVImageBridge.mm */; };
 		C0DE10160000000000000016 /* PDBPolygonOffsetBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00160000000000000016 /* PDBPolygonOffsetBridge.mm */; };
-		C0DE10170000000000000017 /* clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00170000000000000017 /* clipper.cpp */; };
+		C0DE10170000000000000017 /* Clipper1/clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00170000000000000017 /* Clipper1/clipper.cpp */; };
 		C0DE10180000000000000018 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = C0DE00180000000000000018 /* Models */; };
 		C0DF10010000000000000001 /* PaddleOCRQualificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DF00010000000000000001 /* PaddleOCRQualificationTests.swift */; };
-		C0DF10020000000000000002 /* cyrillic_e27_clean.png in Resources */ = {isa = PBXBuildFile; fileRef = C0DF00020000000000000002 /* cyrillic_e27_clean.png */; };
+		C0DF10020000000000000002 /* Fixtures/cyrillic_e27_clean.png in Resources */ = {isa = PBXBuildFile; fileRef = C0DF00020000000000000002 /* Fixtures/cyrillic_e27_clean.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 /* Begin PBXFileReference section */
 		10E4B4A3A0594F1BDA4EA763 /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		13E59B8EAC2094C64A120F7F /* Pods_iosAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A51698AD30239F5A00890E3C /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A93A953729CC810C00F8E227 /* BulbMatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BulbMatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A93A953A29CC810C00F8E227 /* iosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosApp.swift; sourceTree = "<group>"; };
 		A93A953E29CC810D00F8E227 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -78,16 +80,16 @@
 		C0DE00140000000000000014 /* OpenCVDBBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVDBBridge.mm; sourceTree = "<group>"; };
 		C0DE00150000000000000015 /* OpenCVImageBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVImageBridge.mm; sourceTree = "<group>"; };
 		C0DE00160000000000000016 /* PDBPolygonOffsetBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDBPolygonOffsetBridge.mm; sourceTree = "<group>"; };
-		C0DE00170000000000000017 /* clipper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Clipper1/clipper.cpp; sourceTree = "<group>"; };
+		C0DE00170000000000000017 /* Clipper1/clipper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Clipper1/clipper.cpp; sourceTree = "<group>"; };
 		C0DE00180000000000000018 /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Models; path = ../shared/platform/src/androidMain/assets/Models; sourceTree = SOURCE_ROOT; };
 		C0DE00190000000000000019 /* BulbMatch-PaddleOCR-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BulbMatch-PaddleOCR-Bridging-Header.h"; sourceTree = "<group>"; };
 		C0DE00200000000000000020 /* OpenCVDBBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVDBBridge.h; sourceTree = "<group>"; };
 		C0DE00210000000000000021 /* OpenCVImageBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVImageBridge.h; sourceTree = "<group>"; };
 		C0DE00220000000000000022 /* PDBPolygonOffsetBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDBPolygonOffsetBridge.h; sourceTree = "<group>"; };
-		C0DE00230000000000000023 /* clipper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Clipper1/clipper.hpp; sourceTree = "<group>"; };
-		C0DE00240000000000000024 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = Clipper1/LICENSE; sourceTree = "<group>"; };
+		C0DE00230000000000000023 /* Clipper1/clipper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Clipper1/clipper.hpp; sourceTree = "<group>"; };
+		C0DE00240000000000000024 /* Clipper1/LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = Clipper1/LICENSE; sourceTree = "<group>"; };
 		C0DF00010000000000000001 /* PaddleOCRQualificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddleOCRQualificationTests.swift; sourceTree = "<group>"; };
-		C0DF00020000000000000002 /* cyrillic_e27_clean.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Fixtures/cyrillic_e27_clean.png; sourceTree = "<group>"; };
+		C0DF00020000000000000002 /* Fixtures/cyrillic_e27_clean.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Fixtures/cyrillic_e27_clean.png; sourceTree = "<group>"; };
 		C0DF00030000000000000003 /* iosAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iosAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C21B0C529720DD51771C59E6 /* Pods-iosAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.debug.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C60C25009FF1EBBA09EE4CD1 /* Pods-iosAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosAppTests.release.xcconfig"; path = "Target Support Files/Pods-iosAppTests/Pods-iosAppTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -123,7 +125,6 @@
 				C21B0C529720DD51771C59E6 /* Pods-iosAppTests.debug.xcconfig */,
 				C60C25009FF1EBBA09EE4CD1 /* Pods-iosAppTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -156,6 +157,7 @@
 				A93A953E29CC810D00F8E227 /* Assets.xcassets */,
 				B1B100042E10000100000001 /* InfoPlist.strings */,
 				A93A954029CC810D00F8E227 /* Preview Content */,
+				A51698AD30239F5A00890E3C /* GoogleService-Info.plist */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -199,13 +201,13 @@
 				C0DE00140000000000000014 /* OpenCVDBBridge.mm */,
 				C0DE00150000000000000015 /* OpenCVImageBridge.mm */,
 				C0DE00160000000000000016 /* PDBPolygonOffsetBridge.mm */,
-				C0DE00170000000000000017 /* clipper.cpp */,
+				C0DE00170000000000000017 /* Clipper1/clipper.cpp */,
 				C0DE00190000000000000019 /* BulbMatch-PaddleOCR-Bridging-Header.h */,
 				C0DE00200000000000000020 /* OpenCVDBBridge.h */,
 				C0DE00210000000000000021 /* OpenCVImageBridge.h */,
 				C0DE00220000000000000022 /* PDBPolygonOffsetBridge.h */,
-				C0DE00230000000000000023 /* clipper.hpp */,
-				C0DE00240000000000000024 /* LICENSE */,
+				C0DE00230000000000000023 /* Clipper1/clipper.hpp */,
+				C0DE00240000000000000024 /* Clipper1/LICENSE */,
 			);
 			path = PaddleOCR;
 			sourceTree = "<group>";
@@ -214,7 +216,7 @@
 			isa = PBXGroup;
 			children = (
 				C0DF00010000000000000001 /* PaddleOCRQualificationTests.swift */,
-				C0DF00020000000000000002 /* cyrillic_e27_clean.png */,
+				C0DF00020000000000000002 /* Fixtures/cyrillic_e27_clean.png */,
 			);
 			path = iosAppTests;
 			sourceTree = "<group>";
@@ -316,6 +318,7 @@
 			files = (
 				C0DE10180000000000000018 /* Models in Resources */,
 				A93A954229CC810D00F8E227 /* Preview Assets.xcassets in Resources */,
+				A51698AE30239F5A00890E3C /* GoogleService-Info.plist in Resources */,
 				A93A953F29CC810D00F8E227 /* Assets.xcassets in Resources */,
 				B1B100012E10000100000001 /* InfoPlist.strings in Resources */,
 			);
@@ -325,7 +328,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C0DF10020000000000000002 /* cyrillic_e27_clean.png in Resources */,
+				C0DF10020000000000000002 /* Fixtures/cyrillic_e27_clean.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,9 +343,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -458,7 +465,7 @@
 				C0DE10140000000000000014 /* OpenCVDBBridge.mm in Sources */,
 				C0DE10150000000000000015 /* OpenCVImageBridge.mm in Sources */,
 				C0DE10160000000000000016 /* PDBPolygonOffsetBridge.mm in Sources */,
-				C0DE10170000000000000017 /* clipper.cpp in Sources */,
+				C0DE10170000000000000017 /* Clipper1/clipper.cpp in Sources */,
 				B1B210012E20000100000001 /* IOSImageSourceHost.swift in Sources */,
 				B1B210022E20000100000001 /* IOSTextRecognitionHost.swift in Sources */,
 				B1B210032E20000100000001 /* IOSCrashReportingHost.swift in Sources */,
@@ -618,17 +625,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				BULBMATCH_YANDEX_HISTORY_STICKY_AD_UNIT_ID = "demo-banner-yandex";
+				BULBMATCH_YANDEX_MATCH_EXIT_INTERSTITIAL_AD_UNIT_ID = "demo-interstitial-yandex";
+				BULBMATCH_YANDEX_REFERENCE_STICKY_AD_UNIT_ID = "demo-banner-yandex";
+				BULBMATCH_YANDEX_RESULT_INLINE_AD_UNIT_ID = "demo-banner-yandex";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = iosApp/Info.plist;
-				BULBMATCH_YANDEX_HISTORY_STICKY_AD_UNIT_ID = "demo-banner-yandex";
-				BULBMATCH_YANDEX_MATCH_EXIT_INTERSTITIAL_AD_UNIT_ID = "demo-interstitial-yandex";
-				BULBMATCH_YANDEX_REFERENCE_STICKY_AD_UNIT_ID = "demo-banner-yandex";
-				BULBMATCH_YANDEX_RESULT_INLINE_AD_UNIT_ID = "demo-banner-yandex";
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
+				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -650,17 +657,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				BULBMATCH_YANDEX_HISTORY_STICKY_AD_UNIT_ID = "";
+				BULBMATCH_YANDEX_MATCH_EXIT_INTERSTITIAL_AD_UNIT_ID = "";
+				BULBMATCH_YANDEX_REFERENCE_STICKY_AD_UNIT_ID = "";
+				BULBMATCH_YANDEX_RESULT_INLINE_AD_UNIT_ID = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = iosApp/Info.plist;
-				BULBMATCH_YANDEX_HISTORY_STICKY_AD_UNIT_ID = "";
-				BULBMATCH_YANDEX_MATCH_EXIT_INTERSTITIAL_AD_UNIT_ID = "";
-				BULBMATCH_YANDEX_REFERENCE_STICKY_AD_UNIT_ID = "";
-				BULBMATCH_YANDEX_RESULT_INLINE_AD_UNIT_ID = "";
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
+				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
