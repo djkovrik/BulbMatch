@@ -68,3 +68,6 @@ the supported build entry point after CocoaPods resolution.
 Local Firebase configuration, signing credentials, and production catalog
 approval are intentionally not stored in Git. Their absence must remain a
 truthful release gate rather than being replaced with test production data.
+
+## Used resources
+* Icons from [Grand Iconic](https://www.flaticon.com/authors/grand-iconic)
